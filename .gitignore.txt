@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+mud.db
+logs/
+.env
+.vscode/

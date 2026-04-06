@@ -1,10 +1,16 @@
 import asyncio
+
 from core.server import MudServer
 from core.command_handler import load_commands
+from core.world import load_world
+from core.database import init_db
+init_db()
 
 if __name__ == "__main__":
+    # 🔧 carica sistemi
     load_commands()
-    
-    server = MudServer(host="0.0.0.0", port=4001)
+    load_world()
+
+    # 🚀 avvia server
+    server = MudServer(host="0.0.0.0", port=4000)
     asyncio.run(server.start())
-    

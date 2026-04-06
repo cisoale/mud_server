@@ -1,4 +1,5 @@
 from core.data_loader import races, classes
+from core.database import create_player, get_player
 
 # ⚠️ temporaneo (RAM) → poi passeremo a DB
 players = {}
@@ -34,13 +35,14 @@ async def login(conn):
     await conn.send("Password: ")
     password = await conn.recv()
 
-    if name in players and players[name]["password"] == password:
+    player = get_player(name)
+
+    if player and player["password"] == password:
         await conn.send("Login effettuato!")
-        return players[name]
+        return player
 
     await conn.send("Credenziali errate.")
     return None
-
 
 # 🔁 FUNZIONE GENERICA PER SCELTE
 async def ask_choice(conn, prompt, options):
@@ -112,7 +114,7 @@ async def register(conn):
         "class": cls
     }
 
-    players[name] = player
+    create_player(player)
 
     await conn.send("Registrazione completata!")
 

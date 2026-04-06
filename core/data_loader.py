@@ -13,3 +13,5 @@ def load_json(relative_path):
 
 races = load_json("data/races.json")
 classes = load_json("data/classes.json")
+
+print("RACES:", races)

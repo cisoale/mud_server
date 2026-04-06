@@ -13,25 +13,35 @@ def load_commands():
 
 def handle_command(player, cmd_input):
     parts = cmd_input.split()
-    
+
     if not parts:
         return "Comando vuoto."
 
     cmd = parts[0].lower()
     args = parts[1:]
 
-    # abbreviazioni
-    aliases = {
-        "n": "north",
-        "s": "south",
-        "e": "east",
-        "w": "west"
+    # 🔥 alias direzioni → tutte su move
+    direction_aliases = {
+        "n": "move",
+        "north": "move",
+        "s": "move",
+        "south": "move",
+        "e": "move",
+        "east": "move",
+        "w": "move",
+        "west": "move",
+        "u": "move",
+        "up": "move",
+        "d": "move",
+        "down": "move"
     }
 
-    if cmd in aliases:
-        cmd = aliases[cmd]
+    if cmd in direction_aliases:
+        command_name = direction_aliases[cmd]
+    else:
+        command_name = cmd
 
-    if cmd in commands:
-        return commands[cmd](player, args)
+    if command_name in commands:
+        return commands[command_name](player, args, cmd)
 
     return "Comando sconosciuto."

@@ -1,6 +1,7 @@
 from systems.login.login import handle_login
 from core.command_handler import handle_command
-
+from core.spawn import spawn_player
+from commands.look import render_room
 
 class Connection:
     def __init__(self, reader, writer):
@@ -27,7 +28,16 @@ async def handle_client(reader, writer):
 
         # 🔐 Login / Registrazione
         player = await handle_login(conn)
+        
+        room = spawn_player(player)
 
+        if not room:
+          await conn.send("Errore spawn. Contatta un admin.")
+          writer.close()
+          return
+
+        await conn.send(render_room(player))
+ 
         if not player:
             await conn.send("Errore durante il login.")
             writer.close()

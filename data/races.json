@@ -1,8 +1,8 @@
 {
   "umano": {
-    "start_zone": 1000
+    "start_room": 1001
   },
   "elfo": {
-    "start_zone": 2000
+    "start_room": 2001
   }
 }
