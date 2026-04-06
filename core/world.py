@@ -1,6 +1,5 @@
 rooms = {}
 
-
 class Room:
     def __init__(self, vnum, name, description, exits=None):
         self.vnum = vnum
@@ -8,7 +7,6 @@ class Room:
         self.description = description
         self.exits = exits or {}
 
-        # 🔥 nuovi contenuti
         self.players = []
         self.mobs = []
         self.items = []
@@ -17,6 +15,9 @@ class Room:
 def load_world():
     global rooms
 
+    from core.mob_factory import create_mob
+
+    # 🏠 UMANI
     rooms[1001] = Room(
         1001,
         "Villaggio umano",
@@ -27,14 +28,15 @@ def load_world():
     rooms[1002] = Room(
         1002,
         "Strada polverosa",
-        "Una strada che porta fuori dal villaggio.",
+        "Una strada polverosa.",
         {"south": 1001}
     )
 
+    # 🌲 ELFI
     rooms[2001] = Room(
         2001,
         "Foresta elfica",
-        "Una foresta luminosa e magica.",
+        "Una foresta luminosa.",
         {"south": 2002}
     )
 
@@ -44,6 +46,19 @@ def load_world():
         "Una radura tranquilla.",
         {"north": 2001}
     )
+
+    # 👹 MOB
+    goblin = create_mob(
+        "goblin",
+        "Un piccolo goblin verde ti osserva.",
+        10,
+        inventory=[
+            {"name": "Daga", "slot": "weapon"},
+            {"name": "Monete"}
+        ]
+    )
+
+    rooms[1001].mobs.append(goblin)
 
 
 def get_room(vnum):

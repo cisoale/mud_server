@@ -43,5 +43,14 @@ def handle_command(player, cmd_input):
 
     if command_name in commands:
         return commands[command_name](player, args, cmd)
+    
+    if cmd == "exa":
+        command_name = "examine"
+
+    if cmd == "prendi":
+        command_name = "get"
+    
+    if cmd == "lascia":
+        command_name = "drop"
 
     return "Comando sconosciuto."

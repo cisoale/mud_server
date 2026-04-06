@@ -7,14 +7,14 @@ def render_room(player):
     output = []
 
     # 🏠 nome + descrizione
-    output.append(f"{room.name}")
-    output.append(f"{room.description}")
+    output.append(room.name)
+    output.append(room.description)
 
     # 🚪 uscite
     exits = ", ".join(room.exits.keys())
     output.append(f"Uscite: {exits}")
 
-    # 👥 altri player
+    # 👥 player
     others = [p["name"] for p in room.players if p != player]
     if others:
         output.append("Giocatori presenti:")
@@ -27,11 +27,14 @@ def render_room(player):
         for mob in room.mobs:
             output.append(f" - {mob['name']}")
 
-    # 🎒 oggetti
+    # 🎒 oggetti (anche corpse)
     if room.items:
         output.append("Oggetti:")
         for item in room.items:
-            output.append(f" - {item['name']}")
+            if item.get("type") == "corpse":
+                output.append(f" - {item['name']} (corpse)")
+            else:
+                output.append(f" - {item['name']}")
 
     return "\n".join(output)
 

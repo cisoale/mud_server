@@ -1,10 +1,27 @@
 from core.data_loader import races, classes
 from core.database import create_player, get_player
 
-# ⚠️ temporaneo (RAM) → poi passeremo a DB
-players = {}
+
+# 🧠 inizializzazione stato player
+def init_player_state(player):
+    player.setdefault("inventory", [])
+
+    player.setdefault("equipment", {
+        "head": None,
+        "chest": None,
+        "legs": None,
+        "feet": None,
+        "hands": None,
+        "weapon": None,
+        "shield": None,
+        "ring": None,
+        "amulet": None
+    })
+
+    return player
 
 
+# 🔁 MENU LOGIN
 async def handle_login(conn):
     while True:
         await conn.send("1) Login")
@@ -38,13 +55,16 @@ async def login(conn):
     player = get_player(name)
 
     if player and player["password"] == password:
+        player = init_player_state(player)
+
         await conn.send("Login effettuato!")
         return player
 
     await conn.send("Credenziali errate.")
     return None
 
-# 🔁 FUNZIONE GENERICA PER SCELTE
+
+# 🔁 FUNZIONE SCELTE
 async def ask_choice(conn, prompt, options):
     options_list = list(options.keys())
 
@@ -76,7 +96,8 @@ async def register(conn):
             await conn.send("Nome non valido.")
             continue
 
-        if name in players:
+        # controlla se esiste già
+        if get_player(name):
             await conn.send("Nome già esistente.")
             continue
 
@@ -114,6 +135,10 @@ async def register(conn):
         "class": cls
     }
 
+    # 🔥 inizializza inventario + equip
+    player = init_player_state(player)
+
+    # 💾 salva su database
     create_player(player)
 
     await conn.send("Registrazione completata!")
