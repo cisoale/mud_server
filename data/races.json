@@ -1,0 +1,8 @@
+{
+  "umano": {
+    "start_zone": 1000
+  },
+  "elfo": {
+    "start_zone": 2000
+  }
+}
