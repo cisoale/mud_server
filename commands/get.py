@@ -16,3 +16,7 @@ def execute(player, args, cmd=None):
             return f"Hai preso {item['name']}."
 
     return "Non vedi nulla del genere."
+
+
+description = "Raccoglie un oggetto da terra."
+usage = "get <oggetto>"

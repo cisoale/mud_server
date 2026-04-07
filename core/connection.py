@@ -45,6 +45,8 @@ async def handle_client(reader, writer):
 
         await conn.send(f"Benvenuto {player['name']}!")
 
+        player["conn"] = conn
+
         # 🔁 Game loop
         while True:
             await conn.send("> ")
@@ -64,7 +66,9 @@ async def handle_client(reader, writer):
             if response == "quit":
                 await conn.send("Arrivederci!")
                 break
+            from core.database import save_player
 
+            save_player(player)
             await conn.send(response)
 
     except Exception as e:

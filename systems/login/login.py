@@ -4,8 +4,10 @@ from core.database import create_player, get_player
 
 # 🧠 inizializzazione stato player
 def init_player_state(player):
+    # 🎒 inventario
     player.setdefault("inventory", [])
 
+    # 🛡️ equip
     player.setdefault("equipment", {
         "head": None,
         "chest": None,
@@ -17,6 +19,26 @@ def init_player_state(player):
         "ring": None,
         "amulet": None
     })
+
+    # ❤️ hp base
+    player.setdefault("hp", 20)
+    player.setdefault("max_hp", 20)
+    player.setdefault("level", 1)
+    player.setdefault("xp", 0)
+    player.setdefault("xp_to_next", 100)
+
+    # ⚔️ stato combat
+    player.setdefault("combat", {
+    "target": None,
+    "in_combat": False
+})
+
+    player.setdefault("hp", 20)
+    player.setdefault("max_hp", 20)
+
+    player.setdefault("level", 1)
+    player.setdefault("xp", 0)
+    player.setdefault("xp_to_next", 100)
 
     return player
 
@@ -54,6 +76,9 @@ async def login(conn):
 
     player = get_player(name)
 
+    if player:
+        player = init_player_state(player)
+  
     if player and player["password"] == password:
         player = init_player_state(player)
 
