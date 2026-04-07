@@ -1,0 +1,9 @@
+{
+  "name": "goblin",
+  "description": "Un piccolo goblin verde.",
+  "hp": 10,
+  "xp": 20,
+  "inventory": [
+    { "name": "Daga", "slot": "weapon", "damage": 2 }
+  ]
+}

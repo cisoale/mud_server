@@ -1,0 +1,10 @@
+{
+  "vnum": 1001,
+  "name": "Villaggio umano",
+  "description": "Sei nel villaggio degli umani.",
+  "mobs": ["goblin"]
+  "exits": {
+    "north": 1002
+  "pos": { "x": 120, "y": 300 }
+  }
+}

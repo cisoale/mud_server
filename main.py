@@ -1,5 +1,9 @@
 import asyncio
+from core.world_loader import load_rooms_from_files
+from core.mob_loader import load_mobs
 
+load_mobs()
+load_rooms_from_files()
 from core.server import MudServer
 from core.command_handler import load_commands
 from core.world import load_world

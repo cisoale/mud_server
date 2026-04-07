@@ -1,0 +1,9 @@
+{
+  "vnum": 1003,
+  "name": "La cort",
+  "description": "SDSDS",
+  "exits": {
+    "sud": 1002
+  "pos": { "x": 120, "y": 300 }
+  }
+}

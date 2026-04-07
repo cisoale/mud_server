@@ -1,0 +1,9 @@
+{
+  "vnum": 1002,
+  "name": "Strada polverosa",
+  "description": "Una strada polverosa.",
+  "exits": {
+    "south": 1001
+  "pos": { "x": 120, "y": 300 }
+  }
+}

@@ -84,6 +84,9 @@ async def login(conn):
 
         await conn.send("Login effettuato!")
         return player
+    
+    if player["name"] == "wiz":
+       player["builder"] = True
 
     await conn.send("Credenziali errate.")
     return None

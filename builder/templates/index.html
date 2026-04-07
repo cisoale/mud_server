@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MUD Builder</title>
+</head>
+<body>
+
+    <h1>MUD Builder</h1>
+
+    <h2>Room</h2>
+    <input id="vnum" placeholder="VNUM"><br>
+    <input id="name" placeholder="Nome"><br>
+<textarea id="desc" placeholder="Descrizione"></textarea><br>
+    <input id="exits" placeholder='{"north":1002}'><br>
+    <button onclick="saveRoom()">Salva Room</button>
+
+    <hr>
+
+    <h2>Mob</h2>
+    <input id="mob_name" placeholder="Nome"><br>
+    <input id="mob_hp" placeholder="HP"><br>
+    <input id="mob_xp" placeholder="XP"><br>
+    <button onclick="saveMob()">Salva Mob</button>
+
+    <hr>
+
+    <h2>Item</h2>
+    <input id="item_name" placeholder="Nome"><br>
+    <input id="item_slot" placeholder="slot"><br>
+    <input id="item_damage" placeholder="damage"><br>
+    <input id="item_armor" placeholder="armor"><br>
+    <button onclick="saveItem()">Salva Item</button>
+
+    <script src="/static/app.js"></script>
+
+</body>
+</html>
+<h2>Mappa</h2>
+<canvas id="mapCanvas" width="800" height="600" style="border:1px solid black;"></canvas>
