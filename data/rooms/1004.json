@@ -1,0 +1,12 @@
+{
+  "description": "Lungo viale nella pineta",
+  "exits": {
+    "north": 1001
+  },
+  "name": "Viale",
+  "vnum": 1004,
+  "pos": {
+    "x": 263,
+    "y": 236.5
+  }
+}

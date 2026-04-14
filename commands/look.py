@@ -1,43 +1,95 @@
+from core.world import get_room
+
+
 def render_room(player):
-    room = player.get("room")
+
+    room = get_room(player["room"])
 
     if not room:
-        return "Sei nel vuoto."
+        return "Stanza inesistente.\n"
 
-    output = []
+    text = ""
 
-    # 🏠 nome + descrizione
-    output.append(room.name)
-    output.append(room.description)
+    # =========================
+    # NOME + DESCRIZIONE
+    # =========================
+    name = getattr(room, "name", "Unknown")
+    desc = getattr(room, "description", "")
 
-    # 🚪 uscite
-    exits = ", ".join(room.exits.keys())
-    output.append(f"Uscite: {exits}")
+    text += f"\n[{name}]\n"
+    text += f"{desc}\n"
 
-    # 👥 player
-    others = [p["name"] for p in room.players if p != player]
-    if others:
-        output.append("Giocatori presenti:")
-        for p in others:
-            output.append(f" - {p}")
+    # =========================
+    # USCITE
+    # =========================
+    exits = getattr(room, "exits", {})
 
-    # 👹 mob
-    if room.mobs:
-        output.append("Creature:")
-        for mob in room.mobs:
-            output.append(f" - {mob['name']}")
+    if exits:
+        text += "\nUscite:\n"
 
-    # 🎒 oggetti (anche corpse)
-    if room.items:
-        output.append("Oggetti:")
-        for item in room.items:
-            if item.get("type") == "corpse":
-                output.append(f" - {item['name']} (corpse)")
+        for direction, exit in exits.items():
+
+            # sicurezza: exit deve essere dict
+            if isinstance(exit, dict):
+
+                if exit.get("secret"):
+                    continue
+
+                line = f"- {direction}"
+
+                if exit.get("door"):
+                    if exit.get("locked"):
+                        line += " (bloccata)"
+                    elif exit.get("closed"):
+                        line += " (chiusa)"
+                    else:
+                        line += " (aperta)"
+
+                text += line + "\n"
+
             else:
-                output.append(f" - {item['name']}")
+                # fallback vecchio sistema
+                text += f"- {direction}\n"
 
-    return "\n".join(output)
+    # =========================
+    # MOB
+    # =========================
+    mobs = getattr(room, "mobs", [])
+
+    if mobs:
+        text += "\nCreature:\n"
+
+        for mob in mobs:
+            if isinstance(mob, dict):
+                text += f"- {mob.get('name', 'mob')}\n"
+            else:
+                text += f"- {mob}\n"
+
+    # =========================
+    # OGGETTI
+    # =========================
+    items = getattr(room, "items", [])
+
+    if items:
+        text += "\nOggetti:\n"
+
+        for item in items:
+            if isinstance(item, dict):
+                text += f"- {item.get('name', 'oggetto')}\n"
+            else:
+                text += f"- {item}\n"
+
+    return text
 
 
-def execute(player, args, cmd=None):
-    return render_room(player)
+# =========================
+# COMANDO LOOK
+# =========================
+def execute(player, conn, command, args):
+
+    text = render_room(player)
+
+    try:
+        conn.send(text)
+    except:
+        conn.send(text)

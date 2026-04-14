@@ -1,0 +1,29 @@
+{
+    "vnum": 1011,
+    "name": "La bottega delle pozioni",
+    "description": "Una specie di drogheria",
+    "exits": {
+        "east": {
+            "to": 1001,
+            "door": false,
+            "closed": false,
+            "locked": false,
+            "key": null,
+            "secret": false
+        },
+        "down": {
+            "to": 1012,
+            "door": true,
+            "closed": false,
+            "locked": false,
+            "key": null,
+            "secret": false
+        }
+    },
+    "mobs": [],
+    "items": [],
+    "pos": {
+        "x": 149,
+        "y": 108
+    }
+}

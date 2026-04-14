@@ -1,0 +1,12 @@
+{
+  "vnum": 1010,
+  "name": "I cancelli a sud.",
+  "description": "Un enorme cancello aperto.\nLa ronda sempre presente.",
+  "exits": {
+    "north": 1009
+  },
+  "pos": {
+    "x": 262,
+    "y": 443.5
+  }
+}

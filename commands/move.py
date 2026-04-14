@@ -1,47 +1,29 @@
 from core.world import get_room
+from commands.look import render_room
 
-# 🧭 tutte le direzioni + abbreviazioni
-DIRECTIONS = {
-    "north": "north",
-    "n": "north",
+DIRECTIONS = ["north", "south", "east", "west", "up", "down"]
 
-    "south": "south",
-    "s": "south",
+def execute(player, conn, command, args):
 
-    "east": "east",
-    "e": "east",
+    direction = command.lower()
 
-    "west": "west",
-    "w": "west",
+    room = get_room(player["room"])
 
-    "up": "up",
-    "u": "up",
+    if not room:
+        conn.send("Errore stanza.\n")
+        return
 
-    "down": "down",
-    "d": "down",
-}
+    exit = room.exits.get(direction)
 
+    if not exit:
+        conn.send("Non puoi andare lì.\n")
+        return
 
-def execute(player, args, cmd=None):
-    direction = DIRECTIONS.get(cmd)
+    if exit.get("door") and exit.get("closed"):
+        conn.send("La porta è chiusa.\n")
+        return
 
-    current_room = player.get("room")
+    player["room"] = exit["to"]
 
-    if direction not in current_room.exits:
-        return f"Non puoi andare verso {direction}."
-
-    new_room_vnum = current_room.exits[direction]
-    new_room = get_room(new_room_vnum)
-
-    # 🔴 rimuovi dalla stanza attuale
-    if player in current_room.players:
-        current_room.players.remove(player)
-
-    # 🟢 aggiungi nuova stanza
-    new_room.players.append(player)
-
-    player["room"] = new_room
-
-    # 👉 usa look automaticamente
-    from commands.look import render_room
-    return render_room(player)
+    conn.send(f"Vai verso {direction}.\n")
+    conn.send(render_room(player))

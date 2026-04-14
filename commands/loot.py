@@ -1,31 +1,52 @@
 def execute(player, args, cmd=None):
     room = player.get("room")
-    inv = player.get("inventory")
 
-    if not args:
-        return "Loot cosa?"
+    if not room:
+        return "Non sei in una stanza valida."
 
-    target_name = " ".join(args).lower()
+    if not hasattr(room, "items") or not room.items:
+        return "Non c'è nulla da lootare."
 
-    # cerca corpse
-    corpse = None
-    for item in room.items:
-        if item.get("type") == "corpse" and target_name in item["name"].lower():
-            corpse = item
-            break
+    # 🔍 cerca corpse
+    target = None
 
-    if not corpse:
+    if args:
+        name = " ".join(args).lower()
+
+        for item in room.items:
+            if name in item["name"].lower() and item.get("type") == "corpse":
+                target = item
+                break
+    else:
+        for item in room.items:
+            if item.get("type") == "corpse":
+                target = item
+                break
+
+    if not target:
         return "Nessun corpo trovato."
 
-    corpse_inv = corpse.get("inventory", [])
+    loot = target.get("inventory", [])
 
-    if not corpse_inv:
+    if not loot:
         return "Il corpo è vuoto."
 
-    # trasferisci tutto
-    for item in corpse_inv:
-        inv.append(item)
+    # 🎒 aggiungi inventario player
+    if "inventory" not in player:
+        player["inventory"] = []
 
-    corpse["inventory"] = []
+    for item in loot:
+        player["inventory"].append(item)
 
-    return "Hai saccheggiato il corpo."
+    # 🧹 svuota corpse
+    target["inventory"] = []
+
+    # 🗑️ rimuovi corpse se vuoto
+    if not target["inventory"]:
+        room.items.remove(target)
+
+    return f"Hai saccheggiato {target['name']}."
+
+
+description = "Saccheggia un corpo."
+usage = "loot [nome]"

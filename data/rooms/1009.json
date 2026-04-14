@@ -1,0 +1,12 @@
+{
+  "vnum": 1009,
+  "name": "La strada verso sud",
+  "description": "Lungo viale nella pineta",
+  "exits": {
+    "north": 1008
+  },
+  "pos": {
+    "x": 261,
+    "y": 379.5
+  }
+}

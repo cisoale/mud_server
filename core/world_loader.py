@@ -4,6 +4,7 @@ from core.world import Room, rooms
 from core.mob_loader import mobs_data
 from core.mob_factory import create_mob
 
+rooms.clear()
 
 def load_rooms_from_files():
     folder = "data/rooms"

@@ -1,0 +1,9 @@
+{
+  "name": "Boss",
+  "description": "Un piccolo goblin verde.",
+  "hp": 300,
+  "xp": 2000,
+  "inventory": [
+    { "name": "", "slot": "weapon", "damage": 2 }
+  ]
+}

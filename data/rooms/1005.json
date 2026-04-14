@@ -1,0 +1,13 @@
+{
+    "description": "La strettoia",
+    "exits": {
+        "north": 1007,
+        "west": 1003
+    },
+    "name": "Viale",
+    "pos": {
+        "x": 584,
+        "y": 107.5
+    },
+    "vnum": 1005
+}

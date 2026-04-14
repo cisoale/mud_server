@@ -4,3 +4,5 @@ def execute(player, args, cmd=None):
         f"XP: {player.get('xp')}/{player.get('xp_to_next')}\n"
         f"HP: {player.get('hp')}/{player.get('max_hp')}"
     )
+description = "Mostra le statistiche."
+usage = "stats"

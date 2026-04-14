@@ -1,59 +1,79 @@
 import sqlite3
 import json
 
-conn = sqlite3.connect("mud.db")
-cursor = conn.cursor()
+DB_FILE = "data/mud.db"
 
 
+def get_connection():
+    return sqlite3.connect(DB_FILE)
+
+
+# =========================
+# INIT DB
+# =========================
 def init_db():
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS players (
         name TEXT PRIMARY KEY,
         password TEXT,
-        sex TEXT,
-        race TEXT,
-        class TEXT,
-        level INTEGER,
-        xp INTEGER,
-        xp_to_next INTEGER,
+        room INTEGER,
         hp INTEGER,
         max_hp INTEGER,
+        xp INTEGER,
+        level INTEGER,
         inventory TEXT,
-        equipment TEXT
+        equipment TEXT,
+        builder INTEGER
     )
     """)
+
     conn.commit()
+    conn.close()
 
 
-def create_player(player):
+# =========================
+# CREATE PLAYER
+# =========================
+def create_player(name, password):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
     cursor.execute("""
-    INSERT INTO players (
-        name, password, sex, race, class,
-        level, xp, xp_to_next,
-        hp, max_hp,
-        inventory, equipment
-    )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO players VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
-        player["name"],
-        player["password"],
-        player["sex"],
-        player["race"],
-        player["class"],
-        player.get("level", 1),
-        player.get("xp", 0),
-        player.get("xp_to_next", 100),
-        player.get("hp", 20),
-        player.get("max_hp", 20),
-        json.dumps(player.get("inventory", [])),
-        json.dumps(player.get("equipment", {}))
+        name,
+        password,
+        1001,   # start room
+        100,
+        100,
+        0,
+        1,
+        json.dumps([]),
+        json.dumps({}),
+        0
     ))
+
     conn.commit()
+    conn.close()
 
 
+# =========================
+# GET PLAYER
+# =========================
 def get_player(name):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
     cursor.execute("SELECT * FROM players WHERE name = ?", (name,))
     row = cursor.fetchone()
+
+    conn.close()
 
     if not row:
         return None
@@ -61,38 +81,57 @@ def get_player(name):
     return {
         "name": row[0],
         "password": row[1],
-        "sex": row[2],
-        "race": row[3],
-        "class": row[4],
-        "level": row[5],
-        "xp": row[6],
-        "xp_to_next": row[7],
-        "hp": row[8],
-        "max_hp": row[9],
-        "inventory": json.loads(row[10]) if row[10] else [],
-        "equipment": json.loads(row[11]) if row[11] else {}
+        "room": row[2],
+        "hp": row[3],
+        "max_hp": row[4],
+        "xp": row[5],
+        "level": row[6],
+        "inventory": json.loads(row[7]),
+        "equipment": json.loads(row[8]),
+        "builder": bool(row[9])
     }
 
 
+# =========================
+# SAVE PLAYER
+# =========================
 def save_player(player):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
     cursor.execute("""
     UPDATE players SET
-        level = ?,
-        xp = ?,
-        xp_to_next = ?,
+        room = ?,
         hp = ?,
         max_hp = ?,
+        xp = ?,
+        level = ?,
         inventory = ?,
         equipment = ?
     WHERE name = ?
     """, (
-        player["level"],
-        player["xp"],
-        player["xp_to_next"],
+        player["room"],
         player["hp"],
         player["max_hp"],
+        player["xp"],
+        player["level"],
         json.dumps(player["inventory"]),
         json.dumps(player["equipment"]),
         player["name"]
     ))
+
     conn.commit()
+    conn.close()
+
+def make_builder(name):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "UPDATE players SET builder = 1 WHERE name = ?",
+        (name,)
+    )
+
+    conn.commit()
+    conn.close()

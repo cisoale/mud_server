@@ -1,0 +1,12 @@
+{
+    "description": "Il vecchio \u00e8 in fondo al bancone con gli attrezzi difronte a lui.",
+    "exits": {
+        "south": 1005
+    },
+    "name": "La bottega del fabbro",
+    "pos": {
+        "x": 580,
+        "y": 41
+    },
+    "vnum": 1007
+}

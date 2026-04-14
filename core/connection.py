@@ -1,82 +1,79 @@
+import asyncio
+
 from systems.login.login import handle_login
-from core.command_handler import handle_command
+from core.command_handler import execute_command
 from core.spawn import spawn_player
 from commands.look import render_room
 
-class Connection:
-    def __init__(self, reader, writer):
-        self.reader = reader
-        self.writer = writer
 
-    async def send(self, msg):
-        self.writer.write((msg + "\n").encode())
-        await self.writer.drain()
+async def handle_client(reader, writer, server=None):
 
-    async def recv(self):
-        data = await self.reader.read(1024)
-        if not data:
-            return None
-        return data.decode().strip()
-
-
-async def handle_client(reader, writer):
-    conn = Connection(reader, writer)
+    addr = writer.get_extra_info('peername')
+    print(f"[CONNESSIONE] {addr}")
 
     try:
-        # 🟢 Benvenuto
-        await conn.send("Benvenuto nel MUD!")
+        # =========================
+        # LOGIN / REGISTRAZIONE
+        # =========================
+        player = await handle_login(reader, writer)
 
-        # 🔐 Login / Registrazione
-        player = await handle_login(conn)
-        
-        room = spawn_player(player)
-
-        if not room:
-          await conn.send("Errore spawn. Contatta un admin.")
-          writer.close()
-          return
-
-        await conn.send(render_room(player))
- 
         if not player:
-            await conn.send("Errore durante il login.")
             writer.close()
+            await writer.wait_closed()
             return
 
-        await conn.send(f"Benvenuto {player['name']}!")
+        # =========================
+        # SPAWN PLAYER
+        # =========================
+        spawn_player(player)
 
-        player["conn"] = conn
+        print(f"[SPAWN] {player['name']} -> Room {player['room']}")
 
-        # 🔁 Game loop
+        # mostra stanza iniziale
+        writer.write(render_room(player).encode())
+        await writer.drain()
+
+        # =========================
+        # LOOP COMANDI
+        # =========================
         while True:
-            await conn.send("> ")
-            cmd = await conn.recv()
 
-            # ❌ Connessione chiusa
-            if cmd is None:
+            writer.write(b"\n> ")
+            await writer.drain()
+
+            data = await reader.readline()
+
+            if not data:
                 break
 
-            if cmd == "":
+            command_input = data.decode().strip()
+
+            if not command_input:
                 continue
 
-            # ⚙️ Gestione comando
-            response = handle_command(player, cmd)
+            # =========================
+            # PARSING COMANDO
+            # =========================
+            parts = command_input.split()
 
-            # 🚪 Uscita
-            if response == "quit":
-                await conn.send("Arrivederci!")
-                break
-            from core.database import save_player
+            cmd = parts[0].lower()
+            args = parts[1:] if len(parts) > 1 else []
 
-            save_player(player)
-            await conn.send(response)
+            print(f"[CMD] {player['name']}: {cmd} {args}")
+
+            # =========================
+            # ESECUZIONE COMANDO
+            # =========================
+            from core.connection_wrapper import Connection
+
+            conn = Connection(writer)
+
+            execute_command(cmd, player, conn, args)
 
     except Exception as e:
-        print(f"Errore connessione: {e}")
+        print(f"[ERRORE CONNESSIONE] {e}")
 
     finally:
+        print(f"[DISCONNESSO] {addr}")
         writer.close()
-        try:
-            await writer.wait_closed()
-        except:
-            pass
+        await writer.wait_closed()

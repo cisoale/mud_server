@@ -1,5 +1,8 @@
 rooms = {}
 
+
+def get_room(vnum):
+    return rooms.get(vnum)
 class Room:
     def __init__(self, vnum, name, description, exits=None):
         self.vnum = vnum

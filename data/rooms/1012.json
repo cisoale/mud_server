@@ -1,0 +1,14 @@
+{
+    "description": "Un magazzino impolverato pieno di ampolle da cui escono vapori colorati.",
+    "exits": {
+        "up": 1011
+    },
+    "items": [],
+    "mobs": [],
+    "name": "Lo scantinato",
+    "pos": {
+        "x": 56,
+        "y": 144
+    },
+    "vnum": 1012
+}

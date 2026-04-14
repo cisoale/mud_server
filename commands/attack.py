@@ -1,31 +1,28 @@
 import asyncio
-from core.combat_system import combat_loop
+from core.combat_system import start_combat
 
 
-def execute(player, args, cmd=None):
+def execute(player, conn, command, args):
     if not args:
-        return "Attaccare cosa?"
+        return "Attacca chi?"
 
+    target_name = args[0].lower()
     room = player.get("room")
-    target_name = " ".join(args).lower()
 
-    # 🔍 cerca mob
+    if not room:
+        return "Errore stanza."
+
+    target = None
+
     for mob in room.mobs:
-        if target_name in mob["name"].lower():
+        if mob["name"].lower() == target_name:
+            target = mob
+            break
 
-            # già in combat
-            if player["combat"]["in_combat"]:
-                return "Sei già in combattimento!"
+    if not target:
+        return "Mob non trovato."
 
-            # imposta combat
-            player["combat"]["target"] = mob
-            player["combat"]["in_combat"] = True
+    # 🔥 PASSIAMO PLAYER (che ha writer)
+    asyncio.create_task(start_combat(player, target))
 
-            conn = player.get("conn")
-
-            # 🔥 QUESTA DEVE STARE QUI DENTRO
-            asyncio.create_task(combat_loop(player, conn))
-
-            return f"Inizi a combattere contro {mob['name']}!"
-
-    return "Nessun bersaglio trovato."
+    return f"Attacchi {target_name}!"

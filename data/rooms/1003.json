@@ -1,9 +1,15 @@
 {
-  "vnum": 1003,
-  "name": "La cort",
-  "description": "SDSDS",
-  "exits": {
-    "sud": 1002
-  "pos": { "x": 120, "y": 300 }
-  }
+    "description": "SDFD",
+    "exits": {
+        "east": 1005,
+        "west": 1002
+    },
+    "items": [],
+    "mobs": [],
+    "name": "CORTILE",
+    "pos": {
+        "x": 480,
+        "y": 105.5
+    },
+    "vnum": 1003
 }

@@ -1,113 +1,69 @@
 import asyncio
-import random
-from core.combat_utils import (
-    create_corpse,
-    get_total_damage,
-    get_total_armor
-)
+from core.xp_system import add_xp
 
 
-async def combat_loop(player, conn):
-    while True:
-        combat = player.get("combat", {})
+async def send(player, msg):
+    writer = player.get("writer")
+    if writer:
+        writer.write((msg + "\n").encode())
+        await writer.drain()
 
-        # 🔒 sicurezza stato
-        if not combat.get("in_combat"):
-            break
 
-        target = combat.get("target")
+async def start_combat(player, target):
+    room = player.get("room")
 
-        if not target:
-            await conn.send("Il combattimento si interrompe.")
-            combat["in_combat"] = False
-            break
+    await send(player, f"Inizi il combattimento con {target['name']}!")
 
-        room = player.get("room")
-
-        # ❌ target non più valido
-        if target not in room.mobs:
-            await conn.send("Il bersaglio non è più qui.")
-            combat["in_combat"] = False
-            break
+    while player["hp"] > 0 and target["hp"] > 0:
 
         # =========================
-        # ⚔️ PLAYER ATTACCA
+        # 🗡️ PLAYER ATTACCA
         # =========================
-        base_damage = get_total_damage(player)
-        dmg = random.randint(base_damage, base_damage + 2)
+        dmg = 5
+
+        weapon = player.get("equipment", {}).get("weapon")
+        if weapon:
+            dmg += weapon.get("damage", 0)
 
         target["hp"] -= dmg
 
-        await conn.send(f"Colpisci {target['name']} per {dmg} danni.")
+        await send(player, f"Colpisci {target['name']} per {dmg} danni!")
 
-        # 💀 MORTE MOB
         if target["hp"] <= 0:
-            await conn.send(f"Hai ucciso {target['name']}!")
+            await send(player, f"{target['name']} muore!")
 
-            # rimuovi mob
+            # 💀 corpse
+            corpse = {
+                "name": f"corpo di {target['name']}",
+                "description": f"Il corpo senza vita di {target['name']}.",
+                "type": "corpse",
+                "inventory": target.get("inventory", [])
+            }
+
+            if not hasattr(room, "items"):
+                room.items = []
+
+            room.items.append(corpse)
+
             if target in room.mobs:
                 room.mobs.remove(target)
 
-            # crea corpse
-            corpse = create_corpse(target)
-            room.items.append(corpse)
+            # ⭐ XP
+            xp = target.get("xp", 10)
+            await add_xp(player, xp)
 
-            # 🎁 XP
-            xp = target.get("xp", 0)
-            player["xp"] += xp
-
-            await conn.send(f"Ottieni {xp} XP.")
-
-            from core.database import save_player
-            save_player(player)
-
-            # 🔥 LEVEL UP
-            if player["xp"] >= player["xp_to_next"]:
-                player["level"] += 1
-                player["xp"] -= player["xp_to_next"]
-                player["xp_to_next"] = int(player["xp_to_next"] * 1.5)
-
-                player["max_hp"] += 5
-                player["hp"] = player["max_hp"]
-
-                await conn.send(f"🔥 LEVEL UP! Ora sei livello {player['level']}!")
-
-            # stop combat
-            combat["in_combat"] = False
-            combat["target"] = None
-            break
+            return
 
         # =========================
         # 👹 MOB ATTACCA
         # =========================
-        base_mob_damage = random.randint(1, 4)
-        armor = get_total_armor(player)
-
-        dmg = max(0, base_mob_damage - armor)
-
+        dmg = 3
         player["hp"] -= dmg
 
-        if armor > 0:
-            await conn.send(
-                f"{target['name']} ti colpisce per {dmg} danni (ridotto da armatura)."
-            )
-        else:
-            await conn.send(
-                f"{target['name']} ti colpisce per {dmg} danni."
-            )
+        await send(player, f"{target['name']} ti colpisce per {dmg} danni!")
 
-        # 💀 MORTE PLAYER
         if player["hp"] <= 0:
-            await conn.send("💀 Sei morto!")
+            await send(player, "Sei morto!")
+            return
 
-            # respawn semplice
-            player["hp"] = player["max_hp"]
-
-            combat["in_combat"] = False
-            combat["target"] = None
-            break
-
-        # =========================
-        # ⏱ ATTESA TURNO
-        # =========================
         await asyncio.sleep(2)
