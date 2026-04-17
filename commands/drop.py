@@ -1,18 +1,53 @@
+from core.world import get_room
+from core.inventory import remove_item
+
+
 def execute(player, conn, command, args):
+
     if not args:
-        return "Lasciare cosa?"
+        conn.send("Drop cosa?\n")
+        return
 
-    inv = player.get("inventory")
-    room = player.get("room")
+    search = " ".join(args).lower()
 
-    target_name = " ".join(args).lower()
+    inventory = player.get("inventory", [])
 
-    for item in inv:
-        if target_name in item["name"].lower():
+    target = None
 
-            room.items.append(item)
-            inv.remove(item)
+    # =========================
+    # 🔍 MATCH INTELLIGENTE
+    # =========================
+    for item in inventory:
 
-            return f"Hai lasciato {item['name']}."
+        if isinstance(item, dict):
+            name = item.get("name", "").lower()
+        else:
+            name = str(item).lower()
 
-    return "Non hai quell'oggetto."
+        if (
+            search in name
+            or name in search
+            or any(word in name for word in search.split())
+        ):
+            target = item
+            break
+
+    if not target:
+        conn.send("Non ce l'hai.\n")
+        return
+
+    # =========================
+    # RIMUOVI DALL'INVENTARIO
+    # =========================
+    inventory.remove(target)
+
+    room = get_room(player["room"])
+
+    if not hasattr(room, "items"):
+        room.items = []
+
+    room.items.append(target)
+
+    name = target.get("name") if isinstance(target, dict) else str(target)
+
+    conn.send(f"Hai lasciato {name}.\n")

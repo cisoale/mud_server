@@ -1,12 +1,13 @@
-import sqlite3
 import json
+import sqlite3
+import os
 
-DB_FILE = "data/mud.db"
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+DB_PATH = os.path.join(BASE_DIR, "data", "database.db")
 
 
 def get_connection():
-    return sqlite3.connect(DB_FILE)
-
+    return sqlite3.connect(DB_PATH)
 
 # =========================
 # INIT DB
@@ -38,29 +39,23 @@ def init_db():
 # =========================
 # CREATE PLAYER
 # =========================
-def create_player(name, password):
+def create_player(name, password, race, classe):
 
-    conn = get_connection()
+    import sqlite3
+
+    conn = sqlite3.connect("data/database.db")
     cursor = conn.cursor()
 
     cursor.execute("""
-    INSERT INTO players VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        name,
-        password,
-        1001,   # start room
-        100,
-        100,
-        0,
-        1,
-        json.dumps([]),
-        json.dumps({}),
-        0
-    ))
+        INSERT INTO players (
+            name, password, race, classe,
+            level, xp, hp, room, inventory, equipment
+        )
+        VALUES (?, ?, ?, ?, 1, 0, 100, 1001, '[]', '{}')
+    """, (name, password, race, classe))
 
     conn.commit()
     conn.close()
-
 
 # =========================
 # GET PLAYER

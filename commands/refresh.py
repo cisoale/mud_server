@@ -1,35 +1,50 @@
-from core.world_loader import load_rooms_from_files
 from core.world import rooms
-from core.server import connected_players
+from core.mob_loader import load_mobs
+from core.item_loader import load_items
+from core.world_loader import load_rooms_from_files
 
-def get_all_players():
-    return connected_players
 
-def execute(player, args, cmd=None):
+def execute(player, conn, command, args):
+
+    # =========================
+    # PERMESSI
+    # =========================
     if not player.get("builder"):
-        return "Non hai i permessi."
+        conn.send("Non hai i permessi.\n")
+        return
 
-    # 🧠 salva vecchie room
-    old_rooms = rooms.copy()
+    conn.send("🔄 Refresh del mondo in corso...\n")
 
-    # 🔄 ricarica
+    # =========================
+    # SALVA POSIZIONE PLAYER
+    # =========================
+    current_room = player.get("room")
+
+    # =========================
+    # RESET WORLD
+    # =========================
+    rooms.clear()
+
+    # =========================
+    # RICARICA TUTTO
+    # =========================
+    load_mobs()
+    load_items()
     load_rooms_from_files()
 
-    # 🔁 riallinea player alle nuove room
-    for p in get_all_players():
-        current = p.get("room")
+    # =========================
+    # RIPOSIZIONA PLAYER
+    # =========================
+    from core.world import get_room
 
-        if current:
-            new_room = rooms.get(current.vnum)
+    new_room = get_room(current_room)
 
-            if new_room:
-                p["room"] = new_room
+    if new_room:
+        new_room.players.append(player)
+        player["room"] = current_room
+    else:
+        conn.send("⚠️ Room non trovata, spawn default.\n")
+        player["room"] = 1001
+        get_room(1001).players.append(player)
 
-                # aggiungi alla nuova lista player
-                if not hasattr(new_room, "players"):
-                    new_room.players = []
-
-                if p not in new_room.players:
-                    new_room.players.append(p)
-
-    return "Aree ricaricate con successo."
+    conn.send("✅ Mondo ricaricato con successo.\n")

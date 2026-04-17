@@ -1,33 +1,57 @@
-from core.world import rooms
+from core.world import get_room
+from commands.look import execute as look
 
 
-def execute(player, args, cmd=None):
-    # 🔍 DEBUG (QUI DENTRO!)
-    print("BUILDER:", player.get("builder"))
+def execute(player, conn, command, args):
 
-    # 🔒 permessi
+    # =========================
+    # PERMESSI BUILDER
+    # =========================
     if not player.get("builder"):
-        return "Non hai i permessi."
+        conn.send("Non hai i permessi.\n")
+        return
 
+    # =========================
+    # INPUT
+    # =========================
     if not args:
-        return "Uso: goto <vnum>"
+        conn.send("Uso: goto <vnum>\n")
+        return
 
     try:
         vnum = int(args[0])
-    except ValueError:
-        return "VNUM non valido."
+    except:
+        conn.send("Vnum non valido.\n")
+        return
 
-    room = rooms.get(vnum)
+    new_room = get_room(vnum)
 
-    if not room:
-        return f"Room {vnum} non trovata."
+    if not new_room:
+        conn.send("Room non trovata.\n")
+        return
 
-    # 🚀 spostamento
-    player["room"] = room
+    # =========================
+    # RIMUOVI DA VECCHIA ROOM
+    # =========================
+    old_room = get_room(player.get("room"))
 
-    from commands.look import render_room
-    return render_room(player)
+    if old_room and hasattr(old_room, "players"):
+        if player in old_room.players:
+            old_room.players.remove(player)
 
+    # =========================
+    # AGGIUNGI ALLA NUOVA
+    # =========================
+    player["room"] = vnum
 
-description = "Teletrasporta il player in una room (builder)."
-usage = "goto <vnum>"
+    if not hasattr(new_room, "players"):
+        new_room.players = []
+
+    new_room.players.append(player)
+
+    conn.send(f"Ti sposti nella room {vnum}.\n")
+
+    # =========================
+    # AUTO LOOK
+    # =========================
+    look(player, conn, "look", [])

@@ -1,0 +1,7 @@
+{
+    "name": "armatura_di_cuoio",
+    "type": "armor",
+    "slot": "torso",
+    "armor": 3,
+    "weight": 5
+}

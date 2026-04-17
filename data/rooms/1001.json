@@ -1,37 +1,37 @@
 {
-    "vnum": 1001,
-    "name": "Villaggio",
     "description": "Un villaggio tranquillo",
     "exits": {
-        "east": {
-            "to": 1002,
-            "door": false,
+        "down": {
             "closed": false,
-            "locked": false,
+            "door": false,
             "key": null,
-            "secret": false
+            "locked": false,
+            "secret": false,
+            "to": 1006
+        },
+        "east": {
+            "closed": false,
+            "door": false,
+            "key": null,
+            "locked": false,
+            "secret": false,
+            "to": 1002
         },
         "west": {
-            "to": 1011,
-            "door": false,
             "closed": false,
-            "locked": false,
-            "key": null,
-            "secret": false
-        },
-        "down": {
-            "to": 1006,
             "door": false,
-            "closed": false,
-            "locked": false,
             "key": null,
-            "secret": false
+            "locked": false,
+            "secret": false,
+            "to": 1011
         }
     },
-    "mobs": [],
     "items": [],
+    "mobs": [],
+    "name": "Villaggio",
     "pos": {
         "x": 272,
         "y": 105
-    }
+    },
+    "vnum": 1001
 }

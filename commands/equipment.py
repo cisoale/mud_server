@@ -1,12 +1,38 @@
 def execute(player, conn, command, args):
+
     equipment = player.get("equipment", {})
 
-    output = ["Equipaggiamento:"]
+    # =========================
+    # SLOT STANDARD
+    # =========================
+    slots = [
+        "weapon",
+        "shield",
+        "head",
+        "torso",
+        "legs",
+        "feet",
+        "hands",
+        "ring",
+        "amulet"
+    ]
 
-    for slot, item in equipment.items():
+    text = "\n=== EQUIPAGGIAMENTO ===\n"
+
+    for slot in slots:
+
+        item = equipment.get(slot)
+
         if item:
-            output.append(f"{slot}: {item['name']}")
+            if isinstance(item, dict):
+                name = item.get("name", "oggetto")
+            else:
+                name = str(item)
         else:
-            output.append(f"{slot}: (vuoto)")
+            name = "---"
 
-    return "\n".join(output)
+        text += f"{slot.capitalize():<10}: {name}\n"
+
+    text += "\n"
+
+    conn.send(text)

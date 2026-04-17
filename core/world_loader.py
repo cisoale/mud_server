@@ -1,51 +1,40 @@
-import json
 import os
-from core.world import Room, rooms
-from core.mob_loader import mobs_data
-from core.mob_factory import create_mob
+import json
 
-rooms.clear()
+from core.world import add_room
+
+ROOMS_PATH = "data/rooms"
+
 
 def load_rooms_from_files():
-    folder = "data/rooms"
 
-    for file in os.listdir(folder):
-        path = os.path.join(folder, file)
+    print("[WORLD] Caricamento rooms...")
 
-        try:
-            with open(path, encoding="utf-8") as f:
-                data = json.load(f)
+    for file in os.listdir(ROOMS_PATH):
 
-            vnum = data.get("vnum")
-            name = data.get("name", f"Room {vnum}")
-            desc = data.get("description", "")
-            exits = data.get("exits", {})
+        if not file.endswith(".json"):
+            continue
 
-            if not vnum:
-                print(f"[ERRORE] vnum mancante in {file}")
-                continue
+        path = os.path.join(ROOMS_PATH, file)
 
-            room = Room(vnum, name, desc, exits)
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
 
-            # 👹 SPAWN MOB (QUI DENTRO!)
-            for mob_name in data.get("mobs", []):
-                mob_data = mobs_data.get(mob_name)
+        vnum = data["vnum"]
+        name = data.get("name", "Room")
+        desc = data.get("description", "")
 
-                if not mob_data:
-                    print(f"[ERRORE] mob non trovato: {mob_name}")
-                    continue
+        # ✅ CREA OGGETTO ROOM
+        room = add_room(vnum, name, desc)
 
-                mob = create_mob(
-                    mob_data["name"],
-                    mob_data.get("description", ""),
-                    mob_data.get("hp", 10),
-                    mob_data.get("inventory", []),
-                    mob_data.get("xp", 10)
-                )
+        # exits
+        room.exits = data.get("exits", {})
 
-                room.mobs.append(mob)
+        # sempre liste pulite
+        room.players = []
+        room.mobs = []
+        room.items = []
 
-            rooms[vnum] = room
+        print(f"[OK] Room {vnum}")
 
-        except Exception as e:
-            print(f"[ERRORE] Caricamento {file}: {e}")
+    print("[WORLD] Caricamento completato.\n")

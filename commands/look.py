@@ -1,95 +1,63 @@
 from core.world import get_room
 
 
-def render_room(player):
+def execute(player, conn, command, args):
 
-    room = get_room(player["room"])
+    room = get_room(player.get("room"))
 
     if not room:
-        return "Stanza inesistente.\n"
-
-    text = ""
+        conn.send("Stanza non trovata.\n")
+        return
 
     # =========================
     # NOME + DESCRIZIONE
     # =========================
-    name = getattr(room, "name", "Unknown")
-    desc = getattr(room, "description", "")
-
-    text += f"\n[{name}]\n"
-    text += f"{desc}\n"
+    conn.send(f"\n=== {room.name} ===\n")
+    conn.send(f"{room.description}\n")
 
     # =========================
-    # USCITE
+    # PLAYER
     # =========================
-    exits = getattr(room, "exits", {})
+    others = []
 
-    if exits:
-        text += "\nUscite:\n"
+    if hasattr(room, "players"):
+        others = [p for p in room.players if p != player]
 
-        for direction, exit in exits.items():
-
-            # sicurezza: exit deve essere dict
-            if isinstance(exit, dict):
-
-                if exit.get("secret"):
-                    continue
-
-                line = f"- {direction}"
-
-                if exit.get("door"):
-                    if exit.get("locked"):
-                        line += " (bloccata)"
-                    elif exit.get("closed"):
-                        line += " (chiusa)"
-                    else:
-                        line += " (aperta)"
-
-                text += line + "\n"
-
-            else:
-                # fallback vecchio sistema
-                text += f"- {direction}\n"
+    if others:
+        conn.send("\nGiocatori presenti:\n")
+        for p in others:
+            try:
+                conn.send(f"- {p['name']}\n")
+            except:
+                pass
 
     # =========================
     # MOB
     # =========================
-    mobs = getattr(room, "mobs", [])
-
-    if mobs:
-        text += "\nCreature:\n"
-
-        for mob in mobs:
-            if isinstance(mob, dict):
-                text += f"- {mob.get('name', 'mob')}\n"
-            else:
-                text += f"- {mob}\n"
+    if hasattr(room, "mobs") and room.mobs:
+        conn.send("\nCreature presenti:\n")
+        for i, mob in enumerate(room.mobs, 1):
+            try:
+                conn.send(f"{i}) {mob.get('name', 'mob')}\n")
+            except:
+                pass
 
     # =========================
     # OGGETTI
     # =========================
-    items = getattr(room, "items", [])
+    if hasattr(room, "items") and room.items:
+        conn.send("\nOggetti presenti:\n")
+        for item in room.items:
+            try:
+                conn.send(f"- {item.get('name', 'oggetto')}\n")
+            except:
+                pass
 
-    if items:
-        text += "\nOggetti:\n"
+    # =========================
+    # USCITE
+    # =========================
+    if hasattr(room, "exits") and room.exits:
+        conn.send("\nUscite:\n")
+        conn.send(", ".join(room.exits.keys()) + "\n")
 
-        for item in items:
-            if isinstance(item, dict):
-                text += f"- {item.get('name', 'oggetto')}\n"
-            else:
-                text += f"- {item}\n"
-
-    return text
-
-
-# =========================
-# COMANDO LOOK
-# =========================
-def execute(player, conn, command, args):
-
-    text = render_room(player)
-
-    try:
-        conn.send(text)
-    except:
-        conn.send(text)
+    conn.send("\n")

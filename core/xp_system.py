@@ -1,27 +1,68 @@
-async def send(player, msg):
-    writer = player.get("writer")
-    if writer:
-        writer.write((msg + "\n").encode())
-        await writer.drain()
+# =========================
+# XP NECESSARIA PER LIVELLO
+# =========================
+def get_xp_to_next_level(level):
+    """
+    Formula base scalabile
+    """
+    return level * 100
 
 
-async def add_xp(player, amount):
+# =========================
+# AGGIUNTA XP
+# =========================
+def add_xp(player, amount, conn):
+
+    if amount <= 0:
+        return
+
+    # inizializza se mancante
+    player.setdefault("xp", 0)
+    player.setdefault("level", 1)
+    player.setdefault("max_hp", 100)
+    player.setdefault("hp", player["max_hp"])
+    player.setdefault("str", 10)
+    player.setdefault("dex", 10)
+    player.setdefault("int", 10)
+
     player["xp"] += amount
 
-    await send(player, f"+{amount} XP!")
+    conn.send(f"Hai guadagnato {amount} XP.\n")
 
-    while True:
-        needed = player["level"] * 100
+    # =========================
+    # LEVEL UP LOOP
+    # =========================
+    leveled = False
 
-        if player["xp"] < needed:
-            break
+    while player["xp"] >= get_xp_to_next_level(player["level"]):
 
-        # 🔥 LEVEL UP
+        needed = get_xp_to_next_level(player["level"])
         player["xp"] -= needed
-        player["level"] += 1
 
-        # 📈 aumento stats
+        player["level"] += 1
+        leveled = True
+
+        # =========================
+        # BONUS LEVEL UP
+        # =========================
         player["max_hp"] += 10
         player["hp"] = player["max_hp"]
 
-        await send(player, f"*** LEVEL UP! Ora sei livello {player['level']}! ***")
+        player["str"] += 1
+        player["dex"] += 1
+        player["int"] += 1
+
+        conn.send(f"\n🔥 LEVEL UP! Sei ora livello {player['level']}!\n")
+
+        conn.send("Le tue statistiche aumentano!\n")
+        conn.send("+10 HP\n+1 STR\n+1 DEX\n+1 INT\n")
+
+    # =========================
+    # INFO PROGRESSIONE
+    # =========================
+    current = player["xp"]
+    needed = get_xp_to_next_level(player["level"])
+
+    conn.send(f"XP: {current}/{needed}\n")
+
+    return leveled

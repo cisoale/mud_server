@@ -1,0 +1,10 @@
+{
+    "name": "pugnale",
+    "type": "weapon",
+    "slot": "weapon",
+
+    "damage": 4,
+    "crit": 10,
+
+    "weight": 2
+}

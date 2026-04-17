@@ -1,29 +1,75 @@
 def execute(player, conn, command, args):
+
     if not args:
-        return "Equip cosa?"
+        conn.send("Equip cosa?\n")
+        return
 
-    inv = player.get("inventory", [])
-    equipment = player.get("equipment", {})
+    search = " ".join(args).lower()
 
-    try:
-        index = int(args[0]) - 1
-    except:
-        return "Usa: equip <numero oggetto>"
+    inventory = player.get("inventory", [])
 
-    if index < 0 or index >= len(inv):
-        return "Oggetto non valido."
+    if not inventory:
+        conn.send("Non hai oggetti.\n")
+        return
 
-    item = inv[index]
-    slot = item.get("slot")
+    target = None
+
+    # =========================
+    # 🔍 MATCH INTELLIGENTE
+    # =========================
+    for item in inventory:
+
+        if isinstance(item, dict):
+            name = item.get("name", "").lower()
+        else:
+            name = str(item).lower()
+
+        if (
+            search in name
+            or name in search
+            or any(word in name for word in search.split())
+        ):
+            target = item
+            break
+
+    if not target:
+        conn.send("Non ce l'hai.\n")
+        return
+
+    if not isinstance(target, dict):
+        conn.send("Non puoi equipaggiare questo oggetto.\n")
+        return
+
+    # =========================
+    # SLOT
+    # =========================
+    slot = target.get("slot")
 
     if not slot:
-        return "Non puoi equipaggiare questo oggetto."
+        conn.send("Non puoi equipaggiare questo oggetto.\n")
+        return
 
-    # se già equipaggiato qualcosa
-    if equipment[slot]:
-        inv.append(equipment[slot])
+    equipment = player.setdefault("equipment", {})
 
-    equipment[slot] = item
-    inv.pop(index)
+    # =========================
+    # SE SLOT OCCUPATO → SWAP
+    # =========================
+    if slot in equipment:
 
-    return f"Hai equipaggiato {item['name']} in {slot}."
+        old_item = equipment[slot]
+
+        inventory.append(old_item)
+
+        old_name = old_item.get("name", "oggetto")
+
+        conn.send(f"Togli {old_name}.\n")
+
+    # =========================
+    # EQUIP
+    # =========================
+    equipment[slot] = target
+    inventory.remove(target)
+
+    name = target.get("name", "oggetto")
+
+    conn.send(f"Equipaggi {name} nello slot {slot}.\n")

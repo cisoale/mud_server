@@ -1,22 +1,21 @@
-import importlib
 import os
-import inspect
+import importlib
 
-# 📦 dizionario comandi
 commands = {}
 
+
 # =========================
-# 🔄 LOAD COMMANDS
+# CARICA COMANDI
 # =========================
 def load_commands():
+
     global commands
-    commands = {}
+    commands.clear()
 
-    print("[COMMANDS] Caricamento...")
+    commands_dir = "commands"
 
-    for file in os.listdir("commands"):
+    for file in os.listdir(commands_dir):
 
-        # salta file non validi
         if not file.endswith(".py") or file.startswith("__"):
             continue
 
@@ -24,42 +23,75 @@ def load_commands():
 
         try:
             module = importlib.import_module(f"commands.{name}")
+            importlib.reload(module)
 
             if hasattr(module, "execute"):
                 commands[name] = module.execute
-                print(f"[OK] Comando caricato: {name}")
+                print(f"[CMD] Caricato: {name}")
             else:
-                print(f"[WARNING] {name}.py senza execute()")
+                print(f"[ERRORE] {name} senza execute()")
 
         except Exception as e:
-            print(f"[ERRORE] Caricamento {name}: {e}")
+            print(f"[ERRORE COMANDO] {name}: {e}")
 
-    print(f"[COMMANDS] Totale: {len(commands)}\n")
+    # =========================
+    # ALIAS MOVIMENTO
+    # =========================
+    if "move" in commands:
+
+        commands["n"] = commands["move"]
+        commands["s"] = commands["move"]
+        commands["e"] = commands["move"]
+        commands["w"] = commands["move"]
+        commands["u"] = commands["move"]
+        commands["d"] = commands["move"]
+
+        commands["north"] = commands["move"]
+        commands["south"] = commands["move"]
+        commands["east"] = commands["move"]
+        commands["west"] = commands["move"]
+        commands["up"] = commands["move"]
+        commands["down"] = commands["move"]
 
 
 # =========================
-# ⚡ EXECUTE COMMAND
+# ESECUZIONE COMANDO
 # =========================
-def execute_command(cmd, player, conn, args):
+def execute_command(player, conn, input_text):
 
-    cmd = cmd.lower()
+    if not input_text:
+        return
 
-    if cmd not in commands:
+    parts = input_text.strip().split()
+
+    command = parts[0].lower()
+    args = parts[1:]
+
+    print(f"[CMD] {player['name']}: {command} {args}")
+
+    if command not in commands:
         conn.send("Comando sconosciuto.\n")
         return
 
-    func = commands[cmd]
-
     try:
-        func(player, conn, cmd, args)
+        commands[command](player, conn, command, args)
     except Exception as e:
-        print(f"[ERRORE COMANDO] {cmd}: {e}")
-        conn.send(f"Errore nel comando {cmd}.\n")
+        print(f"[ERRORE COMANDO] {command}: {e}")
+        conn.send("Errore durante l'esecuzione del comando.\n")
+
 
 # =========================
-# 📜 LISTA COMANDI
+# RELOAD LIVE
+# =========================
+def reload_commands():
+
+    print("[CMD] Reload comandi...")
+    load_commands()
+    print("[CMD] Reload completato.")
+
+
+# =========================
+# LISTA COMANDI (per help)
 # =========================
 def get_all_commands():
     return list(commands.keys())
-
-handle_command = execute_command

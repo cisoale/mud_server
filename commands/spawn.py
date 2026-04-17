@@ -1,57 +1,80 @@
-from core.mob_loader import mobs_data
-from core.mob_factory import create_mob
-import json
-import os
+from core.world import get_room
+from core.mob_loader import get_mob_template, list_mobs
+from core.item_loader import get_item_template
+import copy
 
 
-def execute(player, args, cmd=None):
+def execute(player, conn, command, args):
+
+    # =========================
+    # PERMESSI BUILDER
+    # =========================
+    if not player.get("builder"):
+        conn.send("Non hai i permessi.\n")
+        return
+
     if len(args) < 2:
-        return "Uso: spawn <mob/item> <nome>"
+        conn.send("Uso: spawn mob/item nome\n")
+        return
 
-    type_ = args[0].lower()
+    tipo = args[0].lower()
     name = " ".join(args[1:]).lower()
 
-    room = player.get("room")
+    room = get_room(player["room"])
+
+    if not room:
+        conn.send("Errore stanza.\n")
+        return
 
     # =========================
-    # 👹 SPAWN MOB
+    # SPAWN MOB
     # =========================
-    if type_ == "mob":
-        mob_data = mobs_data.get(name)
+    if tipo == "mob":
 
-        if not mob_data:
-            return f"Mob '{name}' non trovato."
+        template = get_mob_template(name)
 
-        mob = create_mob(
-            mob_data["name"],
-            mob_data.get("description", ""),
-            mob_data.get("hp", 10),
-            mob_data.get("inventory", []),
-            mob_data.get("xp", 10)
-        )
+        if not template:
+            conn.send("Mob non trovato.\n")
+            conn.send(f"Disponibili: {', '.join(list_mobs())}\n")
+            return
+
+        mob = copy.deepcopy(template)
+
+        # sicurezza
+        mob["hp"] = mob.get("max_hp", 20)
+        mob.setdefault("inventory", [])
+
+        if not hasattr(room, "mobs"):
+            room.mobs = []
 
         room.mobs.append(mob)
-        return f"Mob '{name}' spawnato."
+
+        conn.send(f"Hai spawnato {mob['name']}.\n")
+        return
 
     # =========================
-    # 🎒 SPAWN ITEM
+    # SPAWN ITEM
     # =========================
-    elif type_ == "item":
-        path = os.path.join("data/items", f"{name}.json")
+    elif tipo == "item":
 
-        if not os.path.exists(path):
-            return f"Item '{name}' non trovato."
-        
-        if not player.get("builder"):
-            return "Non hai i permessi."
+        template = get_item_template(name)
 
-        with open(path, encoding="utf-8") as f:
-            item = json.load(f)
+        if not template:
+            conn.send("Item non trovato.\n")
+            return
+
+        item = copy.deepcopy(template)
+
+        if not hasattr(room, "items"):
+            room.items = []
 
         room.items.append(item)
-        return f"Item '{name}' spawnato."
 
-    return "Tipo non valido (mob/item)."
+        conn.send(f"Hai spawnato {item['name']}.\n")
+        return
 
-description = "Spawna mob o item nella stanza (builder)."
-usage = "spawn <mob/item> <nome>"
+    # =========================
+    # ERRORE TIPO
+    # =========================
+    else:
+        conn.send("Tipo non valido. Usa: mob o item\n")
