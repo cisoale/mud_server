@@ -1,61 +1,102 @@
 import os
 import re
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-COMMANDS_DIR = os.path.join(BASE_DIR, "commands")
+COMMANDS_DIR = "commands"
 
 
-def fix_file(path):
+def fix_execute_signature(content):
+
+    # trova execute
+    pattern = r"def execute\s*\((.*?)\):"
+
+    match = re.search(pattern, content)
+
+    if not match:
+        return content, False
+
+    params = match.group(1)
+
+    # già corretto
+    if params.strip() == "player, conn, args":
+        return content, False
+
+    print(f"[FIX] Firma trovata: ({params}) -> (player, conn, args)")
+
+    new_def = "def execute(player, conn, args):"
+
+    content = re.sub(pattern, new_def, content, count=1)
+
+    return content, True
+
+
+def fix_missing_args_usage(content):
+
+    # sostituisce input_text con args se presente
+    content = re.sub(r"input_text", " ' '.join(args) ", content)
+
+    return content
+
+
+def fix_return_outside(content):
+
+    # evita return fuori funzione (best effort)
+    lines = content.split("\n")
+    fixed = []
+
+    inside_func = False
+
+    for line in lines:
+
+        if line.strip().startswith("def execute"):
+            inside_func = True
+
+        if line.strip().startswith("return") and not inside_func:
+            print("[FIX] return fuori funzione rimosso")
+            continue
+
+        fixed.append(line)
+
+    return "\n".join(fixed)
+
+
+def process_file(path):
+
     with open(path, "r", encoding="utf-8") as f:
         content = f.read()
 
     original = content
 
-    # =========================
-    # FIX conn.write -> conn.send
-    # =========================
-    content = re.sub(r'conn\.write\((.*?)\.encode\(\)\)', r'conn.send(\1)', content)
+    content, changed_sig = fix_execute_signature(content)
+    content = fix_missing_args_usage(content)
+    content = fix_return_outside(content)
 
-    # =========================
-    # FIX firme execute
-    # =========================
-    content = re.sub(
-        r'def execute\s*\(\s*player\s*,\s*conn\s*\)',
-        'def execute(player, conn, command, args)',
-        content
-    )
-
-    content = re.sub(
-        r'def execute\s*\(\s*player\s*,\s*conn\s*,\s*command\s*\)',
-        'def execute(player, conn, command, args)',
-        content
-    )
-
-    # =========================
-    # SE manca execute → aggiungi template
-    # =========================
-    if "def execute" not in content:
-        content += """
-
-def execute(player, conn, command, args):
-    conn.send("Comando non ancora implementato.\\n")
-"""
-
-    # =========================
-    # SALVA SOLO SE CAMBIATO
-    # =========================
     if content != original:
         with open(path, "w", encoding="utf-8") as f:
             f.write(content)
-        print(f"[FIXED] {path}")
+
+        print(f"[OK] Sistemato: {path}")
     else:
-        print(f"[OK] {path}")
+        print(f"[SKIP] {path}")
 
 
 def main():
+
+    if not os.path.exists(COMMANDS_DIR):
+        print("[ERRORE] cartella commands non trovata")
+        return
+
+    print("\n=== FIX AUTOMATICO COMANDI ===\n")
+
     for file in os.listdir(COMMANDS_DIR):
-        if file.endswith(".py") and not file.startswith("__"):
-            fix_file(os.path.join(COMMANDS_DIR, file))
+
+        if not file.endswith(".py"):
+            continue
+
+        path = os.path.join(COMMANDS_DIR, file)
+
+        process_file(path)
+
+    print("\n=== COMPLETATO ===\n")
 
 
 if __name__ == "__main__":

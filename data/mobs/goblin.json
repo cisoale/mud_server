@@ -1,9 +1,17 @@
 {
-  "name": "goblin",
-  "description": "Un piccolo goblin verde.",
-  "hp": 10,
-  "xp": 20000,
-   "inventory": [
-    { "name": "Daga", "slot": "weapon", "damage": 2 }
-  ]
+    "name": "goblin",
+    "description": "Un piccolo goblin verde.",
+    "hp": 10,
+    "xp": 20000,
+    "inventory": [
+        {
+            "name": "Daga",
+            "slot": "weapon",
+            "damage": 2
+        }
+    ],
+    "damage": 1,
+    "defense": 0,
+    "loot": [],
+    "vnum": 2000
 }

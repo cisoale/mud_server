@@ -1,0 +1,21 @@
+{
+    "name": "Elisir rosso.",
+    "description": "Un'ampolla con del liquido rosso all'interno",
+    "type": "consumable",
+    "rarity": "common",
+    "slot": "",
+    "damage": 0,
+    "defense": 0,
+    "stats": {
+        "str": 0,
+        "dex": 0,
+        "int": 0
+    },
+    "consumable": {
+        "heal": 1000,
+        "mana": 0
+    },
+    "value": 50,
+    "weight": 2,
+    "vnum": 3004
+}

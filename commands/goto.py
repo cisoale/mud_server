@@ -2,7 +2,7 @@ from core.world import get_room
 from commands.look import execute as look
 
 
-def execute(player, conn, command, args):
+def execute(player, conn, args):
 
     # =========================
     # PERMESSI BUILDER

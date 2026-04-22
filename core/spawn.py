@@ -1,61 +1,24 @@
 from core.world import get_room
+from core.data_loader import races
 
+def spawn_player(player):
 
-def spawn_player(player, races):
+    race = player.get("race") or "umano"
+    start_room_vnum = races.get(race, {}).get("start_room", 1001)
 
-    # =========================
-    # RAZZA → ROOM
-    # =========================
-    race = player.get("race")
-
-    if not race or race not in races:
-        print(f"[ERRORE] Razza non valida: {race}")
-        start_room = 1001  # fallback sicuro
-    else:
-        start_room = races[race].get("start_room", 1001)
-
-    player["room"] = start_room
-
-    # =========================
-    # RECUPERA ROOM
-    # =========================
-    room = get_room(start_room)
+    room = get_room(start_room_vnum)
 
     if not room:
-        print(f"[ERRORE] Room {start_room} non trovata")
-        return
+        print(f"[ERRORE] Room non trovata: {start_room_vnum}")
+        return None
 
-    # =========================
-    # SICUREZZA STRUTTURA ROOM
-    # =========================
-    if not hasattr(room, "players"):
-        room.players = []
+    # 🔥 SET CORRETTO
+    player["room"] = room
 
-    if not hasattr(room, "mobs"):
-        room.mobs = []
-
-    if not hasattr(room, "items"):
-        room.items = []
-
-    # =========================
-    # EVITA DUPLICATI
-    # =========================
+    # 🔥 AGGIUNGI ALLA ROOM
     if player not in room.players:
         room.players.append(player)
+   
+    print(f"[SPAWN] {player['name']} -> Room {room.vnum}")
 
-    # =========================
-    # DEBUG
-    # =========================
-    print(f"[SPAWN] {player['name']} -> Room {start_room}")
-
-    # =========================
-    # NOTIFICA ALTRI PLAYER
-    # =========================
-    for p in room.players:
-        if p != player and isinstance(p, dict):
-            conn = p.get("conn")
-            if conn:
-                try:
-                    conn.send(f"{player['name']} è entrato nella stanza.\n")
-                except:
-                    pass
+    return room

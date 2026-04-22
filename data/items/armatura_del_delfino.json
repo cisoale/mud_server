@@ -1,0 +1,21 @@
+{
+    "name": "Armatura del delfino",
+    "description": "Luccicante e trasparente",
+    "type": "armor",
+    "rarity": "legendary",
+    "slot": "body",
+    "damage": 10,
+    "defense": 35,
+    "stats": {
+        "str": 15,
+        "dex": 50,
+        "int": 20
+    },
+    "consumable": {
+        "heal": 0,
+        "mana": 0
+    },
+    "value": 100,
+    "weight": 22,
+    "vnum": 3003
+}

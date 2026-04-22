@@ -1,0 +1,25 @@
+{
+    "name": "Licantropo",
+    "description": "Mezzo uomo,mezzo lupo,zanne affilate e sangue che cola dalle falangi",
+    "type": "elite",
+    "level": 30,
+    "hp": 600,
+    "damage": 50,
+    "defense": 10,
+    "stats": {
+        "str": 26,
+        "dex": 65,
+        "int": 0
+    },
+    "aggressive": true,
+    "boss": false,
+    "loot": [
+        {
+            "item": "oro",
+            "chance": 1000
+        }
+    ],
+    "inventory": [],
+    "xp": 10,
+    "vnum": 2002
+}

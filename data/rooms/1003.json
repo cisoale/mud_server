@@ -1,15 +1,27 @@
 {
     "description": "SDFD",
     "exits": {
-        "east": 1005,
-        "west": 1002
+        "east": {
+            "closed": false,
+            "locked": false,
+            "secret": false,
+            "to": 1005,
+            "door": false,
+            "key": null
+        },
+        "west": {
+            "closed": false,
+            "locked": false,
+            "secret": false,
+            "to": 1002,
+            "door": false,
+            "key": null
+        }
     },
     "items": [],
     "mobs": [],
     "name": "CORTILE",
-    "pos": {
-        "x": 480,
-        "y": 105.5
-    },
-    "vnum": 1003
+    "vnum": 1003,
+    "x": 479,
+    "y": 107.5
 }

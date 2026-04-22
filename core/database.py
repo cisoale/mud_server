@@ -1,34 +1,31 @@
-import json
 import sqlite3
+import json
 import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-DB_PATH = os.path.join(BASE_DIR, "data", "database.db")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_NAME = os.path.join(BASE_DIR, "../players.db")
 
-
-def get_connection():
-    return sqlite3.connect(DB_PATH)
 
 # =========================
 # INIT DB
 # =========================
 def init_db():
 
-    conn = get_connection()
+    conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS players (
         name TEXT PRIMARY KEY,
         password TEXT,
-        room INTEGER,
-        hp INTEGER,
-        max_hp INTEGER,
-        xp INTEGER,
+        race TEXT,
+        class TEXT,
         level INTEGER,
+        xp INTEGER,
+        hp INTEGER,
+        room INTEGER,
         inventory TEXT,
-        equipment TEXT,
-        builder INTEGER
+        equipment TEXT
     )
     """)
 
@@ -37,96 +34,111 @@ def init_db():
 
 
 # =========================
-# CREATE PLAYER
-# =========================
-def create_player(name, password, race, classe):
-
-    import sqlite3
-
-    conn = sqlite3.connect("data/database.db")
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        INSERT INTO players (
-            name, password, race, classe,
-            level, xp, hp, room, inventory, equipment
-        )
-        VALUES (?, ?, ?, ?, 1, 0, 100, 1001, '[]', '{}')
-    """, (name, password, race, classe))
-
-    conn.commit()
-    conn.close()
-
-# =========================
 # GET PLAYER
 # =========================
 def get_player(name):
+    import sqlite3
 
-    conn = get_connection()
-    cursor = conn.cursor()
+    conn = sqlite3.connect("players.db")
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
 
-    cursor.execute("SELECT * FROM players WHERE name = ?", (name,))
-    row = cursor.fetchone()
+    cur.execute("SELECT * FROM players WHERE name = ?", (name,))
+    row = cur.fetchone()
 
     conn.close()
 
     if not row:
         return None
 
+    player = dict(row)
+
+    # 🔥 FIX SICURO
+    player["builder"] = player.get("builder", 0)
+
+    
     return {
         "name": row[0],
         "password": row[1],
-        "room": row[2],
-        "hp": row[3],
-        "max_hp": row[4],
+        "race": row[2],
+        "class": row[3],
+        "level": row[4],
         "xp": row[5],
-        "level": row[6],
-        "inventory": json.loads(row[7]),
-        "equipment": json.loads(row[8]),
-        "builder": bool(row[9])
+        "hp": row[6],
+        "room": row[7],  # ✔ SEMPRE INT
+        "inventory": json.loads(row[8] or "[]"),
+        "equipment": json.loads(row[9] or "{}"),
+        "builder": 0
     }
 
 
 # =========================
-# SAVE PLAYER
+# CREATE PLAYER
 # =========================
-def save_player(player):
+def create_player(player):
 
-    conn = get_connection()
+    conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
+    room = player.get("room", 1001)
+
+    # sicurezza
+    if hasattr(room, "vnum"):
+        room = room.vnum
+
     cursor.execute("""
-    UPDATE players SET
-        room = ?,
-        hp = ?,
-        max_hp = ?,
-        xp = ?,
-        level = ?,
-        inventory = ?,
-        equipment = ?
-    WHERE name = ?
+    INSERT INTO players (
+        name, password, race, class, level, xp, hp, room, inventory, equipment
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
-        player["room"],
-        player["hp"],
-        player["max_hp"],
-        player["xp"],
-        player["level"],
-        json.dumps(player["inventory"]),
-        json.dumps(player["equipment"]),
-        player["name"]
+        player["name"],
+        player["password"],
+        player.get("race", "umano"),
+        player.get("class", "guerriero"),
+        player.get("level", 1),
+        player.get("xp", 0),
+        player.get("hp", 100),
+        room,
+        json.dumps(player.get("inventory", [])),
+        json.dumps(player.get("equipment", {}))
     ))
 
     conn.commit()
     conn.close()
 
-def make_builder(name):
-    conn = get_connection()
+
+# =========================
+# SAVE PLAYER
+# =========================
+def save_player_to_db(player):
+
+    conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
-    cursor.execute(
-        "UPDATE players SET builder = 1 WHERE name = ?",
-        (name,)
-    )
+    room = player.get("room", 1001)
+
+    # 🔥 FIX CRITICO
+    if hasattr(room, "vnum"):
+        room = room.vnum
+
+    cursor.execute("""
+    UPDATE players SET
+        level = ?,
+        xp = ?,
+        hp = ?,
+        room = ?,
+        inventory = ?,
+        equipment = ?
+    WHERE name = ?
+    """, (
+        player.get("level", 1),
+        player.get("xp", 0),
+        player.get("hp", 100),
+        room,
+        json.dumps(player.get("inventory", [])),
+        json.dumps(player.get("equipment", {})),
+        player.get("name")
+    ))
 
     conn.commit()
     conn.close()

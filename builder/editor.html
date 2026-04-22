@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Editor Mob & Item</title>
+
+    <div style="position:absolute; top:10px; left:10px;">
+        <button onclick="goToMap()">🗺 Torna alla Mappa</button>
+    </div>
+
+    <script>
+        function goToMap() {
+            window.location.href = "/";
+        }
+    </script>
+
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #111;
+            color: #eee;
+            display: flex;
+        }
+
+        #left {
+            width: 30%;
+            background: #1b1b1b;
+            padding: 10px;
+            border-right: 2px solid #333;
+        }
+
+        #right {
+            width: 70%;
+            padding: 10px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            margin-bottom: 5px;
+            background: #222;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 8px;
+            background: #444;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background: #666;
+            }
+
+        .list-item {
+            padding: 5px;
+            border-bottom: 1px solid #333;
+            cursor: pointer;
+        }
+
+            .list-item:hover {
+                background: #333;
+            }
+    </style>
+</head>
+
+<body>
+
+    <!-- LISTA -->
+    <div id="left">
+        <h3>Mob</h3>
+        <div id="mobList"></div>
+        <button onclick="newMob()">+ Nuovo Mob</button>
+
+        <h3>Item</h3>
+        <div id="itemList"></div>
+        <button onclick="newItem()">+ Nuovo Item</button>
+    </div>
+
+    <!-- EDITOR -->
+    <div id="right">
+
+        <h2 id="editorTitle">Editor</h2>
+
+        <!-- ===== MOB ===== -->
+        <div id="mobEditor">
+
+            <h3>Base</h3>
+            <input id="mob_name" placeholder="Nome">
+            <textarea id="mob_desc" placeholder="Descrizione"></textarea>
+
+            <h3>Stats</h3>
+            <input id="mob_level" type="number" placeholder="Livello">
+            <input id="mob_hp" type="number" placeholder="HP">
+            <input id="mob_damage" type="number" placeholder="Damage">
+            <input id="mob_defense" type="number" placeholder="Defense">
+            <input id="mob_xp" type="number" placeholder="XP">
+
+            <h3>Tipo</h3>
+            <select id="mob_type">
+                <option value="normal">Normal</option>
+                <option value="elite">Elite</option>
+                <option value="boss">Boss</option>
+            </select>
+
+            <label><input type="checkbox" id="mob_aggressive"> Aggressivo</label>
+
+            <h3>Loot</h3>
+            <textarea id="mob_loot" placeholder='[{"item":"spada","chance":50}]'></textarea>
+
+            <button onclick="saveMob()">💾 Salva Mob</button>
+        </div>
+
+
+        <!-- ===== ITEM ===== -->
+        <div id="itemEditor" style="display:none;">
+
+            <h3>Base</h3>
+            <input id="item_name" placeholder="Nome">
+            <textarea id="item_desc" placeholder="Descrizione"></textarea>
+
+            <h3>Tipo</h3>
+            <select id="item_type">
+                <option value="weapon">Weapon</option>
+                <option value="armor">Armor</option>
+                <option value="consumable">Consumable</option>
+            </select>
+
+            <h3>Stats</h3>
+            <input id="item_damage" type="number" placeholder="Damage">
+            <input id="item_defense" type="number" placeholder="Defense">
+            <input id="item_heal" type="number" placeholder="Heal">
+            <input id="item_mana" type="number" placeholder="Mana">
+
+            <h3>Slot</h3>
+            <select id="item_slot">
+                <option value="weapon">Weapon</option>
+                <option value="head">Head</option>
+                <option value="body">Body</option>
+                <option value="legs">Legs</option>
+            </select>
+
+            <h3>Rarità</h3>
+            <select id="item_rarity">
+                <option>common</option>
+                <option>rare</option>
+                <option>epic</option>
+                <option>legendary</option>
+            </select>
+
+            <button onclick="saveItem()">💾 Salva Item</button>
+        </div>
+
+    </div>
+
+    <script src="editor.js"></script>
+</body>
+</html>

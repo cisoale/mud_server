@@ -1,143 +1,94 @@
-import json
 from core.database import get_player, create_player
+from core.world import get_room
 from core.spawn import spawn_player
-from core.data_loader import races, classes
 
 
 # =========================
-# SAFE JSON LOAD
+# INPUT
 # =========================
-def safe_load(data, default):
-
-    if isinstance(data, str):
-        try:
-            return json.loads(data)
-        except:
-            return default
-
-    if isinstance(data, (list, dict)):
-        return data
-
-    return default
-
-
-# =========================
-# MENU LOGIN
-# =========================
-async def handle_login(conn):
-
-    conn.send("Benvenuto nel MUD!\n")
-    conn.send("1) Login\n2) Registrati\n> ")
-
-    choice = (await conn.reader.readline()).decode().strip()
-
-    if choice == "2":
-        return await register(conn)
-    else:
-        return await login(conn)
+async def ask(conn, text):
+    conn.send(text)
+    data = await conn.reader.readline()
+    return data.decode().strip()
 
 
 # =========================
 # LOGIN
 # =========================
-async def login(conn):
+async def handle_login(conn):
 
-    conn.send("Nome: ")
-    name = (await conn.reader.readline()).decode().strip()
+    conn.send("\n=== BENVENUTO ===\n")
+    conn.send("1) Login\n")
+    conn.send("2) Registrati\n> ")
 
-    conn.send("Password: ")
-    password = (await conn.reader.readline()).decode().strip()
-
-    player_data = get_player(name)
-
-    if not player_data:
-        conn.send("Player non trovato.\n")
-        return None
-
-    if player_data["password"] != password:
-        conn.send("Password errata.\n")
-        return None
+    choice = (await conn.reader.readline()).decode().strip()
 
     # =========================
-    # COSTRUZIONE PLAYER
+    # LOGIN
     # =========================
-    player = {
-        "name": name,
-        "race": player_data.get("race") or "umano",
+    if choice == "1":
 
-        "hp": player_data.get("hp", 100),
-        "max_hp": player_data.get("max_hp", 100),
+        name = await ask(conn, "Nome: ")
+        password = await ask(conn, "Password: ")
 
-        "level": player_data.get("level", 1),
-        "xp": player_data.get("xp", 0),
+        player = get_player(name)
 
-        "room": player_data.get("room", 1001),
+        # 🔥 FORCE BUILDER (DEBUG SICURO)
+        if player["name"].lower() == "wiz":
+          player["is_builder"] = True
+          print("[DEBUG] wiz è builder")
 
-        "inventory": safe_load(player_data.get("inventory"), []),
-        "equipment": safe_load(player_data.get("equipment"), {}),
+        if not player:
+            conn.send("Player non trovato.\n")
+            return None
 
-        "builder": player_data.get("builder", 0),
+        if player["password"] != password:
+            conn.send("Password errata.\n")
+            return None
 
-        "str": player_data.get("str", 10),
-        "dex": player_data.get("dex", 10),
+        conn.send("\nLogin effettuato!\n")
 
-        "in_combat": False
-    }
+    # =========================
+    # REGISTRAZIONE
+    # =========================
+    elif choice == "2":
+
+        name = await ask(conn, "Nome: ")
+        password = await ask(conn, "Password: ")
+        race = await ask(conn, "Razza (umano/elfo): ")
+        pclass = await ask(conn, "Classe (guerriero/mago): ")
+
+        player = {
+            "name": name,
+            "password": password,
+            "race": race or "umano",
+            "class": pclass or "guerriero",
+            "level": 1,
+            "xp": 0,
+            "hp": 100,
+            "room": 1001,
+            "inventory": [],
+            "equipment": {}
+        }
+
+        create_player(player)
+
+        conn.send("\nPersonaggio creato!\n")
+
+    else:
+        conn.send("Scelta non valida.\n")
+        return None
 
     # =========================
     # SPAWN
     # =========================
-    spawn_player(player, races)
+    # =========================
+# SPAWN
+# =========================
+    spawn_player(player)
 
-    conn.send(f"\nLogin effettuato! Benvenuto {name}.\n")
+# mostra stanza
+    from commands.look import render_room
+    conn.send(render_room(player))  
 
     return player
-
-
-# =========================
-# REGISTRAZIONE
-# =========================
-async def register(conn):
-
-    conn.send("Nome: ")
-    name = (await conn.reader.readline()).decode().strip()
-
-    conn.send("Password: ")
-    password = (await conn.reader.readline()).decode().strip()
-
-    # =========================
-    # RAZZE
-    # =========================
-    conn.send("\nRazze disponibili:\n")
-    for r in races:
-        conn.send(f"- {r}\n")
-
-    conn.send("Scegli razza: ")
-    race = (await conn.reader.readline()).decode().strip().lower()
-
-    if race not in races:
-        conn.send("Razza non valida.\n")
-        return None
-
-    # =========================
-    # CLASSI
-    # =========================
-    conn.send("\nClassi disponibili:\n")
-    for c in classes:
-        conn.send(f"- {c}\n")
-
-    conn.send("Scegli classe: ")
-    classe = (await conn.reader.readline()).decode().strip().lower()
-
-    if classe not in classes:
-        conn.send("Classe non valida.\n")
-        return None
-
-    # =========================
-    # CREA PLAYER
-    # =========================
-    create_player(name, password, race, classe)
-
-    conn.send("\nRegistrazione completata! Ora fai login.\n")
-
-    return None

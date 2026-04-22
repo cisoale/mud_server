@@ -28,7 +28,6 @@ async def handle_client(reader, writer, server):
     print(f"[CONNESSIONE] {addr}")
 
     conn = Connection(reader, writer)
-
     player = None
 
     try:
@@ -42,7 +41,6 @@ async def handle_client(reader, writer, server):
             await writer.wait_closed()
             return
 
-        # salva connessione nel player
         player["conn"] = conn
 
         # =========================
@@ -52,6 +50,7 @@ async def handle_client(reader, writer, server):
 
             conn.send("\n> ")
 
+            # 🔥 QUI DEFINISCI input_text
             input_text = await read_input(conn)
 
             if not input_text:
@@ -83,6 +82,6 @@ class Connection:
 
     def send(self, text):
         try:
-            self.writer.write(text.encode())
+            self.writer.write((text + "\n").encode())
         except:
             pass

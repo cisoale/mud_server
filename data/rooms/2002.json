@@ -1,0 +1,27 @@
+{
+    "description": "",
+    "exits": {
+        "east": {
+            "to": 2003,
+            "door": false,
+            "closed": false,
+            "locked": false,
+            "secret": false,
+            "key": null
+        },
+        "down": {
+            "to": 2004,
+            "door": true,
+            "closed": false,
+            "locked": false,
+            "secret": false,
+            "key": null
+        }
+    },
+    "items": [],
+    "mobs": [],
+    "name": "La foresta elfica",
+    "vnum": 2002,
+    "x": 895.1328125,
+    "y": 157.125
+}

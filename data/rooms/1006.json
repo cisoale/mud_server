@@ -1,15 +1,19 @@
 {
     "description": "Ti trovi in una specie di caverna al buio.",
     "exits": {
-        "up": 1001
+        "up": {
+            "closed": false,
+            "locked": false,
+            "secret": false,
+            "to": 1001,
+            "door": false,
+            "key": null
+        }
     },
-    "mobs": [
-        "Custode"
-    ],
+    "items": [],
+    "mobs": [],
     "name": "La tana",
-    "pos": {
-        "x": 188,
-        "y": 163.5
-    },
-    "vnum": 1006
+    "vnum": 1006,
+    "x": 188,
+    "y": 163.5
 }

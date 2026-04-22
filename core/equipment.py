@@ -1,11 +1,2 @@
-SLOTS = [
-    "head",
-    "chest",
-    "legs",
-    "feet",
-    "hands",
-    "weapon",
-    "shield",
-    "ring",
-    "amulet"
-]
+slot = item.get("slot")
+player["equipment"][slot] = item

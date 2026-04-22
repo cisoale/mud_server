@@ -1,24 +1,24 @@
 from core.world import get_room
-import random
 
-def execute(player, conn, command, args):
+
+def execute(player, conn, args):
 
     room = get_room(player["room"])
 
     if not room:
-        conn.send("Errore stanza.\n")
+        conn.send("Non sei in una stanza valida.\n")
         return
 
     found = False
 
-    for direction, exit in room.get("exits", {}).items():
+    # 🔍 ciclo corretto
+    for direction, exit_data in room.exits.items():
 
-        if exit.get("secret"):
+        if exit_data.get("secret"):
 
-            # 🧠 puoi mettere probabilità
-            if random.random() < 0.5:  # 50% chance
-                exit["secret"] = False
-                conn.send(f"Hai trovato un passaggio segreto verso {direction}!\n")
-                return
+            exit_data["secret"] = False
+            conn.send(f"Hai trovato un passaggio segreto verso {direction}!\n")
+            found = True
 
-    conn.send("Non trovi nulla di interessante.\n")
+    if not found:
+        conn.send("Non trovi nulla di interessante.\n")

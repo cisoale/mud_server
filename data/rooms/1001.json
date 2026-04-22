@@ -2,8 +2,8 @@
     "description": "Un villaggio tranquillo",
     "exits": {
         "down": {
-            "closed": false,
-            "door": false,
+            "closed": true,
+            "door": true,
             "key": null,
             "locked": false,
             "secret": false,
@@ -29,9 +29,7 @@
     "items": [],
     "mobs": [],
     "name": "Villaggio",
-    "pos": {
-        "x": 272,
-        "y": 105
-    },
-    "vnum": 1001
+    "vnum": 1001,
+    "x": 273,
+    "y": 107
 }

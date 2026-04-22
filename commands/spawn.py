@@ -1,80 +1,87 @@
+from core.mob_loader import create_mob
+from core.item_loader import create_item
 from core.world import get_room
-from core.mob_loader import get_mob_template, list_mobs
-from core.item_loader import get_item_template
-import copy
 
 
-def execute(player, conn, command, args):
+def parse_target(target):
+    """
+    Converte automaticamente:
+    - numeri → vnum (string)
+    - testo → nome lowercase
+    """
+    if target.isdigit():
+        return target  # vnum già ok
+    return target.lower()
 
-    # =========================
-    # PERMESSI BUILDER
-    # =========================
-    if not player.get("builder"):
+
+def execute(player, conn, args):
+
+    if not args:
+        conn.send("Uso: spawn mob|item <nome/vnum> [quantità]\n")
+        return
+
+    if not player.get("is_builder"):
         conn.send("Non hai i permessi.\n")
         return
 
+    tipo = args[0].lower()
+
     if len(args) < 2:
-        conn.send("Uso: spawn mob/item nome\n")
+        conn.send("Specifica cosa spawnare.\n")
         return
 
-    tipo = args[0].lower()
-    name = " ".join(args[1:]).lower()
+    target_raw = args[1]
+    target = parse_target(target_raw)
 
-    room = get_room(player["room"])
+    quantità = 1
+    if len(args) > 2 and args[2].isdigit():
+        quantità = int(args[2])
+
+    room = get_room(player.get("room"))
 
     if not room:
         conn.send("Errore stanza.\n")
         return
 
     # =========================
-    # SPAWN MOB
+    # MOB
     # =========================
     if tipo == "mob":
 
-        template = get_mob_template(name)
+        spawned = 0
 
-        if not template:
-            conn.send("Mob non trovato.\n")
-            conn.send(f"Disponibili: {', '.join(list_mobs())}\n")
-            return
+        for _ in range(quantità):
+            mob = create_mob(target)
 
-        mob = copy.deepcopy(template)
+            if not mob:
+                conn.send(f"Mob non trovato: {target_raw}\n")
+                return
 
-        # sicurezza
-        mob["hp"] = mob.get("max_hp", 20)
-        mob.setdefault("inventory", [])
+            room.mobs.append(mob)
+            spawned += 1
 
-        if not hasattr(room, "mobs"):
-            room.mobs = []
-
-        room.mobs.append(mob)
-
-        conn.send(f"Hai spawnato {mob['name']}.\n")
+        conn.send(f"Spawnati {spawned} mob: {target_raw}\n")
         return
 
     # =========================
-    # SPAWN ITEM
+    # ITEM
     # =========================
     elif tipo == "item":
 
-        template = get_item_template(name)
+        spawned = 0
 
-        if not template:
-            conn.send("Item non trovato.\n")
-            return
+        for _ in range(quantità):
+            item = create_item(target)
 
-        item = copy.deepcopy(template)
+            if not item:
+                conn.send(f"Item non trovato: {target_raw}\n")
+                return
 
-        if not hasattr(room, "items"):
-            room.items = []
+            room.items.append(item)
+            spawned += 1
 
-        room.items.append(item)
-
-        conn.send(f"Hai spawnato {item['name']}.\n")
+        conn.send(f"Spawnati {spawned} item: {target_raw}\n")
         return
 
-    # =========================
-    # ERRORE TIPO
-    # =========================
     else:
-        conn.send("Tipo non valido. Usa: mob o item\n")
+        conn.send("Tipo non valido (mob/item)\n")

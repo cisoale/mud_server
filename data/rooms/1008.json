@@ -1,12 +1,19 @@
 {
-  "vnum": 1008,
-  "name": "La strada verso sud",
-  "description": "Lungo viale nella pineta",
-  "exits": {
-    "north": 1004
-  },
-  "pos": {
+    "description": "Lungo viale nella pineta",
+    "exits": {
+        "north": {
+            "closed": false,
+            "locked": false,
+            "secret": false,
+            "to": 1004,
+            "door": false,
+            "key": null
+        }
+    },
+    "items": [],
+    "mobs": [],
+    "name": "La strada verso sud",
+    "vnum": 1008,
     "x": 262,
     "y": 307.5
-  }
 }

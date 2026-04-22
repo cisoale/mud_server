@@ -1,84 +1,62 @@
-import json
 import os
+import json
 
-# =========================
-# STORAGE MOB
-# =========================
 MOBS = {}
 
 
-# =========================
-# LOAD MOBS
-# =========================
 def load_mobs():
+
     global MOBS
     MOBS = {}
 
-    base_path = os.path.join(os.getcwd(), "data", "mobs")
+    path = "data/mobs"
 
-    if not os.path.exists(base_path):
-        print("[MOBS] Cartella non trovata")
-        return
+    print("\n[MOBS] Caricamento...")
 
-    print("[MOBS] Caricamento...")
-
-    for file in os.listdir(base_path):
+    for file in os.listdir(path):
 
         if not file.endswith(".json"):
             continue
 
-        path = os.path.join(base_path, file)
-
-        try:
-            with open(path, "r", encoding="utf-8") as f:
+        with open(os.path.join(path, file), encoding="utf-8") as f:
+            try:
                 data = json.load(f)
 
                 name = data.get("name", "").lower()
+                vnum = data.get("vnum")
 
                 if not name:
-                    print(f"[ERRORE] Nome mancante in {file}")
+                    print(f"[ERRORE] Mob senza nome: {file}")
                     continue
-
-                # valori base
-                data.setdefault("max_hp", 20)
-                data.setdefault("hp", data["max_hp"])
-                data.setdefault("xp", 10)
-                data.setdefault("inventory", [])
 
                 MOBS[name] = data
 
+                if vnum:
+                    MOBS[str(vnum)] = data
+
                 print(f"[OK] {name}")
 
-        except Exception as e:
-            print(f"[ERRORE] {file}: {e}")
+            except Exception as e:
+                print(f"[ERRORE JSON] {file}: {e}")
 
-    print(f"[MOBS] Totale: {len(MOBS)}\n")
+    print(f"[MOBS] Totale: {len(MOBS)}")
 
 
-# =========================
-# GET MOB TEMPLATE
-# =========================
-def get_mob_template(name):
+def get_mob(key):
+    return MOBS.get(key.lower())
 
-    if not name:
+
+def create_mob(key):
+
+    template = get_mob(key)
+
+    if not template:
         return None
 
-    name = name.lower()
+    # copia per evitare modifiche globali
+    mob = dict(template)
 
-    # match diretto
-    if name in MOBS:
-        return MOBS[name]
+    mob["current_hp"] = mob.get("hp", 10)
+    mob["inventory"] = mob.get("inventory", [])
 
-    # match parziale
-    for mob_name, mob in MOBS.items():
-        if name in mob_name:
-            return mob
-
-    return None
-
-
-# =========================
-# DEBUG
-# =========================
-def list_mobs():
-    return list(MOBS.keys())
+    return mob

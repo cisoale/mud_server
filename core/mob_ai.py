@@ -1,40 +1,44 @@
-import asyncio
-from core.world import rooms
 from core.combat_system import start_combat
+from core.world import rooms
+import asyncio
+import random
 
-
+print("USANDO QUESTO MOB_AI:", __file__)
 async def mob_ai_loop():
-
+    import inspect
+    print("LINE:", inspect.getsource(mob_ai_loop))
     while True:
+        await asyncio.sleep(2)
 
-        for room in rooms.values():
+        for room in list(rooms.values()):
 
             # sicurezza
-            if not hasattr(room, "mobs") or not hasattr(room, "players"):
+            if not hasattr(room, "players") or not hasattr(room, "mobs"):
                 continue
 
-            for mob in room.mobs:
+            if not room.players:
+                continue
 
-                # sicurezza
-                if not isinstance(mob, dict):
+            for mob in list(room.mobs):
+
+                # solo aggressivi
+                if not mob.get("aggressive"):
                     continue
 
-                # -------------------------
-                # MOB AGGRESSIVO
-                # -------------------------
-                if mob.get("aggressive"):
+                # 🔥 FIX SPAM: se già in combat
+                if mob.get("target"):
+                    continue
 
-                    if room.players:
+                # scegli player
+                player = random.choice(room.players)
 
-                        target = room.players[0]
+                # 🔥 FIX: se player già in combat
+                if player.get("target"):
+                    continue
 
-                        # evita spam combat
-                        if target.get("in_combat"):
-                            continue
+                print(f"[AI] {mob['name']} attacca {player['name']}")
 
-                        print(f"[AI] {mob['name']} attacca {target['name']}")
-
-                        # ⚔️ attacco automatico
-                        start_combat(target, mob, target.get("conn"))
-
-        await asyncio.sleep(3)
+                try:
+                    start_combat(player, mob, player["conn"])
+                except Exception as e:
+                    print("[ERRORE AI]", e)

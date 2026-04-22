@@ -1,2 +1,2 @@
-def execute(player, args, cmd=None):
+def execute(player, conn, args):
     return "quit"

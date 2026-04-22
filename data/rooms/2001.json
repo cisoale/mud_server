@@ -1,0 +1,19 @@
+{
+    "description": "La radura tranquilla",
+    "exits": {
+        "down": {
+            "closed": false,
+            "door": true,
+            "locked": false,
+            "secret": false,
+            "to": 2002,
+            "key": null
+        }
+    },
+    "items": [],
+    "mobs": [],
+    "name": "La baita",
+    "vnum": 2001,
+    "x": 882,
+    "y": 57
+}

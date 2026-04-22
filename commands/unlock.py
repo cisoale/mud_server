@@ -1,30 +1,37 @@
 from core.world import get_room
 
-def execute(player, conn, command, args):
+
+def execute(player, conn, args):
 
     if not args:
-        conn.send("Sblocca cosa?\n")
+        conn.send("Uso: unlock <direzione>\n")
         return
 
     direction = args[0].lower()
-
     room = get_room(player["room"])
-    exit = room.get("exits", {}).get(direction)
 
-    if not exit:
-        conn.send("Nessuna uscita.\n")
+    if direction not in room.exits:
+        conn.send("Non c'è nulla lì.\n")
         return
 
-    if not exit.get("locked"):
-        conn.send("Non è bloccata.\n")
+    exit_data = room.exits[direction]
+
+    if not isinstance(exit_data, dict) or not exit_data.get("door"):
+        conn.send("Non c'è una porta.\n")
         return
 
-    key = exit.get("key")
-
-    if key not in player.get("inventory", []):
-        conn.send("Non hai la chiave giusta.\n")
+    if not exit_data.get("locked"):
+        conn.send("Non è chiusa a chiave.\n")
         return
 
-    exit["locked"] = False
+    key_needed = exit_data.get("key")
+
+    if key_needed:
+        has_key = any(item.get("name") == key_needed for item in player["inventory"])
+        if not has_key:
+            conn.send("Non hai la chiave.\n")
+            return
+
+    exit_data["locked"] = False
 
     conn.send("Sblocchi la porta.\n")

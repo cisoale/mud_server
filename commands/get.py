@@ -2,7 +2,7 @@ from core.world import get_room
 from core.inventory import add_item
 
 
-def execute(player, conn, command, args):
+def execute(player, conn, args):
 
     room = get_room(player["room"])
 

@@ -1,7 +1,7 @@
 from core.inventory import get_total_weight
 
 
-def execute(player, conn, command, args):
+def execute(player, conn, args):
 
     inv = player.get("inventory", [])
 

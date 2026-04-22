@@ -1,0 +1,11 @@
+{
+    "name": "Lama_rossa",
+    "description": "",
+    "type": "armor",
+    "damage": 5000,
+    "defense": 2000,
+    "heal": 2000,
+    "mana": 0,
+    "slot": "weapon",
+    "rarity": "legendary"
+}

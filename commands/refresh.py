@@ -4,7 +4,7 @@ from core.item_loader import load_items
 from core.world_loader import load_rooms_from_files
 
 
-def execute(player, conn, command, args):
+def execute(player, conn, args):
 
     # =========================
     # PERMESSI

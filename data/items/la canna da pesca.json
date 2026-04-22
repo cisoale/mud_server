@@ -1,0 +1,12 @@
+{
+    "name": "La canna da pesca",
+    "description": "Un canna di legno.",
+    "type": "weapon",
+    "damage": 26,
+    "defense": 12,
+    "heal": 0,
+    "mana": 0,
+    "slot": "weapon",
+    "rarity": "common",
+    "vnum": 3007
+}

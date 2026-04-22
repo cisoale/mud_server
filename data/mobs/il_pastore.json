@@ -1,0 +1,20 @@
+{
+    "name": "Il Pastore",
+    "description": "Adirato per la perdita del suo bestiame.",
+    "type": "elite",
+    "level": 25,
+    "hp": 10,
+    "damage": 20,
+    "defense": 0,
+    "stats": {
+        "str": 0,
+        "dex": 0,
+        "int": 0
+    },
+    "aggressive": true,
+    "boss": true,
+    "loot": [],
+    "inventory": [],
+    "xp": 10,
+    "vnum": 2001
+}

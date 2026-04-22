@@ -1,12 +1,19 @@
 {
-  "vnum": 1010,
-  "name": "I cancelli a sud.",
-  "description": "Un enorme cancello aperto.\nLa ronda sempre presente.",
-  "exits": {
-    "north": 1009
-  },
-  "pos": {
+    "description": "Un enorme cancello aperto.\nLa ronda sempre presente.",
+    "exits": {
+        "north": {
+            "closed": false,
+            "locked": false,
+            "secret": false,
+            "to": 1009,
+            "door": false,
+            "key": null
+        }
+    },
+    "items": [],
+    "mobs": [],
+    "name": "I cancelli a sud.",
+    "vnum": 1010,
     "x": 262,
     "y": 443.5
-  }
 }

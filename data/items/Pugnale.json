@@ -2,9 +2,8 @@
     "name": "pugnale",
     "type": "weapon",
     "slot": "weapon",
-
     "damage": 4,
     "crit": 10,
-
-    "weight": 2
+    "weight": 2,
+    "vnum": 3009
 }

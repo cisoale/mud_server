@@ -1,4 +1,4 @@
-def execute(player, conn, command, args):
+def execute(player, conn, args):
 
     equipment = player.get("equipment", {})
 

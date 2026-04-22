@@ -1,12 +1,19 @@
 {
-    "description": "Il vecchio \u00e8 in fondo al bancone con gli attrezzi difronte a lui.",
+    "description": "Il vecchio è in fondo al bancone con gli attrezzi difronte a lui.",
     "exits": {
-        "south": 1005
+        "south": {
+            "closed": false,
+            "locked": false,
+            "secret": false,
+            "to": 1005,
+            "door": false,
+            "key": null
+        }
     },
+    "items": [],
+    "mobs": [],
     "name": "La bottega del fabbro",
-    "pos": {
-        "x": 580,
-        "y": 41
-    },
-    "vnum": 1007
+    "vnum": 1007,
+    "x": 580,
+    "y": 41
 }

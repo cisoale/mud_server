@@ -2,7 +2,7 @@ from core.world import get_room
 from core.inventory import remove_item
 
 
-def execute(player, conn, command, args):
+def execute(player, conn, args):
 
     if not args:
         conn.send("Drop cosa?\n")

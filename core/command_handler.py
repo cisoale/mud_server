@@ -2,19 +2,23 @@ import os
 import importlib
 
 commands = {}
-
+aliases = {}
 
 # =========================
-# CARICA COMANDI
+# CARICAMENTO COMANDI
 # =========================
 def load_commands():
 
-    global commands
-    commands.clear()
+    global commands, aliases
 
-    commands_dir = "commands"
+    commands = {}
+    aliases = {}
 
-    for file in os.listdir(commands_dir):
+    base_path = os.path.join(os.path.dirname(__file__), "..", "commands")
+
+    print("\n[CMD] Caricamento comandi...")
+
+    for file in os.listdir(base_path):
 
         if not file.endswith(".py") or file.startswith("__"):
             continue
@@ -23,35 +27,24 @@ def load_commands():
 
         try:
             module = importlib.import_module(f"commands.{name}")
-            importlib.reload(module)
 
+            # ✅ REGISTRA COMANDO
             if hasattr(module, "execute"):
                 commands[name] = module.execute
                 print(f"[CMD] Caricato: {name}")
             else:
-                print(f"[ERRORE] {name} senza execute()")
+                print(f"[ERRORE] {name} non ha execute()")
+                continue
+
+            # ✅ ALIAS (opzionale)
+            if hasattr(module, "ALIASES"):
+                for alias in module.ALIASES:
+                    aliases[alias] = name
 
         except Exception as e:
             print(f"[ERRORE COMANDO] {name}: {e}")
 
-    # =========================
-    # ALIAS MOVIMENTO
-    # =========================
-    if "move" in commands:
-
-        commands["n"] = commands["move"]
-        commands["s"] = commands["move"]
-        commands["e"] = commands["move"]
-        commands["w"] = commands["move"]
-        commands["u"] = commands["move"]
-        commands["d"] = commands["move"]
-
-        commands["north"] = commands["move"]
-        commands["south"] = commands["move"]
-        commands["east"] = commands["move"]
-        commands["west"] = commands["move"]
-        commands["up"] = commands["move"]
-        commands["down"] = commands["move"]
+    print(f"[CMD] Totale: {len(commands)}")
 
 
 # =========================
@@ -63,35 +56,43 @@ def execute_command(player, conn, input_text):
         return
 
     parts = input_text.strip().split()
-
     command = parts[0].lower()
     args = parts[1:]
 
-    print(f"[CMD] {player['name']}: {command} {args}")
+    # 🔥 alias (n → north → move ecc)
+    if command in aliases:
+        command = aliases[command]
 
-    if command not in commands:
+    # 🔥 shortcut direzioni
+    directions = ["north", "south", "east", "west", "up", "down", "n", "s", "e", "w", "u", "d"]
+
+    if command in directions:
+        try:
+            move_cmd = commands.get("move")
+            if move_cmd:
+                move_cmd(player, conn, [command])
+            return
+        except Exception as e:
+            print("[ERRORE MOVE]", e)
+            conn.send("Errore movimento.\n")
+            return
+
+    # 🔥 comando normale
+    func = commands.get(command)
+
+    if not func:
         conn.send("Comando sconosciuto.\n")
         return
 
     try:
-        commands[command](player, conn, command, args)
+        func(player, conn, args)
     except Exception as e:
-        print(f"[ERRORE COMANDO] {command}: {e}")
-        conn.send("Errore durante l'esecuzione del comando.\n")
+        print(f"[CRASH COMANDO] {command}\n{e}")
+        conn.send("Errore comando.\n")
 
 
 # =========================
-# RELOAD LIVE
+# RELOAD COMANDI
 # =========================
 def reload_commands():
-
-    print("[CMD] Reload comandi...")
     load_commands()
-    print("[CMD] Reload completato.")
-
-
-# =========================
-# LISTA COMANDI (per help)
-# =========================
-def get_all_commands():
-    return list(commands.keys())

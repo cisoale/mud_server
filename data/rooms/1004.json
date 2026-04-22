@@ -1,12 +1,21 @@
 {
-  "description": "Lungo viale nella pineta",
-  "exits": {
-    "north": 1001
-  },
-  "name": "Viale",
-  "vnum": 1004,
-  "pos": {
+    "description": "Lungo viale nella pineta",
+    "exits": {
+        "north": {
+            "closed": false,
+            "locked": false,
+            "secret": false,
+            "to": 1001,
+            "door": false,
+            "key": null
+        }
+    },
+    "items": [
+        "spada lunga"
+    ],
+    "mobs": [],
+    "name": "Viale",
+    "vnum": 1004,
     "x": 263,
     "y": 236.5
-  }
 }

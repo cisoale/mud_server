@@ -1,145 +1,194 @@
-from flask import Flask, request, jsonify, render_template
-import json
+from flask import Flask, request, jsonify
 import os
+import json
+from flask import send_from_directory
+
 
 app = Flask(__name__)
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOMS_DIR = os.path.abspath(os.path.join(BASE_DIR, "../data/rooms"))
+MOBS_FOLDER = os.path.join(BASE_DIR, "../data/mobs")
+ITEMS_FOLDER = os.path.join(BASE_DIR, "../data/items")
+print("SERVER FILE:", __file__)
+print("=== DEBUG PATH ===")
+print("BASE_DIR:", BASE_DIR)
+print("MOBS PATH:", MOBS_FOLDER)
+print("ITEMS PATH:", ITEMS_FOLDER)
+print("==================")
+if os.path.exists(MOBS_FOLDER):
+    print("FILES:", os.listdir(MOBS_FOLDER))
 
-# =========================
-# 📁 PATH
-# =========================
-ROOMS_PATH = "../data/rooms"
-MOBS_PATH = "../data/mobs.json"
-ITEMS_PATH = "../data/items.json"
+from flask import request
 
+WORLD_FILE = os.path.join(BASE_DIR, "data", "world.json")
 
-# =========================
-# 🏠 HOME
-# =========================
+from flask import send_from_directory
+@app.route("/<path:path>")
+def static_files(path):
+    return send_from_directory(".", path)
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return send_from_directory(".", "index.html")
+@app.route("/editor.html")
+def editor():
+    return send_from_directory(".", "editor.html")
 
-
-# =========================
-# 🗺️ LOAD ROOMS
-# =========================
-@app.route("/rooms", methods=["GET"])
-def get_rooms():
-    rooms = []
-
-    if not os.path.exists(ROOMS_PATH):
-        os.makedirs(ROOMS_PATH)
-
-    for file in os.listdir(ROOMS_PATH):
-        if file.endswith(".json"):
-            with open(os.path.join(ROOMS_PATH, file)) as f:
-                rooms.append(json.load(f))
-
-    return jsonify(rooms)
-
-
-# =========================
-# 💾 SAVE ROOM
-# =========================
-@app.route("/save_room", methods=["POST"])
-def save_room():
-    data = request.json
-
-    if not os.path.exists(ROOMS_PATH):
-        os.makedirs(ROOMS_PATH)
-
-    vnum = data.get("vnum")
-    path = os.path.join(ROOMS_PATH, f"{vnum}.json")
-
-    with open(path, "w") as f:
-        json.dump(data, f, indent=4)
-
-    return {"status": "ok"}
-
-
-# =========================
-# 👹 LOAD MOBS
-# =========================
-@app.route("/mobs", methods=["GET"])
+@app.route("/mobs")
 def get_mobs():
-    if not os.path.exists(MOBS_PATH):
-        with open(MOBS_PATH, "w") as f:
-            json.dump([], f)
 
-    with open(MOBS_PATH) as f:
-        return jsonify(json.load(f))
+    mobs = []
+
+    if not os.path.exists(MOBS_FOLDER):
+        print("[ERRORE] Cartella mobs non trovata:", MOBS_FOLDER)
+        return []
+
+    for file in os.listdir(MOBS_FOLDER):
+
+        if not file.endswith(".json"):
+            continue
+
+        path = os.path.join(MOBS_FOLDER, file)
+
+        try:
+            with open(path, encoding="utf-8") as f:
+                data = json.load(f)
+
+                # 🔥 aggiungiamo nome file (utile)
+                data["_file"] = file
+
+                mobs.append(data)
+
+        except Exception as e:
+            print(f"[ERRORE MOB] {file}: {e}")
+
+    print(f"[MOBS] Caricati: {len(mobs)}")
+
+    return mobs
 
 
-# =========================
-# 💾 SAVE MOB
-# =========================
+@app.route("/editor")
+def editor_page():
+    return send_from_directory(".", "editor.html")
+
+
+@app.route("/items")
+def get_items():
+
+    items = []
+
+    if not os.path.exists(ITEMS_FOLDER):
+        print("[ERRORE] Cartella items non trovata:", ITEMS_FOLDER)
+        return []
+
+    for file in os.listdir(ITEMS_FOLDER):
+
+        if not file.endswith(".json"):
+            continue
+
+        path = os.path.join(ITEMS_FOLDER, file)
+
+        try:
+            with open(path, encoding="utf-8") as f:
+                data = json.load(f)
+
+                data["_file"] = file
+
+                items.append(data)
+
+        except Exception as e:
+            print(f"[ERRORE ITEM] {file}: {e}")
+
+    print(f"[ITEMS] Caricati: {len(items)}")
+
+    return items
+
+
 @app.route("/save_mob", methods=["POST"])
 def save_mob():
+
     data = request.json
 
-    if not os.path.exists(MOBS_PATH):
-        with open(MOBS_PATH, "w") as f:
-            json.dump([], f)
+    filename = data.get("_file") or f"{data['name'].lower()}.json"
+    path = os.path.join(MOBS_FOLDER, filename)
 
-    with open(MOBS_PATH) as f:
-        mobs = json.load(f)
-
-    existing = next((m for m in mobs if m["name"] == data["name"]), None)
-
-    if existing:
-        existing.update(data)
-    else:
-        mobs.append(data)
-
-    with open(MOBS_PATH, "w") as f:
-        json.dump(mobs, f, indent=4)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
 
     return {"status": "ok"}
 
 
-# =========================
-# 🎒 LOAD ITEMS
-# =========================
-@app.route("/items", methods=["GET"])
-def get_items():
-    if not os.path.exists(ITEMS_PATH):
-        with open(ITEMS_PATH, "w") as f:
-            json.dump([], f)
-
-    with open(ITEMS_PATH) as f:
-        return jsonify(json.load(f))
-
-
-# =========================
-# 💾 SAVE ITEM
-# =========================
 @app.route("/save_item", methods=["POST"])
 def save_item():
+
     data = request.json
 
-    if not os.path.exists(ITEMS_PATH):
-        with open(ITEMS_PATH, "w") as f:
-            json.dump([], f)
+    filename = data.get("_file") or f"{data['name'].lower()}.json"
+    path = os.path.join(ITEMS_FOLDER, filename)
 
-    with open(ITEMS_PATH) as f:
-        items = json.load(f)
-
-    existing = next((i for i in items if i["name"] == data["name"]), None)
-
-    if existing:
-        existing.update(data)
-    else:
-        items.append(data)
-
-    with open(ITEMS_PATH, "w") as f:
-        json.dump(items, f, indent=4)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
 
     return {"status": "ok"}
+# =========================
+# GET ROOMS
+# =========================
+@app.route("/rooms")
+def get_rooms():
 
+    rooms = []
+
+    if not os.path.exists(ROOMS_DIR):
+        return {"rooms": []}
+
+    for file in os.listdir(ROOMS_DIR):
+
+        if file.endswith(".json"):
+            path = os.path.join(ROOMS_DIR, file)
+
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    room = json.load(f)
+                    rooms.append(room)
+
+            except Exception as e:
+                print("[ERRORE ROOM]", file, e)
+
+    return {"rooms": rooms}
 
 # =========================
-# 🚀 START
+# SAVE ROOM
+# =========================
+@app.route("/save_rooms", methods=["POST"])
+def save_rooms():
+
+    data = request.json
+    rooms = data.get("rooms", [])
+
+    os.makedirs(ROOMS_DIR, exist_ok=True)
+
+    try:
+        for room in rooms:
+            vnum = room.get("vnum")
+
+            if not vnum:
+                print("[SKIP] Room senza vnum")
+                continue
+
+            path = os.path.join(ROOMS_DIR, f"{vnum}.json")
+
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(room, f, indent=4, ensure_ascii=False)
+
+            print(f"[SAVE] Room {vnum}")
+
+        return {"status": "ok"}
+
+    except Exception as e:
+        print("[ERRORE SAVE]", e)
+        return {"status": "error"}
+# =========================
+# RUN
 # =========================
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

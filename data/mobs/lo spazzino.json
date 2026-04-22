@@ -1,0 +1,14 @@
+{
+    "name": "Lo spazzino",
+    "description": "Un giovane ricurvo sulla sua scopa.",
+    "level": 1,
+    "hp": 20,
+    "damage": 5,
+    "defense": 2,
+    "xp": 200,
+    "type": "normal",
+    "aggressive": false,
+    "loot": [],
+    "inventory": [],
+    "vnum": 2003
+}

@@ -1,13 +1,27 @@
 {
     "description": "La strettoia",
     "exits": {
-        "north": 1007,
-        "west": 1003
+        "north": {
+            "closed": false,
+            "locked": false,
+            "secret": false,
+            "to": 1007,
+            "door": false,
+            "key": null
+        },
+        "west": {
+            "closed": false,
+            "locked": false,
+            "secret": false,
+            "to": 1003,
+            "door": false,
+            "key": null
+        }
     },
+    "items": [],
+    "mobs": [],
     "name": "Viale",
-    "pos": {
-        "x": 584,
-        "y": 107.5
-    },
-    "vnum": 1005
+    "vnum": 1005,
+    "x": 584,
+    "y": 107.5
 }

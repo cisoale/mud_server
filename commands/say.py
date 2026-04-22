@@ -1,4 +1,4 @@
-def execute(player, args, cmd=None):
+def execute(player, conn, args):
     if not args:
         return "Di cosa vuoi parlare?"
 

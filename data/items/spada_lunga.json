@@ -2,11 +2,9 @@
     "name": "spada lunga",
     "type": "weapon",
     "slot": "weapon",
-
     "damage": 58,
     "weight": 5,
-
     "description": "Una spada lunga affilata, perfetta per il combattimento ravvicinato.",
-
-    "value": 50
+    "value": 50,
+    "vnum": 3010
 }
