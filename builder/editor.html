@@ -4,17 +4,6 @@
     <meta charset="UTF-8">
     <title>Editor Mob & Item</title>
 
-    <div style="position:absolute; top:10px; left:10px;">
-        <button onclick="goToMap()">🗺 Torna alla Mappa</button>
-    </div>
-
-    <script>
-        function goToMap() {
-            window.location.href = "/";
-        }
-    </script>
-
-
     <style>
         body {
             margin: 0;
@@ -38,11 +27,12 @@
 
         input, textarea, select {
             width: 100%;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             background: #222;
             color: #fff;
             border: 1px solid #444;
-            padding: 5px;
+            padding: 6px;
+            border-radius: 4px;
         }
 
         button {
@@ -52,14 +42,16 @@
             border: none;
             color: white;
             cursor: pointer;
+            border-radius: 4px;
         }
 
             button:hover {
-                background: #666;
+                background: #00d4ff;
+                color: black;
             }
 
         .list-item {
-            padding: 5px;
+            padding: 6px;
             border-bottom: 1px solid #333;
             cursor: pointer;
         }
@@ -67,10 +59,37 @@
             .list-item:hover {
                 background: #333;
             }
+
+        h3 {
+            margin-top: 12px;
+            color: #00d4ff;
+        }
+
+        #topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #222;
+            padding: 8px;
+            z-index: 1000;
+        }
+
+            #topbar button {
+                width: auto;
+            }
+
+        body {
+            margin-top: 50px;
+        }
     </style>
 </head>
 
 <body>
+
+    <div id="topbar">
+        <button onclick="goToMap()">🗺 Torna alla Mappa</button>
+    </div>
 
     <!-- LISTA -->
     <div id="left">
@@ -109,10 +128,19 @@
                 <option value="boss">Boss</option>
             </select>
 
-            <label><input type="checkbox" id="mob_aggressive"> Aggressivo</label>
+            <label>
+                <input type="checkbox" id="mob_aggressive"> Aggressivo
+            </label>
 
-            <h3>Loot</h3>
+            <h3>Gold</h3>
+            <input id="mob_gold_min" type="number" placeholder="Gold Min">
+            <input id="mob_gold_max" type="number" placeholder="Gold Max">
+
+            <h3>Loot (JSON)</h3>
             <textarea id="mob_loot" placeholder='[{"item":"spada","chance":50}]'></textarea>
+
+            <h3>Eventi Morte (JSON)</h3>
+            <textarea id="mob_events" placeholder='[{"type":"message","text":"urla!","chance":1.0}]'></textarea>
 
             <button onclick="saveMob()">💾 Salva Mob</button>
         </div>
@@ -160,5 +188,12 @@
     </div>
 
     <script src="editor.js"></script>
+
+    <script>
+        function goToMap() {
+            window.location.href = "/";
+        }
+    </script>
+
 </body>
 </html>

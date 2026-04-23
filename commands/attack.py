@@ -2,6 +2,9 @@ from core.world import get_room
 from core.combat_system import start_combat
 
 
+# =========================
+# TROVA TARGET
+# =========================
 def find_target(room, name):
     """
     Trova un mob nella stanza usando match parziale (case insensitive)
@@ -17,10 +20,12 @@ def find_target(room, name):
     if not matches:
         return None
 
-    # se più target → prende il primo (future: scelta numerica)
     return matches[0]
 
 
+# =========================
+# COMANDO ATTACK
+# =========================
 def execute(player, conn, args):
 
     # =========================
@@ -55,7 +60,7 @@ def execute(player, conn, args):
         conn.send("Non trovi quel bersaglio.\n")
         return
 
-    # evita attacco su mob già in combat con qualcun altro (opzionale)
+    # evita attacco su mob già occupato
     if target.get("target") and target["target"] != player:
         conn.send(f"{target['name']} è già impegnato in combattimento!\n")
         return
@@ -66,7 +71,10 @@ def execute(player, conn, args):
     conn.send(f"Attacchi {target['name']}!\n")
 
     try:
+        # 🔥 NON gestiamo morte qui
+        # verrà gestita nel combat_system
         start_combat(player, target, conn)
+
     except Exception as e:
         print("[ERRORE ATTACK]", e)
         conn.send("Errore durante l'attacco.\n")

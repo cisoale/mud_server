@@ -13,5 +13,9 @@
     "damage": 1,
     "defense": 0,
     "loot": [],
-    "vnum": 2000
+    "vnum": 2000,
+
+    "gold_min": 5,
+    "gold_max": 10,
+    "level": 1
 }

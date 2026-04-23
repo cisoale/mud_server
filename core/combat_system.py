@@ -2,6 +2,7 @@ import asyncio
 import random
 from core.world import get_room
 from core.save_system import save_player
+from core.death_system import handle_death  # 🔥 NUOVO
 
 
 # =========================
@@ -27,7 +28,7 @@ def start_combat(player, mob, conn):
         print("[ERRORE COMBAT] room non trovata")
         return
 
-    # 🔥 evita doppio combat
+    # evita doppio combat
     if player.get("target") or mob.get("target"):
         return
 
@@ -41,7 +42,6 @@ def start_combat(player, mob, conn):
     conn.send(f"Inizia il combattimento con {mob['name']}!\n")
     broadcast_room(room, f"{player['name']} attacca {mob['name']}!\n", exclude=player)
 
-    # avvia loop async
     asyncio.create_task(combat_loop(player, mob))
 
 
@@ -58,7 +58,6 @@ async def combat_loop(player, mob):
         if not room:
             return
 
-        # se uno dei due sparisce
         if mob not in room.mobs or player not in room.players:
             return
 
@@ -77,14 +76,21 @@ async def combat_loop(player, mob):
         # =====================
         # MOB ATTACK
         # =====================
-        dmg = calculate_damage(mob, player)
-        player["current_hp"] -= dmg
+        # =====================
+        # =====================
+# MOB ATTACK
+# =====================
+        from core.combat_boss import boss_action
 
-        broadcast_room(room, f"{mob['name']} colpisce {player['name']} per {dmg} danni!\n")
+        msg = boss_action(mob, player)
 
-        if player["current_hp"] <= 0:
-            handle_player_death(player, room)
-            return
+        if msg:
+          broadcast_room(room, msg + "\n")
+        else:
+           dmg = calculate_damage(mob, player)
+           player["current_hp"] -= dmg
+
+           broadcast_room(room, f"{mob['name']} colpisce {player['name']} per {dmg} danni!\n")
 
 
 # =========================
@@ -94,12 +100,10 @@ def calculate_damage(attacker, defender):
 
     base = attacker.get("damage", 2)
 
-    # arma equipaggiata
     weapon = attacker.get("equipment", {}).get("weapon")
     if weapon:
         base += weapon.get("damage", 0)
 
-    # difesa
     defense = defender.get("defense", 0)
 
     dmg = max(1, base - defense)
@@ -112,36 +116,34 @@ def calculate_damage(attacker, defender):
 
 
 # =========================
-# MOB MORTE
+# MOB MORTE (REFINED)
 # =========================
 def handle_mob_death(player, mob, room):
 
     broadcast_room(room, f"{mob['name']} muore!\n")
 
-    # XP
+    # =========================
+    # XP SYSTEM
+    # =========================
     xp = mob.get("xp", 10)
+
     from core.xp_system import check_level_up
 
     player["xp"] = player.get("xp", 0) + xp
 
-    player["conn"].send(f"Hai guadagnato {xp} XP!\n")
+    if player.get("conn"):
+        player["conn"].send(f"Hai guadagnato {xp} XP!\n")
 
-    check_level_up(player, player["conn"])
+    check_level_up(player, player.get("conn"))
 
-    # corpse
-    corpse = {
-        "name": f"corpo di {mob['name']}",
-        "inventory": mob.get("inventory", []),
-        "type": "corpse"
-    }
+    # =========================
+    # 🔥 DEATH SYSTEM (GOLD + CORPSE)
+    # =========================
+    handle_death(player, mob, room, broadcast_room)
 
-    room.items.append(corpse)
-
-    # rimuovi mob
-    if mob in room.mobs:
-        room.mobs.remove(mob)
-
-    # reset combat
+    # =========================
+    # RESET COMBAT
+    # =========================
     player["target"] = None
     mob["target"] = None
 
@@ -157,9 +159,7 @@ def handle_player_death(player, room):
 
     player["current_hp"] = player.get("hp", 100)
 
-    # respawn
     player["room"] = 1001
-
     player["target"] = None
 
     conn = player.get("conn")

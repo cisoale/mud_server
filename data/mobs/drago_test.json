@@ -1,0 +1,16 @@
+{
+    "name": "drago_test",
+    "type": "boss",
+
+    "hp": 120,
+    "damage": 5,
+    "defense": 2,
+    "xp": 50,
+
+    "gold_min": 20,
+    "gold_max": 50,
+
+    "loot": [],
+
+    "script": "scripts/boss_drago.lua"
+}

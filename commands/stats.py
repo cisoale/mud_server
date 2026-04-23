@@ -76,6 +76,8 @@ def execute(player, conn, args):
         else:
             conn.send(f"{slot.capitalize()}: ---\n")
 
+    gold = player.get("gold", 0)
+    conn.send(f"Oro: {gold}\n")
     # =========================
     # BONUS SET
     # =========================

@@ -1,6 +1,7 @@
 from core.database import get_player, create_player
 from core.world import get_room
 from core.spawn import spawn_player
+from core.skill_system import unlock_skills  # 🔥 FIX IMPORT
 
 
 # =========================
@@ -33,14 +34,15 @@ async def handle_login(conn):
 
         player = get_player(name)
 
-        # 🔥 FORCE BUILDER (DEBUG SICURO)
-        if player["name"].lower() == "wiz":
-          player["is_builder"] = True
-          print("[DEBUG] wiz è builder")
-
+        # 🔥 FIX: controlla prima che esista
         if not player:
             conn.send("Player non trovato.\n")
             return None
+
+        # 🔥 BUILDER SAFE
+        if player["name"].lower() == "wiz":
+            player["is_builder"] = True
+            print("[DEBUG] wiz è builder")
 
         if player["password"] != password:
             conn.send("Password errata.\n")
@@ -68,7 +70,10 @@ async def handle_login(conn):
             "hp": 100,
             "room": 1001,
             "inventory": [],
-            "equipment": {}
+            "equipment": {},
+            "gold": 0,
+            "skills": [] # 🔥 già inizializzato
+            
         }
 
         create_player(player)
@@ -80,15 +85,22 @@ async def handle_login(conn):
         return None
 
     # =========================
+    # INIT PLAYER (SKILLS SAFE)
+    # =========================
+    player.setdefault("skills", [])
+    player.setdefault("gold", 0)
+    unlock_skills(player, conn)
+    
+
+    # =========================
     # SPAWN
     # =========================
-    # =========================
-# SPAWN
-# =========================
     spawn_player(player)
 
-# mostra stanza
+    # =========================
+    # LOOK
+    # =========================
     from commands.look import render_room
-    conn.send(render_room(player))  
+    conn.send(render_room(player))
 
     return player

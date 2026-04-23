@@ -1,10 +1,25 @@
-from lupa import LuaRuntime
+import subprocess
+import json
 
-lua = LuaRuntime(unpack_returned_tuples=True)
+LUA_CMD = "lua54"
 
-def run_script(path, context={}):
-    with open(path) as f:
-        code = f.read()
+def run_lua(script_path, context=None):
 
-    lua_func = lua.execute(code)
-    return lua_func(context)
+    try:
+        input_data = json.dumps(context or {})
+
+        result = subprocess.run(
+            [LUA_CMD, script_path],
+            input=input_data,
+            text=True,
+            capture_output=True
+        )
+
+        if result.stderr:
+            print("[LUA ERROR]", result.stderr)
+
+        return result.stdout.strip()
+
+    except Exception as e:
+        print("[LUA ENGINE ERROR]", e)
+        return None

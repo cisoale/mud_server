@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Visual Builder</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #111;
+            color: #eee;
+            display: flex;
+            margin: 0;
+        }
+
+        #left {
+            width: 25%;
+            background: #1b1b1b;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        #right {
+            width: 75%;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 6px;
+            background: #222;
+            color: #fff;
+            border: 1px solid #444;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 8px;
+            background: #444;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+            button:hover {
+                background: #00d4ff;
+                color: black;
+            }
+
+        .field {
+            margin-bottom: 12px;
+        }
+
+            .field label {
+                font-size: 12px;
+                color: #aaa;
+            }
+
+        .section {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+
+        .card {
+            background: #222;
+            padding: 8px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="left">
+        <h3>Mob</h3>
+        <div id="mobList"></div>
+        <button id="newMobBtn">+ Nuovo Mob</button>
+    </div>
+
+    <div id="right">
+
+        <h2>Editor Mob</h2>
+
+        <div class="section">
+            <h3>Base</h3>
+
+            <div class="field">
+                <label>Nome</label>
+                <input id="name">
+            </div>
+
+            <div class="field">
+                <label>Descrizione</label>
+                <textarea id="description"></textarea>
+            </div>
+
+            <div class="field">
+                <label>Tipo</label>
+                <select id="type">
+                    <option value="normal">Comune</option>
+                    <option value="elite">Elite</option>
+                    <option value="boss">Boss</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Combattimento</h3>
+            <div class="field"><label>Livello</label><input id="level" type="number"></div>
+            <div class="field"><label>HP</label><input id="hp" type="number"></div>
+            <div class="field"><label>Damage</label><input id="damage" type="number"></div>
+            <div class="field"><label>Defense</label><input id="defense" type="number"></div>
+        </div>
+
+        <div class="section">
+            <h3>Progressione</h3>
+            <div class="field"><label>XP</label><input id="xp" type="number"></div>
+        </div>
+
+        <div class="section">
+            <h3>Economia</h3>
+            <div class="field"><label>Gold Min</label><input id="gold_min" type="number"></div>
+            <div class="field"><label>Gold Max</label><input id="gold_max" type="number"></div>
+        </div>
+
+        <div class="section">
+            <h3>Loot</h3>
+            <div id="lootContainer"></div>
+            <button id="addLootBtn">+ Loot</button>
+        </div>
+
+        <div class="section">
+            <h3>Eventi</h3>
+            <div id="eventsContainer"></div>
+            <button id="addEventBtn">+ Evento</button>
+        </div>
+
+        <button id="saveBtn">💾 Salva Mob</button>
+
+    </div>
+
+    <script src="editor_visual.js"></script>
+
+</body>
+</html>

@@ -32,6 +32,28 @@ def execute(player, conn, args):
             or any(word in name for word in search.split())
         ):
 
+            # =========================
+            # 💰 GOLD (PRIORITARIO)
+            # =========================
+            if item.get("type") == "gold":
+
+                amount = item.get("amount", 0)
+
+                if amount <= 0:
+                    room.items.remove(item)
+                    conn.send("Non c'è nulla da raccogliere.\n")
+                    return
+
+                player["gold"] = player.get("gold", 0) + amount
+
+                room.items.remove(item)
+
+                conn.send(f"Raccogli {amount} monete.\n")
+                return  # 🔥 IMPORTANTISSIMO
+
+            # =========================
+            # 🎒 OGGETTI NORMALI
+            # =========================
             if add_item(player, item):
                 room.items.remove(item)
                 conn.send(f"Hai preso {name}.\n")
@@ -69,6 +91,16 @@ def execute(player, conn, args):
                         obj_name = str(obj).lower()
 
                     if search in obj_name:
+
+                        # 💰 GOLD dentro corpse (extra safe)
+                        if isinstance(obj, dict) and obj.get("type") == "gold":
+
+                            amount = obj.get("amount", 0)
+                            player["gold"] = player.get("gold", 0) + amount
+
+                            inventory.remove(obj)
+                            conn.send(f"Raccogli {amount} monete da {container_name}.\n")
+                            return
 
                         if add_item(player, obj):
                             inventory.remove(obj)

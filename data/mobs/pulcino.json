@@ -1,0 +1,24 @@
+{
+    "name": "pulcino",
+    "description": "Una piccola palla di piume.",
+    "level": 2,
+    "hp": 10,
+    "current_hp": 10,
+    "damage": 1,
+    "defense": 1,
+    "xp": 50,
+    "inventory": [],
+    "loot": [],
+    "gold_min": 1,
+    "gold_max": 29,
+    "target": null,
+    "death_events": [
+        {
+            "type": "message",
+            "text": "Piume volando ovunque.",
+            "chance": 1
+        }
+    ],
+    "vnum": 1001,
+    "_file": "pulcino.json"
+}
