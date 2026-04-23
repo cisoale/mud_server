@@ -1,38 +1,28 @@
+SLOTS = [
+    "testa",
+    "torso",
+    "gambe",
+    "piedi",
+    "mani",
+    "arma",
+    "secondaria",
+    "anello1",
+    "anello2",
+    "collo"
+]
+
+
 def execute(player, conn, args):
 
-    equipment = player.get("equipment", {})
+    equip = player.get("equipment", {})
 
-    # =========================
-    # SLOT STANDARD
-    # =========================
-    slots = [
-        "weapon",
-        "shield",
-        "head",
-        "torso",
-        "legs",
-        "feet",
-        "hands",
-        "ring",
-        "amulet"
-    ]
+    conn.send("\n=== EQUIPAGGIAMENTO ===\n")
 
-    text = "\n=== EQUIPAGGIAMENTO ===\n"
+    for slot in SLOTS:
 
-    for slot in slots:
-
-        item = equipment.get(slot)
+        item = equip.get(slot)
 
         if item:
-            if isinstance(item, dict):
-                name = item.get("name", "oggetto")
-            else:
-                name = str(item)
+            conn.send(f"{slot.capitalize()}: {item.get('name')}\n")
         else:
-            name = "---"
-
-        text += f"{slot.capitalize():<10}: {name}\n"
-
-    text += "\n"
-
-    conn.send(text)
+            conn.send(f"{slot.capitalize()}: ---\n")

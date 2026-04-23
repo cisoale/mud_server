@@ -1,21 +1,22 @@
 import time
 
 
-def apply_effect(target, effect):
+def apply_effects(player):
 
-    if "effects" not in target:
-        target["effects"] = []
+    effects = {}
 
-    # evita duplicati (opzionale)
-    for e in target["effects"]:
-        if e["type"] == effect["type"]:
-            e["duration"] = max(e["duration"], effect["duration"])
-            return
+    # da equip
+    for item in player.get("equipment", {}).values():
+        for k, v in item.get("effects", {}).items():
+            effects[k] = effects.get(k, 0) + v
 
-    effect["last_tick"] = time.time()
-    target["effects"].append(effect)
+    # applica
+    if effects.get("regen_hp"):
+        player["hp"] += effects["regen_hp"]
 
-
+    if effects.get("regen_mana"):
+        player["mana"] += effects["regen_mana"]
+        
 def process_effects(target, conn=None):
 
     if "effects" not in target:

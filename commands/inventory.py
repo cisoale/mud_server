@@ -1,6 +1,3 @@
-from core.inventory import get_total_weight
-
-
 def execute(player, conn, args):
 
     inv = player.get("inventory", [])
@@ -9,22 +6,14 @@ def execute(player, conn, args):
         conn.send("Inventario vuoto.\n")
         return
 
-    text = "\nInventario:\n"
+    conn.send("\n--- Inventario ---\n")
 
     for item in inv:
 
-        if isinstance(item, dict):
-            name = item.get("name", "oggetto")
-            weight = item.get("weight", 1)
+        name = item.get("name", "???")
+        qty = item.get("quantity", 1)
+
+        if qty > 1:
+            conn.send(f"{name} x{qty}\n")
         else:
-            name = str(item)
-            weight = 1
-
-        text += f"- {name} (peso {weight})\n"
-
-    total = get_total_weight(player)
-    max_w = player.get("max_weight", 50)
-
-    text += f"\nPeso: {total}/{max_w}\n"
-
-    conn.send(text)
+            conn.send(f"{name}\n")

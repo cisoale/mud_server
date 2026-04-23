@@ -1,20 +1,13 @@
+from core.equipment import unequip_item
+
+
 def execute(player, conn, args):
+
     if not args:
-        return "Unequip cosa?"
+        conn.send("Specifica lo slot.\n")
+        return
 
-    slot = args[0].lower()
-    equipment = player.get("equipment", {})
-    inv = player.get("inventory", [])
+    slot = args[0]
 
-    if slot not in equipment:
-        return "Slot non valido."
-
-    item = equipment[slot]
-
-    if not item:
-        return "Niente da rimuovere."
-
-    inv.append(item)
-    equipment[slot] = None
-
-    return f"Hai rimosso {item['name']}."
+    msg = unequip_item(player, slot)
+    conn.send(msg + "\n")

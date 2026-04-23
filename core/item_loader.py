@@ -93,11 +93,13 @@ def create_item(key):
     if not template:
         return None
 
-    # copia profonda sicura
     item = dict(template)
 
-    # runtime fields
-    item["id"] = id(item)  # unico in memoria
+    # runtime
+    item["id"] = id(item)
+
+    # stack
+    item.setdefault("quantity", 1)
 
     return item
 
