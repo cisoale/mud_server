@@ -1,0 +1,21 @@
+{
+    "name": "stecco",
+    "display_name": "Stecco di legno",
+    "description": "",
+    "type": "misc",
+    "rarity": "common",
+    "value": 10,
+    "weight": 1,
+    "vnum": 0,
+    "stackable": false,
+    "quantity": 1,
+    "slot": null,
+    "damage": 0,
+    "defense": 0,
+    "consumable": null,
+    "effects": {},
+    "flags": [],
+    "requirements": {
+        "level": 1
+    }
+}

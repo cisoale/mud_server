@@ -3,19 +3,19 @@
     "exits": {
         "north": {
             "closed": false,
+            "door": false,
+            "key": null,
             "locked": false,
             "secret": false,
-            "to": 1007,
-            "door": false,
-            "key": null
+            "to": 1007
         },
         "west": {
             "closed": false,
+            "door": false,
+            "key": null,
             "locked": false,
             "secret": false,
-            "to": 1003,
-            "door": false,
-            "key": null
+            "to": 1003
         }
     },
     "items": [],

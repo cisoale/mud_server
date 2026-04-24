@@ -1,0 +1,12 @@
+{
+    "name": "elisir velenoso",
+    "type": "consumable",
+    "effects": [
+        {
+            "type": "poison",
+            "duration": 5,
+            "value": 3
+        }
+    ],
+    "vnum": 3005
+}

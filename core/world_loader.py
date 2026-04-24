@@ -1,15 +1,19 @@
 import os
 import json
+
 from core.world import add_room
 from core.world_validator import validate_and_fix_room
-from core.mob_factory import create_mob
+from core.mob_loader import create_mob
 
 ROOMS_PATH = "data/rooms"
 
 
 def load_rooms_from_files():
-
     print("[WORLD] Caricamento rooms...")
+
+    if not os.path.exists(ROOMS_PATH):
+        print(f"[ERRORE] Cartella rooms non trovata: {ROOMS_PATH}")
+        return
 
     for filename in os.listdir(ROOMS_PATH):
 
@@ -18,10 +22,19 @@ def load_rooms_from_files():
 
         path = os.path.join(ROOMS_PATH, filename)
 
-        with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        # =========================
+        # LOAD JSON SICURO
+        # =========================
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception as e:
+            print(f"[ERRORE] Lettura {filename}: {e}")
+            continue
 
-        # 🔥 VALIDATOR
+        # =========================
+        # VALIDAZIONE
+        # =========================
         data, changed = validate_and_fix_room(data)
 
         if changed:
@@ -31,7 +44,7 @@ def load_rooms_from_files():
                 json.dump(data, f, indent=4)
 
         # =========================
-        # 🔥 FIX QUI
+        # DATI BASE
         # =========================
         vnum = data.get("vnum")
         name = data.get("name", "Stanza")
@@ -43,28 +56,34 @@ def load_rooms_from_files():
 
         room = add_room(vnum, name, desc)
 
-        # coordinate
+        # =========================
+        # POSIZIONE
+        # =========================
         room.x = data.get("x", 100)
         room.y = data.get("y", 100)
 
-        # exits
+        # =========================
+        # EXITS
+        # =========================
         room.exits = data.get("exits", {})
 
-        # mobs
+        # =========================
+        # MOB SPAWN AUTOMATICO
+        # =========================
         room.mobs = []
 
         for mob_name in data.get("mobs", []):
-            template = get_mob_template(mob_name.lower())
-
-            if not template:
-              print(f"[ERRORE] Mob non trovato: {mob_name}")
-              continue
-
             mob = create_mob(mob_name)
-            room.mobs.append(mob)
-        # items
+            if mob:
+                room.mobs.append(mob)
+            else:
+                print(f"[WARN] Mob non trovato: {mob_name}")
+
+        # =========================
+        # ITEMS
+        # =========================
         room.items = data.get("items", [])
 
-        print(f"[OK] Room {vnum}")
+        print(f"[OK] Room {vnum} caricata")
 
     print("[WORLD] Caricamento completato.\n")

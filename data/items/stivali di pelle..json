@@ -1,12 +1,16 @@
 {
-    "name": "Stivali di pelle.",
+    "name": "stivali_di_pelle",
+    "display_name": "Stivali Di Pelle",
     "description": "Sono vecchi ma sembrano ancora robusti.",
     "type": "armor",
-    "damage": 0,
-    "defense": 15,
-    "heal": 0,
-    "mana": 0,
-    "slot": "legs",
     "rarity": "common",
-    "vnum": 3011
+    "value": 10,
+    "weight": 1,
+    "vnum": 3011,
+    "consumable": {
+        "heal": 0,
+        "mana": 0
+    },
+    "slot": "legs",
+    "defense": 15
 }

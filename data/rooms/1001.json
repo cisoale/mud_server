@@ -1,35 +1,30 @@
 {
-    "description": "Un villaggio tranquillo",
+    "vnum": 1001,
+    "name": "Villaggio",
+    "short_desc": "Ti trovi nella locanda",
+    "long_desc": "Un luogo accogliente,sembra di essere a casa.",
+    "zone": "",
     "exits": {
+        "up": {
+            "to": 5000,
+            "door": false,
+            "closed": false,
+            "locked": false,
+            "key": null,
+            "secret": true
+        },
         "down": {
-            "closed": true,
-            "door": true,
-            "key": null,
-            "locked": false,
-            "secret": false,
-            "to": 1006
-        },
-        "east": {
-            "closed": false,
+            "to": 1001,
             "door": false,
-            "key": null,
-            "locked": false,
-            "secret": false,
-            "to": 1002
-        },
-        "west": {
             "closed": false,
-            "door": false,
-            "key": null,
             "locked": false,
-            "secret": false,
-            "to": 1011
+            "key": null,
+            "secret": false
         }
     },
+    "description": "",
     "items": [],
     "mobs": [],
-    "name": "Villaggio",
-    "vnum": 1001,
-    "x": 273,
-    "y": 107
+    "x": 100,
+    "y": 100
 }

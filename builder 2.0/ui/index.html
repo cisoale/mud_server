@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>MUD Builder</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <h1>MUD Builder</h1>
+
+        <a href="#" onclick="showPage('dashboard')">Home</a>
+        <a href="#" onclick="showPage('mobs')">Mobs</a>
+        <a href="#" onclick="showPage('items')">Items</a>
+        <a href="#" onclick="showPage('rooms')">Rooms</a>
+    </div>
+
+    <!-- APP CONTAINER -->
+    <div class="app">
+
+        <!-- ===================== -->
+        <!-- DASHBOARD -->
+        <!-- ===================== -->
+        <div id="dashboard" class="page">
+
+            <div class="panel">
+                <h2>Dashboard</h2>
+                <p>Builder collegato al MUD in tempo reale.</p>
+            </div>
+
+            <div class="panel">
+                <button class="add" onclick="showPage('mobs')">Vai ai Mob</button>
+                <button class="add" onclick="showPage('items')">Vai agli Item</button>
+                <button class="add" onclick="showPage('rooms')">Vai alle Rooms</button>
+            </div>
+
+        </div>
+
+        <!-- ===================== -->
+        <!-- MOBS -->
+        <!-- ===================== -->
+        <div id="mobs" class="page" style="display:none">
+
+            <div class="sidebar">
+                <h2>Mobs</h2>
+                <button class="add" onclick="newMob()">+ Nuovo</button>
+                <div id="mobList"></div>
+            </div>
+
+            <div class="editor">
+
+                <h2>Mob Editor</h2>
+
+                <input id="mob_name" placeholder="Nome">
+                <input id="mob_hp" type="number" placeholder="HP">
+                <input id="mob_damage" type="number" placeholder="Damage">
+                <input id="mob_xp" type="number" placeholder="XP">
+
+                <h3>Loot</h3>
+                <div id="mob_loot"></div>
+                <button class="add" onclick="addLoot()">+ Loot</button>
+
+                <br>
+
+                <button class="save" onclick="saveMob()">💾 Salva</button>
+                <button class="delete" onclick="deleteMob()">🗑 Elimina</button>
+
+            </div>
+
+        </div>
+
+        <!-- ===================== -->
+        <!-- ITEMS -->
+        <!-- ===================== -->
+        <div id="items" class="page" style="display:none">
+
+            <div class="sidebar">
+                <h2>Items</h2>
+                <button class="add" onclick="newItem()">+ Nuovo</button>
+                <div id="itemList"></div>
+            </div>
+
+            <div class="editor">
+
+                <h2>Item Editor</h2>
+
+                <input id="item_name" placeholder="name">
+                <input id="item_display_name" placeholder="Display Name">
+
+                <select id="item_type">
+                    <option value="misc">Misc</option>
+                    <option value="weapon">Weapon</option>
+                    <option value="armor">Armor</option>
+                    <option value="consumable">Consumable</option>
+                </select>
+
+                <input id="item_value" type="number" placeholder="Value">
+
+                <br>
+
+                <button class="save" onclick="saveItem()">💾 Salva</button>
+                <button class="delete" onclick="deleteItem()">🗑 Elimina</button>
+
+            </div>
+
+        </div>
+
+        <!-- ===================== -->
+        <!-- ROOMS (PRO) -->
+        <!-- ===================== -->
+        <div id="rooms" class="page" style="display:none">
+
+            <div class="sidebar">
+                <h2>Rooms</h2>
+
+                <button class="add" onclick="newRoom()">+ Nuova</button>
+                <button class="secondary" onclick="autoLayout()">Auto Layout</button>
+                <button class="save" onclick="saveRooms()">💾 Salva</button>
+
+                <div id="roomList"></div>
+            </div>
+
+            <div class="editor">
+
+                <h2>Room Editor</h2>
+
+                <!-- BASE -->
+                <div class="panel">
+                    <h3>Base</h3>
+                    <input id="room_vnum" placeholder="VNUM">
+                    <input id="room_name" placeholder="Nome">
+                    <input id="room_zone" placeholder="Zona">
+                </div>
+
+                <!-- DESCRIPTIONS -->
+                <div class="panel">
+                    <h3>Descrizioni</h3>
+                    <input id="room_short" placeholder="Short description">
+                    <textarea id="room_long" placeholder="Long description"></textarea>
+                </div>
+
+                <!-- EXITS -->
+                <div class="panel">
+                    <h3>Exits</h3>
+                    <div id="exitsContainer"></div>
+                </div>
+
+                <!-- MAP -->
+                <div class="panel">
+                    <h3>Mappa</h3>
+                    <canvas id="mapCanvas" width="900" height="500"></canvas>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ===================== -->
+    <!-- SCRIPTS -->
+    <!-- ===================== -->
+    <script src="js/mobs.js"></script>
+    <script src="js/items.js"></script>
+    <script src="js/rooms.js"></script>
+
+    <script>
+        function showPage(page) {
+            document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+            document.getElementById(page).style.display = "flex";
+        }
+    </script>
+
+</body>
+</html>

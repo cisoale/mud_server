@@ -1,11 +1,17 @@
 {
-    "name": "Lama_rossa",
+    "name": "lama_rossa",
+    "display_name": "Lama Rossa",
     "description": "",
     "type": "armor",
-    "damage": 5000,
-    "defense": 2000,
-    "heal": 2000,
-    "mana": 0,
+    "rarity": "legendary",
+    "value": 10,
+    "weight": 1,
+    "vnum": 0,
+    "consumable": {
+        "heal": 2000,
+        "mana": 0
+    },
     "slot": "weapon",
-    "rarity": "legendary"
+    "damage": 5000,
+    "defense": 2000
 }

@@ -1,0 +1,12 @@
+{
+    "name": "Stivali di pelle.",
+    "description": "Sono vecchi ma sembrano ancora robusti.",
+    "type": "armor",
+    "damage": 0,
+    "defense": 15,
+    "heal": 0,
+    "mana": 0,
+    "slot": "legs",
+    "rarity": "common",
+    "vnum": 3011
+}

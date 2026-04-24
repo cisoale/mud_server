@@ -1,9 +1,12 @@
 {
     "name": "pugnale",
+    "display_name": "Pugnale",
+    "description": "",
     "type": "weapon",
-    "slot": "weapon",
-    "damage": 4,
-    "crit": 10,
+    "rarity": "common",
+    "value": 10,
     "weight": 2,
-    "vnum": 3009
+    "vnum": 3009,
+    "slot": "weapon",
+    "damage": 4
 }

@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Visual Builder</title>
+    <title>Visual Mob Builder</title>
 
     <style>
         body {
@@ -18,12 +18,17 @@
             background: #1b1b1b;
             padding: 10px;
             overflow-y: auto;
+            border-right: 1px solid #333;
         }
 
         #right {
             width: 75%;
             padding: 15px;
             overflow-y: auto;
+        }
+
+        h2, h3 {
+            margin-top: 0;
         }
 
         input, textarea, select {
@@ -44,6 +49,7 @@
             border: none;
             cursor: pointer;
             border-radius: 4px;
+            margin-top: 5px;
         }
 
             button:hover {
@@ -72,26 +78,49 @@
             margin-bottom: 8px;
             border-radius: 6px;
         }
+
+        .hint {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        #mobList div {
+            padding: 6px;
+            cursor: pointer;
+            border-bottom: 1px solid #333;
+        }
+
+            #mobList div:hover {
+                background: #333;
+            }
     </style>
 </head>
 
 <body>
 
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
     <div id="left">
         <h3>Mob</h3>
         <div id="mobList"></div>
         <button id="newMobBtn">+ Nuovo Mob</button>
     </div>
 
+    <!-- =========================
+         EDITOR
+    ========================== -->
     <div id="right">
 
         <h2>Editor Mob</h2>
 
+        <!-- BASE -->
         <div class="section">
             <h3>Base</h3>
 
             <div class="field">
-                <label>Nome</label>
+                <label>Nome (snake_case)</label>
                 <input id="name">
             </div>
 
@@ -110,38 +139,75 @@
             </div>
         </div>
 
+        <!-- COMBAT -->
         <div class="section">
             <h3>Combattimento</h3>
-            <div class="field"><label>Livello</label><input id="level" type="number"></div>
-            <div class="field"><label>HP</label><input id="hp" type="number"></div>
-            <div class="field"><label>Damage</label><input id="damage" type="number"></div>
-            <div class="field"><label>Defense</label><input id="defense" type="number"></div>
+
+            <div class="field">
+                <label>Livello</label>
+                <input id="level" type="number">
+            </div>
+
+            <div class="field">
+                <label>HP</label>
+                <input id="hp" type="number">
+            </div>
+
+            <div class="field">
+                <label>Damage</label>
+                <input id="damage" type="number">
+            </div>
+
+            <div class="field">
+                <label>Defense</label>
+                <input id="defense" type="number">
+            </div>
         </div>
 
+        <!-- PROGRESSION -->
         <div class="section">
             <h3>Progressione</h3>
-            <div class="field"><label>XP</label><input id="xp" type="number"></div>
+
+            <div class="field">
+                <label>XP</label>
+                <input id="xp" type="number">
+            </div>
         </div>
 
+        <!-- ECONOMY -->
         <div class="section">
             <h3>Economia</h3>
-            <div class="field"><label>Gold Min</label><input id="gold_min" type="number"></div>
-            <div class="field"><label>Gold Max</label><input id="gold_max" type="number"></div>
+
+            <div class="field">
+                <label>Gold Min</label>
+                <input id="gold_min" type="number">
+            </div>
+
+            <div class="field">
+                <label>Gold Max</label>
+                <input id="gold_max" type="number">
+            </div>
         </div>
 
+        <!-- LOOT -->
         <div class="section">
             <h3>Loot</h3>
+
+            <div class="hint">
+                Chance da 0 a 1 (0.5 = 50%)<br>
+                Min/Max = quantità drop
+            </div>
+
             <div id="lootContainer"></div>
-            <button id="addLootBtn">+ Loot</button>
+
+            <button id="addLootBtn">+ Aggiungi Loot</button>
         </div>
 
-        <div class="section">
-            <h3>Eventi</h3>
-            <div id="eventsContainer"></div>
-            <button id="addEventBtn">+ Evento</button>
-        </div>
-
+        <!-- SAVE -->
         <button id="saveBtn">💾 Salva Mob</button>
+        <button id="deleteBtn" style="background:#8b0000;">
+            🗑 Elimina Mob
+        </button>
 
     </div>
 

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Item Builder</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #111;
+            color: #eee;
+            display: flex;
+            margin: 0;
+        }
+
+        #left {
+            width: 25%;
+            background: #1b1b1b;
+            padding: 10px;
+            border-right: 1px solid #333;
+        }
+
+        #right {
+            width: 75%;
+            padding: 15px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 6px;
+            margin-bottom: 8px;
+            background: #222;
+            color: #fff;
+            border: 1px solid #444;
+        }
+
+        button {
+            width: 100%;
+            padding: 8px;
+            background: #444;
+            border: none;
+            color: white;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="left">
+        <h3>Items</h3>
+        <div id="itemList"></div>
+        <button onclick="newItem()">+ Nuovo</button>
+    </div>
+
+    <div id="right">
+
+        <h2>Item Editor</h2>
+
+        <div class="section">
+            <h3>Base</h3>
+            <input id="name" placeholder="name (snake_case)">
+            <input id="display_name" placeholder="Display Name">
+            <textarea id="description"></textarea>
+
+            <select id="type" onchange="updateType()">
+                <option value="misc">Misc</option>
+                <option value="weapon">Weapon</option>
+                <option value="armor">Armor</option>
+                <option value="consumable">Consumable</option>
+            </select>
+
+            <select id="rarity">
+                <option>common</option>
+                <option>uncommon</option>
+                <option>rare</option>
+                <option>epic</option>
+                <option>legendary</option>
+            </select>
+
+            <input id="value" type="number" placeholder="value">
+            <input id="weight" type="number" placeholder="weight">
+        </div>
+
+        <div id="weaponFields" class="section" style="display:none">
+            <h3>Weapon</h3>
+            <input id="damage" type="number" placeholder="damage">
+        </div>
+
+        <div id="armorFields" class="section" style="display:none">
+            <h3>Armor</h3>
+            <input id="defense" type="number" placeholder="defense">
+
+            <select id="slot">
+                <option>head</option>
+                <option>chest</option>
+                <option>legs</option>
+                <option>feet</option>
+                <option>hands</option>
+                <option>shield</option>
+            </select>
+        </div>
+
+        <div id="consumableFields" class="section" style="display:none">
+            <h3>Consumable</h3>
+            <input id="heal" type="number" placeholder="heal">
+            <input id="mana" type="number" placeholder="mana">
+        </div>
+
+        <button onclick="save()">💾 Salva</button>
+        <button onclick="deleteItem()" style="background:#8b0000;">
+            🗑 Elimina Item
+        </button>
+
+    </div>
+
+    <script src="item_editor.js"></script>
+
+</body>
+</html>

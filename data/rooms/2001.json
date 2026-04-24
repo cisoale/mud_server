@@ -4,16 +4,16 @@
         "down": {
             "closed": false,
             "door": true,
+            "key": null,
             "locked": false,
             "secret": false,
-            "to": 2002,
-            "key": null
+            "to": 2002
         }
     },
     "items": [],
     "mobs": [],
     "name": "La baita",
     "vnum": 2001,
-    "x": 882,
-    "y": 57
+    "x": 895.64453125,
+    "y": 58
 }

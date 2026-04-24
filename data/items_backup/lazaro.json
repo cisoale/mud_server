@@ -1,0 +1,9 @@
+{
+    "name": "lazaro",
+    "type": "weapon",
+    "slot": "weapon",
+    "damage": 24,
+    "crit": 120,
+    "weight": 12,
+    "vnum": 3008
+}

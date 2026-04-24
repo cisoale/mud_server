@@ -1,0 +1,11 @@
+{
+    "name": "Anello di legno",
+    "description": "Un rudimentale gioiello.",
+    "type": "armor",
+    "damage": 2,
+    "defense": 5,
+    "heal": 0,
+    "mana": 0,
+    "slot": "weapon",
+    "rarity": "common"
+}

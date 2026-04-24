@@ -1,0 +1,12 @@
+{
+    "name": "Elmo di cuoio.",
+    "description": "Attoppato con del cuio.",
+    "type": "armor",
+    "damage": 0,
+    "defense": 20,
+    "heal": 2,
+    "mana": 0,
+    "slot": "head",
+    "rarity": "common",
+    "vnum": 3006
+}

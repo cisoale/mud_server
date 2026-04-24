@@ -36,3 +36,15 @@ def execute(player, conn, args):
 
     msg = equip_item(player, item)
     conn.send(msg + "\n")
+
+from core.equipment_system import equip_item
+
+def execute(player, conn, args):
+
+    if not args:
+        conn.send("Usa: equip <item>\n")
+        return
+
+    ok, msg = equip_item(player, args[0])
+
+    conn.send(msg + "\n")

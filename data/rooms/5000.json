@@ -1,0 +1,30 @@
+{
+    "exits": {
+        "down": {
+            "closed": false,
+            "door": false,
+            "key": null,
+            "locked": false,
+            "secret": true,
+            "to": 1001
+        },
+        "east": {
+            "closed": false,
+            "door": false,
+            "key": null,
+            "locked": false,
+            "secret": false,
+            "to": 5001
+        }
+    },
+    "long_desc": "",
+    "name": "Terre degli enfant",
+    "short_desc": "puzza di bruciato",
+    "vnum": 5000,
+    "zone": "Terre bruciate",
+    "description": "",
+    "items": [],
+    "mobs": [],
+    "x": 100,
+    "y": 100
+}

@@ -1,0 +1,9 @@
+{
+    "name": "legno",
+    "display_name": "legno a terra",
+    "description": "",
+    "type": "misc",
+    "rarity": "common",
+    "value": 10,
+    "weight": 1
+}

@@ -1,0 +1,11 @@
+{
+    "name": "Armatura di legno",
+    "description": "Una rudimentale corazza di legno...chissa' quanto possa resistere!",
+    "type": "armor",
+    "damage": 0,
+    "defense": 7,
+    "heal": 0,
+    "mana": 0,
+    "slot": "body",
+    "rarity": "common"
+}

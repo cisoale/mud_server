@@ -1,21 +1,21 @@
 {
     "description": "",
     "exits": {
-        "east": {
-            "to": 2003,
-            "door": false,
-            "closed": false,
-            "locked": false,
-            "secret": false,
-            "key": null
-        },
         "down": {
-            "to": 2004,
-            "door": true,
             "closed": false,
+            "door": true,
+            "key": null,
             "locked": false,
             "secret": false,
-            "key": null
+            "to": 2004
+        },
+        "east": {
+            "closed": false,
+            "door": false,
+            "key": null,
+            "locked": false,
+            "secret": false,
+            "to": 2003
         }
     },
     "items": [],

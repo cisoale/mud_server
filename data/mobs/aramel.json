@@ -1,0 +1,18 @@
+{
+    "name": "aramel",
+    "description": "",
+    "level": 10,
+    "hp": 105,
+    "current_hp": 105,
+    "damage": 1,
+    "defense": 0,
+    "xp": 10000,
+    "inventory": [],
+    "loot": [],
+    "gold_min": 1000,
+    "gold_max": 50000,
+    "target": null,
+    "death_events": [],
+    "vnum": 1000,
+    "type": "boss"
+}

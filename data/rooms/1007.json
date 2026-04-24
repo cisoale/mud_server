@@ -3,11 +3,11 @@
     "exits": {
         "south": {
             "closed": false,
+            "door": false,
+            "key": null,
             "locked": false,
             "secret": false,
-            "to": 1005,
-            "door": false,
-            "key": null
+            "to": 1005
         }
     },
     "items": [],

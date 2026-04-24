@@ -1,12 +1,16 @@
 {
-    "name": "Armatura del primo guerriero.",
+    "name": "armatura_del_primo_guerriero",
+    "display_name": "Armatura Del Primo Guerriero",
     "description": "Logora ma resistente al tatto.",
     "type": "armor",
-    "damage": 0,
-    "defense": 50,
-    "heal": 10,
-    "mana": 0,
-    "slot": "body",
     "rarity": "rare",
-    "vnum": 3002
+    "value": 10,
+    "weight": 1,
+    "vnum": 3002,
+    "consumable": {
+        "heal": 10,
+        "mana": 0
+    },
+    "slot": "body",
+    "defense": 50
 }

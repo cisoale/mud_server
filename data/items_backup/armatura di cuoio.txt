@@ -1,0 +1,7 @@
+{
+    "name": "armatura",
+    "type": "armor",
+    "slot": "torso",
+    "armor": 33,
+    "weight": 5
+}

@@ -1,9 +1,12 @@
 {
     "name": "lazaro",
+    "display_name": "Lazaro",
+    "description": "",
     "type": "weapon",
-    "slot": "weapon",
-    "damage": 24,
-    "crit": 120,
+    "rarity": "common",
+    "value": 10,
     "weight": 12,
-    "vnum": 3008
+    "vnum": 3008,
+    "slot": "weapon",
+    "damage": 24
 }

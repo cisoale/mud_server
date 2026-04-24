@@ -1,12 +1,14 @@
 {
-    "name": "Anello nunziale.",
+    "name": "anello_nunziale",
+    "display_name": "Anello Nunziale",
     "description": "Una fede dalle iniziali sbiadite.",
     "type": "armor",
-    "damage": 0,
-    "defense": 0,
-    "heal": 0,
-    "mana": 0,
-    "slot": "",
     "rarity": "common",
-    "vnum": 3001
+    "value": 10,
+    "weight": 1,
+    "vnum": 3001,
+    "consumable": {
+        "heal": 0,
+        "mana": 0
+    }
 }

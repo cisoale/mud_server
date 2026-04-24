@@ -3,11 +3,11 @@
     "exits": {
         "up": {
             "closed": false,
+            "door": false,
+            "key": null,
             "locked": false,
             "secret": false,
-            "to": 1001,
-            "door": false,
-            "key": null
+            "to": 1001
         }
     },
     "items": [],

@@ -3,34 +3,103 @@ def get_total_weight(player):
 
     for item in player.get("inventory", []):
         if isinstance(item, dict):
-            total += item.get("weight", 1)
+            weight = item.get("weight", 1)
+            qty = item.get("quantity", 1)
+            total += weight * qty
 
     return total
 
 
-def can_carry(player, item):
-    weight = item.get("weight", 1)
+# =========================
+# CARRY CHECK
+# =========================
+def can_carry(player, item_name, quantity=1, item_data=None):
+
+    if not item_data:
+        item_data = {}
+
+    weight = item_data.get("weight", 1)
     total = get_total_weight(player)
 
-    return (total + weight) <= player.get("max_weight", 50)
+    return (total + (weight * quantity)) <= player.get("max_weight", 50)
 
 
-def add_item(player, item):
-    if not can_carry(player, item):
-        return False
+# =========================
+# ADD ITEM (STACK)
+# =========================
+def add_item(player, item_name, quantity=1):
 
-    player.setdefault("inventory", []).append(item)
-    return True
+    inv = player.setdefault("inventory", [])
 
-
-def remove_item(player, item_name):
-    inv = player.get("inventory", [])
-
+    # stack
     for item in inv:
-        name = item.get("name") if isinstance(item, dict) else str(item)
+        if item["name"] == item_name:
+            item["quantity"] += quantity
+            return
 
-        if item_name in name:
-            inv.remove(item)
+    inv.append({
+        "name": item_name,
+        "quantity": quantity
+    })
+
+
+# =========================
+# REMOVE ITEM
+# =========================
+def remove_item(player, item_name, quantity=1):
+
+    inventory = player.get("inventory", [])
+
+    for item in inventory:
+        if item["name"] == item_name:
+
+            if item["quantity"] < quantity:
+                return False
+
+            item["quantity"] -= quantity
+
+            if item["quantity"] <= 0:
+                inventory.remove(item)
+
+            return True
+
+    return False
+
+
+# =========================
+# FIND ITEM
+# =========================
+def find_item(player, name):
+
+    name = name.lower()
+
+    for item in player.get("inventory", []):
+
+        item_name = item.get("name", "").lower()
+        display = item.get("display_name", "").lower()
+
+        if name in item_name or name in display:
             return item
 
     return None
+
+
+# =========================
+# FORMAT INVENTORY
+# =========================
+def format_inventory(player):
+
+    inv = player.get("inventory", [])
+
+    if not inv:
+        return "Inventario vuoto.\n"
+
+    lines = ["--- Inventario ---"]
+
+    for item in inv:
+        name = item.get("display_name", item.get("name"))
+        qty = item.get("quantity", 1)
+
+        lines.append(f"{name} x{qty}")
+
+    return "\n".join(lines) + "\n"

@@ -1,0 +1,11 @@
+{
+    "name": "Pantaloni di seta",
+    "description": "Dei pantaloni logori.",
+    "type": "armor",
+    "damage": 1,
+    "defense": 0,
+    "heal": -1,
+    "mana": 0,
+    "slot": "legs",
+    "rarity": "common"
+}

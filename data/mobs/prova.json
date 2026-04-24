@@ -1,0 +1,18 @@
+{
+    "name": "prova",
+    "description": "",
+    "level": 1,
+    "hp": 10,
+    "current_hp": 10,
+    "damage": 1,
+    "defense": 0,
+    "xp": 10,
+    "inventory": [],
+    "loot": [],
+    "gold_min": 0,
+    "gold_max": 0,
+    "target": null,
+    "death_events": [],
+    "vnum": 1004,
+    "type": "normal"
+}

@@ -1,0 +1,22 @@
+{
+    "exits": {
+        "east": {
+            "closed": false,
+            "door": false,
+            "key": null,
+            "locked": false,
+            "secret": true,
+            "to": 5000
+        }
+    },
+    "long_desc": "",
+    "name": "Lo sterrato",
+    "short_desc": "",
+    "vnum": 5001,
+    "zone": "Terre bruciate",
+    "description": "",
+    "items": [],
+    "mobs": [],
+    "x": 100,
+    "y": 100
+}

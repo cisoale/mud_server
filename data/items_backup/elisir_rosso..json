@@ -1,0 +1,19 @@
+{
+    "name": "elisir_rosso",
+    "display_name": "Elisir Rosso",
+
+    "description": "Un'ampolla contenente un liquido rosso brillante.",
+
+    "type": "consumable",
+    "rarity": "common",
+
+    "consumable": {
+        "heal": 25,
+        "mana": 0
+    },
+
+    "value": 50,
+    "weight": 1,
+
+    "vnum": 3004
+}

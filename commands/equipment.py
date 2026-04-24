@@ -26,3 +26,8 @@ def execute(player, conn, args):
             conn.send(f"{slot.capitalize()}: {item.get('name')}\n")
         else:
             conn.send(f"{slot.capitalize()}: ---\n")
+
+from core.equipment_system import format_equipment
+
+def execute(player, conn, args):
+    conn.send(format_equipment(player))

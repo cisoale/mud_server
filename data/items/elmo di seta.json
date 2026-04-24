@@ -1,0 +1,11 @@
+{
+    "name": "elmo di seta",
+    "description": "",
+    "type": "weapon",
+    "damage": 0,
+    "defense": 0,
+    "heal": 0,
+    "mana": 0,
+    "slot": "head",
+    "rarity": "epic"
+}

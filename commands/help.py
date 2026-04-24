@@ -1,55 +1,28 @@
-name = "help"
-category = "system"
-description = "Mostra tutti i comandi disponibili"
-usage = "help [comando]"
+from core.command_registry import get_commands
 
 
-def execute(player, conn, args):
+def cmd_help(player, args):
 
-    from core.command_handler import commands
+    commands = get_commands()
 
-    # =========================
-    # HELP SPECIFICO
-    # =========================
-    if args:
-        cmd = args[0]
+    grouped = {}
 
-        if cmd in commands:
-            c = commands[cmd]
-
-            msg = f"\n{c['name'].upper()}\n"
-            msg += f"Descrizione: {c['description']}\n"
-            msg += f"Uso: {c['usage']}\n"
-
-            conn.send(msg)
-        else:
-            conn.send("Comando non trovato.\n")
-
-        return
-
-    # =========================
-    # LISTA PER CATEGORIA
-    # =========================
-    categories = {}
-
-    for cmd_name, data in commands.items():
-
+    # raggruppa per categoria
+    for name, data in commands.items():
         cat = data["category"]
 
-        if cat not in categories:
-            categories[cat] = []
+        if cat not in grouped:
+            grouped[cat] = []
 
-        categories[cat].append(cmd_name)
+        grouped[cat].append((name, data["description"]))
 
-    msg = "\n=== COMANDI ===\n"
+    # output
+    player["conn"].send("\n=== COMANDI DISPONIBILI ===\n")
 
-    for cat in sorted(categories):
+    for cat, cmds in grouped.items():
+        player["conn"].send(f"\n[{cat}]\n")
 
-        msg += f"\n[{cat.upper()}]\n"
+        for name, desc in cmds:
+            player["conn"].send(f" - {name}: {desc}\n")
 
-        for cmd in sorted(categories[cat]):
-            msg += f" - {cmd}\n"
-
-    msg += "\nDigita 'help <comando>' per dettagli.\n"
-
-    conn.send(msg)
+    player["conn"].send("\n")

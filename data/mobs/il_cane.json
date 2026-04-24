@@ -1,0 +1,19 @@
+{
+    "name": "Il cane",
+    "description": "Il cane randagio.",
+    "level": 1,
+    "hp": 10,
+    "current_hp": 10,
+    "damage": 1,
+    "defense": 0,
+    "xp": 10,
+    "inventory": [],
+    "loot": [],
+    "gold_min": 5,
+    "gold_max": 10,
+    "target": null,
+    "death_events": [],
+    "vnum": null,
+    "type": "normal",
+    "aggressive": false
+}

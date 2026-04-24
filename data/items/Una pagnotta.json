@@ -1,7 +1,10 @@
 {
-    "name": "Una pagnotta",
-    "slot": "",
-    "damage": 0,
-    "armor": 0,
+    "name": "una_pagnotta",
+    "display_name": "Una Pagnotta",
+    "description": "",
+    "type": "misc",
+    "rarity": "common",
+    "value": 10,
+    "weight": 1,
     "vnum": 3012
 }

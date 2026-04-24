@@ -19,9 +19,18 @@
         }
     },
     "items": [],
-    "mobs": [],
+    "mobs": [
+        "goblin",
+        "goblin",
+        "goblin"
+    ],
     "name": "La bottega delle pozioni",
+    "position": {
+        "x": 149,
+        "y": 108,
+        "z": 0
+    },
     "vnum": 1011,
-    "x": 149,
-    "y": 108
+    "x": 100,
+    "y": 100
 }

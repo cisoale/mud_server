@@ -1,12 +1,10 @@
 {
-    "name": "elisir velenoso",
+    "name": "elisir_velenoso",
+    "display_name": "Elisir Velenoso",
+    "description": "",
     "type": "consumable",
-    "effects": [
-        {
-            "type": "poison",
-            "duration": 5,
-            "value": 3
-        }
-    ],
+    "rarity": "common",
+    "value": 10,
+    "weight": 1,
     "vnum": 3005
 }
