@@ -2,6 +2,12 @@ from flask import Flask, request, jsonify, send_from_directory
 import os
 import json
 
+import sys
+import os
+
+# 🔥 FIX PATH ROOT
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
 # =========================
 # INIT
 # =========================
