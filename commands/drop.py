@@ -1,53 +1,108 @@
-from core.world import get_room
-from core.inventory import remove_item
+from core.world import get_room, broadcast_room
+from core.item_utils import add_item
 
 
 def execute(player, conn, args):
 
     if not args:
-        conn.send("Drop cosa?\n")
+        conn.send("Lasciare cosa?\n")
         return
 
-    search = " ".join(args).lower()
+    room = get_room(player.get("room"))
+    if not room:
+        conn.send("Errore stanza.\n")
+        return
 
     inventory = player.get("inventory", [])
 
-    target = None
-
     # =========================
-    # 🔍 MATCH INTELLIGENTE
+    # DROP ALL
     # =========================
-    for item in inventory:
+    if args[0].lower() == "all":
 
-        if isinstance(item, dict):
-            name = item.get("name", "").lower()
-        else:
-            name = str(item).lower()
+        if len(args) < 2 or args[1].lower() != "yes":
+            conn.send("Sei sicuro? Scrivi: drop all yes\n")
+            return
 
-        if (
-            search in name
-            or name in search
-            or any(word in name for word in search.split())
-        ):
-            target = item
-            break
+        if not inventory:
+            conn.send("Non hai nulla.\n")
+            return
 
-    if not target:
-        conn.send("Non ce l'hai.\n")
+        for item in list(inventory):
+            add_item(room.items, item)
+            inventory.remove(item)
+
+        conn.send("Hai lasciato tutto a terra.\n")
+
+        broadcast_room(
+            room,
+            f"{player['name']} lascia tutto a terra.\n",
+            exclude=player
+        )
         return
 
     # =========================
-    # RIMUOVI DALL'INVENTARIO
+    # DROP X (quantità)
     # =========================
-    inventory.remove(target)
+    amount = None
+    search = ""
 
-    room = get_room(player["room"])
+    # es: drop 2 potion
+    if args[0].isdigit():
+        amount = int(args[0])
+        search = " ".join(args[1:]).lower()
+    else:
+        search = " ".join(args).lower()
 
-    if not hasattr(room, "items"):
-        room.items = []
+    for item in list(inventory):
 
-    room.items.append(target)
+        name = item.get("name", "").lower()
 
-    name = target.get("name") if isinstance(target, dict) else str(target)
+        if search in name:
 
-    conn.send(f"Hai lasciato {name}.\n")
+            qty = item.get("quantity", 1)
+
+            # =========================
+            # DROP PARZIALE
+            # =========================
+            if amount and item.get("stackable"):
+
+                if amount >= qty:
+                    add_item(room.items, item)
+                    inventory.remove(item)
+
+                    conn.send(f"Hai lasciato tutto ({qty}) {item.get('display_name', name)}.\n")
+
+                else:
+                    item["quantity"] -= amount
+
+                    dropped = item.copy()
+                    dropped["quantity"] = amount
+
+                    add_item(room.items, dropped)
+
+                    conn.send(f"Hai lasciato {amount} {item.get('display_name', name)}.\n")
+
+                broadcast_room(
+                    room,
+                    f"{player['name']} lascia {amount} {item.get('display_name', name)}.\n",
+                    exclude=player
+                )
+                return
+
+            # =========================
+            # DROP NORMALE
+            # =========================
+            add_item(room.items, item)
+            inventory.remove(item)
+
+            conn.send(f"Hai lasciato {item.get('display_name', name)}.\n")
+
+            broadcast_room(
+                room,
+                f"{player['name']} lascia {item.get('display_name', name)}.\n",
+                exclude=player
+            )
+            return
+
+    conn.send("Non hai quell'oggetto.\n")

@@ -1,5 +1,4 @@
 {
-    "description": "La strettoia",
     "exits": {
         "north": {
             "closed": false,
@@ -7,21 +6,25 @@
             "key": null,
             "locked": false,
             "secret": false,
-            "to": 1007
+            "to": 5004
         },
-        "west": {
+        "south": {
             "closed": false,
             "door": false,
             "key": null,
             "locked": false,
             "secret": false,
-            "to": 1003
+            "to": 5002
         }
     },
+    "long_desc": "",
+    "name": "",
+    "short_desc": "",
+    "vnum": 5003,
+    "zone": "",
+    "description": "",
     "items": [],
     "mobs": [],
-    "name": "Viale",
-    "vnum": 1005,
-    "x": 567.2973030090463,
-    "y": 166.55827870399443
+    "x": 100,
+    "y": 100
 }

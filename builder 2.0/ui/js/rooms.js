@@ -1,323 +1,162 @@
-﻿// =========================
-// STATE
-// =========================
-let rooms = [];
-let currentRoom = null;
+﻿let rooms = [], currentRoom = null;
+let canvas, ctx, wrapper, positions = {}, dragging = null;
+let camera = { zoom: 1 };
 
-let canvas, ctx;
-let positions = {}; // vnum -> {x,y}
-let dragging = null;
-
-// =========================
-// UTILS
-// =========================
-function $(id) { return document.getElementById(id); }
-
-function setVal(id, value) {
-    const el = $(id);
-    if (el) el.value = value ?? "";
-}
-
-function getVal(id) {
-    const el = $(id);
-    return el ? el.value : "";
-}
-
-// =========================
-// INIT
-// =========================
-window.addEventListener("load", () => {
+window.onload = () => {
+    canvas = mapCanvas;
+    wrapper = mapWrapper;
+    ctx = canvas.getContext("2d");
     initCanvas();
     loadRooms();
-});
+};
 
-// =========================
-// LOAD ROOMS
-// =========================
 async function loadRooms() {
+    let r = await fetch("/rooms");
+    rooms = (await r.json()).rooms || [];
+    positions = {};
 
-    const res = await fetch("/rooms");
-    const data = await res.json();
-
-    rooms = data.rooms || [];
-
-    // assegna posizione se manca
-    rooms.forEach(r => {
-        if (!positions[r.vnum]) {
-            positions[r.vnum] = {
-                x: Math.random() * 700 + 80,
-                y: Math.random() * 400 + 80
-            };
-        }
+    rooms.forEach((x, i) => {
+        positions[x.vnum] = x.pos || { x: 100 + i * 120, y: 100 + i * 80 };
     });
 
     renderRoomList();
-
-    if (rooms.length > 0) {
-        currentRoom = rooms[0];
-        loadRoom(currentRoom);
-    }
-
+    if (rooms.length) { currentRoom = rooms[0]; loadRoom(currentRoom); }
     drawMap();
 }
 
-// =========================
-// LIST
-// =========================
 function renderRoomList() {
-
-    const list = $("roomList");
-    if (!list) return;
-
-    list.innerHTML = "";
-
+    roomList.innerHTML = "";
     rooms.forEach(r => {
-
-        const div = document.createElement("div");
-        div.className = "mob-item";
-        div.innerText = `${r.vnum} - ${r.name || ""}`;
-
-        if (currentRoom && currentRoom.vnum === r.vnum)
-            div.classList.add("active");
-
-        div.onclick = () => {
-            currentRoom = r;
-            loadRoom(r);
-            renderRoomList();
-            drawMap();
-        };
-
-        list.appendChild(div);
+        let d = document.createElement("div");
+        d.className = "item";
+        if (currentRoom && currentRoom.vnum === r.vnum) d.classList.add("active");
+        d.innerText = r.vnum + " - " + (r.name || "");
+        d.onclick = () => { currentRoom = r; loadRoom(r); renderRoomList(); drawMap(); };
+        roomList.appendChild(d);
     });
 }
 
-// =========================
-// LOAD ROOM
-// =========================
+function deleteRoom() {
+    if (!currentRoom) return alert("Select room");
+    rooms = rooms.filter(r => r.vnum !== currentRoom.vnum);
+    saveRooms();
+}
+
 function loadRoom(r) {
-
-    if (!r) return;
-
-    setVal("room_vnum", r.vnum);
-    setVal("room_name", r.name);
-    setVal("room_zone", r.zone);
-
-    setVal("room_short", r.short_desc);
-    setVal("room_long", r.long_desc);
-
-    // exits sempre renderizzati
+    room_vnum.value = r.vnum || "";
+    room_name.value = r.name || "";
+    room_zone.value = r.zone || "";
+    room_short.value = r.short_desc || "";
+    room_long.value = r.long_desc || "";
     renderExits(r.exits || {});
 }
 
-// =========================
-// NEW ROOM
-// =========================
 function newRoom() {
-
     currentRoom = null;
-
-    setVal("room_vnum", "");
-    setVal("room_name", "");
-    setVal("room_zone", "");
-
-    setVal("room_short", "");
-    setVal("room_long", "");
-
+    room_vnum.value = "";
+    room_name.value = "";
+    room_zone.value = "";
+    room_short.value = "";
+    room_long.value = "";
     renderExits({});
 }
 
-// =========================
-// EXITS UI
-// =========================
 function renderExits(exits) {
+    exitsContainer.innerHTML = "";
+    ["north", "south", "east", "west", "up", "down"].forEach(dir => {
+        let e = exits[dir] || {};
+        let d = document.createElement("div");
+        d.className = "exit-card";
+        d.dataset.dir = dir;
 
-    const container = $("exitsContainer");
-    if (!container) return;
+        d.innerHTML = `
+<div class="exit-title">${dir}</div>
+<div class="exit-row">
+<input value="${e.to || ""}">
+<input value="${e.key || ""}">
+</div>
+<div class="exit-flags">
+<label><input type="checkbox" ${e.door ? "checked" : ""}>door</label>
+<label><input type="checkbox" ${e.closed ? "checked" : ""}>closed</label>
+<label><input type="checkbox" ${e.locked ? "checked" : ""}>locked</label>
+<label><input type="checkbox" ${e.secret ? "checked" : ""}>secret</label>
+</div>`;
 
-    container.innerHTML = "";
-
-    const dirs = ["north", "south", "east", "west", "up", "down"];
-
-    dirs.forEach(dir => {
-
-        const e = exits[dir] || {};
-
-        const div = document.createElement("div");
-        div.className = "exit-card";
-        div.dataset.dir = dir;
-
-        div.innerHTML = `
-            <div class="exit-title">${dir.toUpperCase()}</div>
-            <div class="exit-row">
-                <input type="number" placeholder="to" value="${e.to || ""}">
-
-                <label><input type="checkbox" ${e.door ? "checked" : ""}>door</label>
-                <label><input type="checkbox" ${e.closed ? "checked" : ""}>closed</label>
-                <label><input type="checkbox" ${e.locked ? "checked" : ""}>locked</label>
-
-                <input type="number" placeholder="key" value="${e.key || ""}">
-
-                <label><input type="checkbox" ${e.secret ? "checked" : ""}>secret</label>
-            </div>
-        `;
-
-        container.appendChild(div);
+        exitsContainer.appendChild(d);
     });
 }
 
-// =========================
-// READ EXITS
-// =========================
 function readExits() {
-
-    const res = {};
-    const container = $("exitsContainer");
-
-    if (!container) return res;
-
-    [...container.children].forEach(card => {
-
-        const dir = card.dataset.dir;
-        const row = card.querySelector(".exit-row").children;
-
-        const to = parseInt(row[0].value) || null;
-
+    let res = {};
+    [...exitsContainer.children].forEach(c => {
+        let i = c.querySelectorAll("input");
+        let to = parseInt(i[0].value);
         if (!to) return;
-
-        res[dir] = {
-            to: to,
-            door: row[1].firstChild.checked,
-            closed: row[2].firstChild.checked,
-            locked: row[3].firstChild.checked,
-            key: parseInt(row[4].value) || null,
-            secret: row[5].firstChild.checked
+        res[c.dataset.dir] = {
+            to,
+            key: parseInt(i[1].value) || null,
+            door: i[2].checked,
+            closed: i[3].checked,
+            locked: i[4].checked,
+            secret: i[5].checked
         };
     });
-
     return res;
 }
 
-// =========================
-// BUILD ROOM
-// =========================
 function buildRoom() {
-
-    const vnum = parseInt(getVal("room_vnum"));
-
+    let v = parseInt(room_vnum.value);
     return {
-        vnum: vnum,
-        name: getVal("room_name"),
-        short_desc: getVal("room_short"),
-        long_desc: getVal("room_long"),
-        zone: getVal("room_zone"),
-        exits: readExits()
+        vnum: v,
+        name: room_name.value,
+        short_desc: room_short.value,
+        long_desc: room_long.value,
+        zone: room_zone.value,
+        exits: readExits(),
+        pos: positions[v]
     };
 }
 
-// =========================
-// SAVE
-// =========================
 async function saveRooms() {
+    let r = buildRoom();
+    let i = rooms.findIndex(x => x.vnum === r.vnum);
+    if (i >= 0) rooms[i] = r; else rooms.push(r);
 
-    const room = buildRoom();
-
-    if (!room.vnum) {
-        alert("Inserisci VNUM valido");
-        return;
-    }
-
-    const idx = rooms.findIndex(r => r.vnum === room.vnum);
-
-    if (idx >= 0) {
-        rooms[idx] = room;
-    } else {
-        rooms.push(room);
-    }
-
-    const res = await fetch("/save_rooms", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rooms: rooms })
-    });
-
-    const result = await res.json();
-
-    if (result.status !== "ok") {
-        alert("Errore salvataggio");
-        return;
-    }
-
-    alert("Room salvata!");
-
-    await loadRooms();
-
-    currentRoom = rooms.find(r => r.vnum === room.vnum);
-
-    renderRoomList();
-    loadRoom(currentRoom);
-    drawMap();
+    await fetch("/save_rooms", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ rooms }) });
+    loadRooms();
 }
 
-// =========================
-// CANVAS
-// =========================
 function initCanvas() {
-
-    canvas = $("mapCanvas");
-    if (!canvas) return;
-
-    ctx = canvas.getContext("2d");
-
-    canvas.addEventListener("mousedown", e => {
-        const r = hitNode(e);
+    canvas.onmousedown = e => {
+        let r = hitNode(e);
         if (r) dragging = r.vnum;
-    });
+    };
 
-    canvas.addEventListener("mousemove", e => {
+    canvas.onmousemove = e => {
         if (!dragging) return;
-
-        const pos = getMouse(e);
-        positions[dragging] = pos;
-
+        positions[dragging] = getMouseWorld(e);
         drawMap();
-    });
+    };
 
-    canvas.addEventListener("mouseup", () => dragging = null);
-    canvas.addEventListener("mouseleave", () => dragging = null);
+    canvas.onmouseup = () => dragging = null;
 
-    canvas.addEventListener("click", e => {
-        const r = hitNode(e);
-        if (!r) return;
-
-        currentRoom = r;
-        loadRoom(r);
-        renderRoomList();
+    canvas.onwheel = e => {
+        e.preventDefault();
+        camera.zoom = Math.max(0.3, Math.min(2.5, camera.zoom - e.deltaY * 0.001));
         drawMap();
-    });
+    };
 }
 
-// =========================
-// MAP DRAW
-// =========================
 function drawMap() {
-
-    if (!ctx) return;
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.scale(camera.zoom, camera.zoom);
 
-    // linee
     rooms.forEach(r => {
-        const p = positions[r.vnum];
-        if (!p) return;
-
-        const exits = r.exits || {};
-
-        Object.values(exits).forEach(e => {
-            if (!e || !e.to) return;
-
-            const t = positions[e.to];
+        let p = positions[r.vnum];
+        Object.values(r.exits || {}).forEach(e => {
+            let t = positions[e.to];
             if (!t) return;
-
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(t.x, t.y);
@@ -326,48 +165,32 @@ function drawMap() {
         });
     });
 
-    // nodi
     rooms.forEach(r => {
-        const p = positions[r.vnum];
-        if (!p) return;
-
+        let p = positions[r.vnum];
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 16, 0, Math.PI * 2);
-        ctx.fillStyle = (currentRoom && currentRoom.vnum === r.vnum)
-            ? "#facc15"
-            : "#0ea5e9";
+        ctx.arc(p.x, p.y, 15, 0, 6.28);
+        ctx.fillStyle = "#0ea5e9";
         ctx.fill();
-
         ctx.fillStyle = "#fff";
-        ctx.font = "11px Arial";
         ctx.fillText(r.vnum, p.x - 10, p.y + 4);
     });
+
+    ctx.restore();
 }
 
-// =========================
-// HELPERS MAP
-// =========================
-function getMouse(e) {
-    const rect = canvas.getBoundingClientRect();
+function getMouseWorld(e) {
+    let r = canvas.getBoundingClientRect();
     return {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
+        x: (e.clientX - r.left + wrapper.scrollLeft) / camera.zoom,
+        y: (e.clientY - r.top + wrapper.scrollTop) / camera.zoom
     };
 }
 
 function hitNode(e) {
-    const m = getMouse(e);
-
+    let m = getMouseWorld(e);
     for (let r of rooms) {
-        const p = positions[r.vnum];
-        if (!p) continue;
-
-        const dx = m.x - p.x;
-        const dy = m.y - p.y;
-
-        if (Math.sqrt(dx * dx + dy * dy) < 16)
-            return r;
+        let p = positions[r.vnum];
+        if (Math.hypot(m.x - p.x, m.y - p.y) < 15) return r;
     }
-
     return null;
 }

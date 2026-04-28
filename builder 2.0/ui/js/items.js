@@ -1,97 +1,118 @@
-﻿let currentItem = null;
-let items = [];
+﻿let items = [];
+let currentItem = null;
 
-function $(id) { return document.getElementById(id); }
-
-// LOAD
 async function loadItems() {
-    const res = await fetch("/items");
-    items = await res.json();
-    renderItemList();
+
+    try {
+        const res = await fetch("/items");
+
+        if (!res.ok) {
+            console.error("Errore HTTP /items", res.status);
+            return;
+        }
+
+        const data = await res.json();
+
+        console.log("ITEMS:", data);
+
+        // 🔥 SUPPORTA ENTRAMBI I FORMATI
+        items = Array.isArray(data) ? data : (data.items || []);
+
+        renderItems();
+
+    } catch (err) {
+        console.error("Errore loadItems:", err);
+    }
 }
 
-// LIST
-function renderItemList() {
-    const list = $("itemList");
+function renderItems() {
+
+    const list = document.getElementById("itemList");
+    if (!list) return;
+
     list.innerHTML = "";
 
     items.forEach(i => {
-        const div = document.createElement("div");
-        div.className = "mob-item";
-        div.innerText = i.name;
 
-        if (currentItem && currentItem.name === i.name)
-            div.classList.add("active");
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerText = i.name || "NO_NAME";
+
+        if (currentItem && currentItem.name === i.name) {
+            div.style.background = "#1e293b";
+        }
 
         div.onclick = () => {
             currentItem = i;
             loadItem(i);
-            renderItemList();
+            renderItems();
         };
 
         list.appendChild(div);
     });
 }
 
-// LOAD ITEM
 function loadItem(i) {
-    $("item_name").value = i.name || "";
-    $("item_display_name").value = i.display_name || "";
-    $("item_type").value = i.type || "misc";
-    $("item_value").value = i.value || 10;
+
+    item_name.value = i.name || "";
+    item_display_name.value = i.display_name || "";
+    item_type.value = i.type || "misc";
+
+    item_value.value = i.value || 0;
+    item_weight.value = i.weight || 0;
+
+    item_slot.value = i.slot || "";
+    item_defense.value = i.defense || 0;
+    item_damage.value = i.damage || 0;
 }
 
-// NEW
 function newItem() {
     currentItem = null;
-    $("item_name").value = "";
-    $("item_display_name").value = "";
-    $("item_type").value = "misc";
-    $("item_value").value = 10;
+    item_name.value = "";
+    item_display_name.value = "";
 }
 
-// SAVE
-async function saveItem() {
+function deleteItem() {
 
-    const data = {
-        name: $("item_name").value,
-        display_name: $("item_display_name").value,
-        type: $("item_type").value,
-        value: +$("item_value").value
-    };
-
-    const res = await fetch("/save_item", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-    });
-
-    const result = await res.json();
-
-    if (result.status !== "ok") {
-        alert("Errore salvataggio");
-        return;
-    }
-
-    alert("Item salvato");
-    loadItems();
-}
-
-// DELETE
-async function deleteItem() {
-
-    if (!currentItem) return;
+    if (!currentItem) return alert("Seleziona un item");
 
     if (!confirm("Eliminare item?")) return;
 
-    await fetch("/delete_item", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: currentItem.name })
-    });
-
+    items = items.filter(i => i.name !== currentItem.name);
     currentItem = null;
-    loadItems();
+
+    saveItem();
 }
 
-loadItems();
+async function saveItem() {
+
+    const item = {
+        name: item_name.value,
+        display_name: item_display_name.value,
+        type: item_type.value,
+
+        value: parseInt(item_value.value) || 0,
+        weight: parseInt(item_weight.value) || 0,
+
+        slot: item_slot.value,
+        defense: parseInt(item_defense.value) || 0,
+        damage: parseInt(item_damage.value) || 0,
+
+        rarity: "common",
+        stackable: false,
+        effects: {}
+    };
+
+    const idx = items.findIndex(i => i.name === item.name);
+
+    if (idx >= 0) items[idx] = item;
+    else items.push(item);
+
+    await fetch("/save_items", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items })
+    });
+
+    loadItems();
+}

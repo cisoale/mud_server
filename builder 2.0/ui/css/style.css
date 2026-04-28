@@ -207,3 +207,55 @@ button:hover {
   border: 1px solid #1e293b;
   cursor: pointer;
 }
+
+#mapWrapper {
+    width: 100%;
+    height: 500px;
+    overflow: auto;
+    border: 1px solid #1e293b;
+    background: #020617;
+}
+
+#mapInner {
+    width: 2000px;
+    height: 2000px;
+    position: relative;
+}
+
+#mapCanvas {
+    display: block;
+}
+
+/* =========================
+   MAP SCROLL SYSTEM
+========================= */
+
+#mapWrapper {
+    width: 100%;
+    height: 500px;
+    overflow: auto;
+    border: 1px solid #1e293b;
+    background: #020617;
+    position: relative;
+}
+
+#mapInner {
+    width: 3000px;
+    height: 3000px;
+    position: relative;
+}
+
+#mapCanvas {
+    display: block;
+}
+
+/* opzionale scrollbar styling */
+#mapWrapper::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#mapWrapper::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}

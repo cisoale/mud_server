@@ -1,28 +1,53 @@
-from core.command_registry import get_commands
+# =========================
+# HELP COMMAND
+# =========================
 
+def execute(player, conn, args):
 
-def cmd_help(player, args):
+    from core.command_handler import commands, aliases
 
-    commands = get_commands()
+    # =========================
+    # HELP SPECIFICO
+    # =========================
+    if args:
+        cmd = args[0].lower()
 
-    grouped = {}
+        if cmd in aliases:
+            cmd = aliases[cmd]
 
-    # raggruppa per categoria
-    for name, data in commands.items():
-        cat = data["category"]
+        func = commands.get(cmd)
 
-        if cat not in grouped:
-            grouped[cat] = []
+        if not func:
+            conn.send("Comando non trovato.\n")
+            return
 
-        grouped[cat].append((name, data["description"]))
+        # prova a leggere docstring
+        desc = func.__doc__ or "Nessuna descrizione disponibile."
 
-    # output
-    player["conn"].send("\n=== COMANDI DISPONIBILI ===\n")
+        conn.send(f"\n=== HELP: {cmd} ===\n")
+        conn.send(desc.strip() + "\n")
 
-    for cat, cmds in grouped.items():
-        player["conn"].send(f"\n[{cat}]\n")
+        # alias collegati
+        related_aliases = [a for a, c in aliases.items() if c == cmd]
 
-        for name, desc in cmds:
-            player["conn"].send(f" - {name}: {desc}\n")
+        if related_aliases:
+            conn.send(f"Alias: {', '.join(related_aliases)}\n")
 
-    player["conn"].send("\n")
+        return
+
+    # =========================
+    # LISTA COMANDI
+    # =========================
+    conn.send("\n=== COMANDI DISPONIBILI ===\n")
+
+    sorted_cmds = sorted(commands.keys())
+
+    for cmd in sorted_cmds:
+
+        func = commands[cmd]
+
+        desc = func.__doc__.split("\n")[0] if func.__doc__ else ""
+
+        conn.send(f"- {cmd:10} {desc}\n")
+
+    conn.send("\nUsa: help <comando> per dettagli\n")

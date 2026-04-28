@@ -1,0 +1,52 @@
+{
+  "vnum": 5001,
+
+  "name": "locandiere",
+  "description": "Un uomo robusto con un sorriso accogliente. Sembra sapere molte cose del posto.",
+
+  "hp": 100,
+  "damage": 2,
+  "defense": 5,
+
+  "xp": 0,
+
+  "gold_min": 0,
+  "gold_max": 0,
+
+  "ai": "passive",
+  "npc": true,
+
+  "dialogues": [
+    "Benvenuto nella mia locanda!",
+    "Se cerchi lavoro, ho qualcosa per te.",
+    "Attento ai goblin nel bosco.",
+    "Qui sei al sicuro... per ora."
+  ],
+
+  "quests": [
+    {
+      "id": "goblin_easy",
+      "label": "Lavoro facile",
+      "target": "goblin",
+      "required": 3,
+      "reward_gold": 20,
+      "reward_xp": 40
+    },
+    {
+      "id": "goblin_med",
+      "label": "Lavoro medio",
+      "target": "goblin",
+      "required": 6,
+      "reward_gold": 50,
+      "reward_xp": 100
+    },
+    {
+      "id": "goblin_pro",
+      "label": "Lavoro pericoloso",
+      "target": "goblin_scout",
+      "required": 5,
+      "reward_gold": 100,
+      "reward_xp": 200
+    }
+  ]
+}

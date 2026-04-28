@@ -1,17 +1,12 @@
 {
-    "name": "guardia",
-    "description": "",
-    "level": 5,
-    "hp": 10,
-    "current_hp": 10,
-    "damage": 1,
-    "defense": 11,
-    "xp": 100,
-    "inventory": [],
-    "loot": [],
-    "gold_min": 1,
-    "gold_max": 9,
-    "target": null,
-    "death_events": [],
-    "vnum": null
+  "name": "guardia",
+  "hp": 40,
+  "damage": 6,
+  "defense": 2,
+  "xp": 25,
+
+  "ai": "patrol",
+
+  "patrol_route": [1001, 1002, 1003, 1002],
+  "patrol_delay": 5
 }

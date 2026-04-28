@@ -1,0 +1,22 @@
+{
+    "vnum": 5004,
+    "name": "",
+    "short_desc": "",
+    "long_desc": "",
+    "zone": "",
+    "exits": {
+        "south": {
+            "to": 5003,
+            "key": null,
+            "door": false,
+            "closed": false,
+            "locked": false,
+            "secret": false
+        }
+    },
+    "description": "",
+    "items": [],
+    "mobs": [],
+    "x": 100,
+    "y": 100
+}

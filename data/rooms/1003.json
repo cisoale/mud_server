@@ -1,5 +1,5 @@
 {
-    "description": "SDFD",
+    "description": "",
     "exits": {
         "east": {
             "closed": false,
@@ -19,9 +19,12 @@
         }
     },
     "items": [],
+    "long_desc": "",
     "mobs": [],
-    "name": "CORTILE",
+    "name": "Cortile",
+    "short_desc": "",
     "vnum": 1003,
-    "x": 479,
-    "y": 107.5
+    "x": 497.0270320312702,
+    "y": 170.88260307185757,
+    "zone": "Villaggio umano"
 }

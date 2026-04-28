@@ -1,4 +1,5 @@
 {
+    "description": "",
     "exits": {
         "down": {
             "closed": false,
@@ -17,14 +18,13 @@
             "to": 5001
         }
     },
+    "items": [],
     "long_desc": "",
+    "mobs": [],
     "name": "Terre degli enfant",
     "short_desc": "puzza di bruciato",
     "vnum": 5000,
-    "zone": "Terre bruciate",
-    "description": "",
-    "items": [],
-    "mobs": [],
-    "x": 100,
-    "y": 100
+    "x": 228.91892122375523,
+    "y": 93.04476445032097,
+    "zone": "Terre bruciate"
 }

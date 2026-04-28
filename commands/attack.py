@@ -2,79 +2,22 @@ from core.world import get_room
 from core.combat_system import start_combat
 
 
-# =========================
-# TROVA TARGET
-# =========================
-def find_target(room, name):
-    """
-    Trova un mob nella stanza usando match parziale (case insensitive)
-    """
-    name = name.lower()
-
-    matches = []
-
-    for mob in room.mobs:
-        if name in mob.get("name", "").lower():
-            matches.append(mob)
-
-    if not matches:
-        return None
-
-    return matches[0]
-
-
-# =========================
-# COMANDO ATTACK
-# =========================
 def execute(player, conn, args):
 
-    # =========================
-    # VALIDAZIONE
-    # =========================
     if not args:
-        conn.send("Attaccare cosa?\n")
+        conn.send("Attacca cosa?\n")
         return
 
-    if player.get("target"):
-        conn.send("Sei già in combattimento!\n")
-        return
-
-    room = get_room(player.get("room"))
-
+    room = get_room(player["room"])
     if not room:
-        conn.send("Errore: stanza non trovata.\n")
+        conn.send("Errore stanza.\n")
         return
 
-    if not hasattr(room, "mobs"):
-        conn.send("Errore: stanza corrotta.\n")
-        return
+    target_name = " ".join(args).lower()
 
-    # =========================
-    # TARGET
-    # =========================
-    target_name = " ".join(args)
+    for mob in room.mobs:
+        if mob["name"].lower() == target_name:
+            start_combat(player, mob, conn)
+            return
 
-    target = find_target(room, target_name)
-
-    if not target:
-        conn.send("Non trovi quel bersaglio.\n")
-        return
-
-    # evita attacco su mob già occupato
-    if target.get("target") and target["target"] != player:
-        conn.send(f"{target['name']} è già impegnato in combattimento!\n")
-        return
-
-    # =========================
-    # START COMBAT
-    # =========================
-    conn.send(f"Attacchi {target['name']}!\n")
-
-    try:
-        # 🔥 NON gestiamo morte qui
-        # verrà gestita nel combat_system
-        start_combat(player, target, conn)
-
-    except Exception as e:
-        print("[ERRORE ATTACK]", e)
-        conn.send("Errore durante l'attacco.\n")
+    conn.send("Nessun bersaglio trovato.\n")

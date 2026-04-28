@@ -1,0 +1,14 @@
+[
+  {
+    "room": 1001,
+    "mob": "goblin",
+    "max_alive": 2,
+    "respawn": 20
+  },
+  {
+    "room": 1001,
+    "mob": "guardia",
+    "max_alive": 1,
+    "respawn": 30
+  }
+]

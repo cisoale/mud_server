@@ -9,3 +9,5 @@ def execute(player, conn, args):
 
     for item in room.items:
         conn.send(str(item) + "\n")
+
+print("[DEBUG INVENTORY]", player.get("inventory"))

@@ -1,5 +1,4 @@
 {
-    "description": "Il vecchio è in fondo al bancone con gli attrezzi difronte a lui.",
     "exits": {
         "south": {
             "closed": false,
@@ -7,13 +6,17 @@
             "key": null,
             "locked": false,
             "secret": false,
-            "to": 1005
+            "to": 5001
         }
     },
+    "long_desc": "",
+    "name": "Il viale spoglio",
+    "short_desc": "",
+    "vnum": 5002,
+    "zone": "Terre bruciate",
+    "description": "",
     "items": [],
     "mobs": [],
-    "name": "La bottega del fabbro",
-    "vnum": 1007,
-    "x": 650.0000053809749,
-    "y": 176.39467738619564
+    "x": 100,
+    "y": 100
 }
