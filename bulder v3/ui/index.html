@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="navbar">
+        <h1>Items</h1>
+    </div>
+
+    <div class="app">
+
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <button class="add" onclick="newItem()">+ New</button>
+            </div>
+            <div id="itemList" class="sidebar-list"></div>
+        </div>
+
+        <div class="editor">
+
+            <div class="editor-header">
+                <div id="title">No item</div>
+                <div>
+                    <button class="save" onclick="saveItem()">Save</button>
+                    <button class="delete" onclick="deleteItem()">Delete</button>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('base')">Base</div>
+                <div class="tab" onclick="showTab('stats')">Stats</div>
+                <div class="tab" onclick="showTab('advanced')">Advanced</div>
+            </div>
+
+            <!-- BASE -->
+            <div id="base" class="tab-content">
+                <div class="component">
+                    <div class="component-header">General</div>
+                    <div class="component-body grid">
+                        <input id="item_name">
+                        <input id="item_display_name">
+                        <select id="item_type">
+                            <option>misc</option>
+                            <option>weapon</option>
+                            <option>armor</option>
+                        </select>
+                        <input id="item_rarity">
+<textarea id="item_description" class="full"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATS -->
+            <div id="stats" class="tab-content" style="display:none">
+                <div class="component">
+                    <div class="component-header">Stats</div>
+                    <div class="component-body grid">
+                        <input id="item_value">
+                        <input id="item_weight">
+                        <input id="item_damage">
+                        <input id="item_defense">
+                        <input id="item_vnum">
+                        <input id="item_quantity">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADVANCED -->
+            <div id="advanced" class="tab-content" style="display:none">
+                <div class="component">
+                    <div class="component-header">JSON</div>
+                    <div class="component-body">
+<textarea id="item_effects"></textarea>
+<textarea id="item_flags"></textarea>
+<textarea id="item_requirements"></textarea>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/items.js"></script>
+
+    <script>loadItems()</script>
+
+</body>
+</html>

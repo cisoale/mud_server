@@ -1,0 +1,67 @@
+﻿<div class="app">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <button class="add" onclick="newItem()">+ New</button>
+        </div>
+        <div id="itemList" class="sidebar-list"></div>
+    </div>
+
+    <!-- EDITOR -->
+    <div class="editor">
+
+        <div class="editor-top">
+            <button class="save" onclick="saveItem()">Save</button>
+            <button class="delete" onclick="deleteItem()">Delete</button>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('base')">Base</div>
+            <div class="tab" onclick="showTab('stats')">Stats</div>
+            <div class="tab" onclick="showTab('advanced')">Advanced</div>
+        </div>
+
+        <!-- BASE -->
+        <div id="base" class="tab-content">
+            <div class="form">
+                <input id="item_name" placeholder="Name">
+                <input id="item_display_name" placeholder="Display Name">
+
+                <select id="item_type">
+                    <option>misc</option>
+                    <option>weapon</option>
+                    <option>armor</option>
+                    <option>consumable</option>
+                </select>
+
+                <input id="item_rarity" placeholder="Rarity">
+
+                <textarea id="item_description" class="full" placeholder="Description"></textarea>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div id="stats" class="tab-content" style="display:none">
+            <div class="form">
+                <input id="item_value" placeholder="Value">
+                <input id="item_weight" placeholder="Weight">
+
+                <input id="item_damage" placeholder="Damage">
+                <input id="item_defense" placeholder="Defense">
+
+                <input id="item_vnum" placeholder="VNUM">
+                <input id="item_quantity" placeholder="Quantity">
+            </div>
+        </div>
+
+        <!-- ADVANCED -->
+        <div id="advanced" class="tab-content" style="display:none">
+            <textarea id="item_effects" placeholder="Effects JSON"></textarea>
+            <textarea id="item_flags" placeholder="Flags JSON"></textarea>
+            <textarea id="item_requirements" placeholder="Requirements JSON"></textarea>
+        </div>
+
+    </div>
+</div>

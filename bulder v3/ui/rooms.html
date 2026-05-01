@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Room Builder</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        #list {
+            width: 250px;
+            border-right: 1px solid #ccc;
+            overflow: auto;
+        }
+
+            #list div {
+                padding: 8px;
+                cursor: pointer;
+            }
+
+                #list div:hover {
+                    background: #eee;
+                }
+
+        #editor {
+            flex: 1;
+            padding: 10px;
+        }
+
+        input, textarea {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="list"></div>
+
+    <div id="editor">
+
+        <h2 id="title">No room</h2>
+
+        <input id="vnum" placeholder="VNUM">
+        <input id="name" placeholder="Name">
+<textarea id="desc" placeholder="Description"></textarea>
+
+        <button onclick="saveRoom()">Save</button>
+
+        <hr>
+
+        <canvas id="map" width="800" height="600"></canvas>
+
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/rooms.js"></script>
+
+    <script>
+        window.onload = init;
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+export function normalizeRoom(r){
+
+    return {
+        vnum: parseInt(r.vnum) || 0,
+
+        name: r.name || "Room",
+        zone: r.zone || "",
+
+        short_desc: r.short_desc || "",
+        long_desc: r.long_desc || "",
+
+        exits: r.exits || {},
+
+        flags: r.flags || [],
+        sector: r.sector || "inside",
+
+        pos: r.pos || { x: 0, y: 0 }
+    };
+}

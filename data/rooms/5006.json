@@ -1,0 +1,10 @@
+{
+    "vnum": 5006,
+    "name": "La posta",
+    "long_desc": "Sei alla posta",
+    "exits": {},
+    "pos": {
+        "x": 300,
+        "y": 300
+    }
+}

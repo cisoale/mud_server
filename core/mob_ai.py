@@ -5,8 +5,7 @@ import random
 
 print("USANDO QUESTO MOB_AI:", __file__)
 async def mob_ai_loop():
-    import inspect
-    print("LINE:", inspect.getsource(mob_ai_loop))
+    print("[AI LOOP AVVIATO]")
     while True:
         await asyncio.sleep(2)
 

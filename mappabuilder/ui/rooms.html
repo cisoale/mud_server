@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Map Builder</title>
+
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+        }
+
+        #sidebar {
+            width: 260px;
+            background: #020617;
+            border-right: 1px solid #1e293b;
+            overflow: auto;
+        }
+
+            #sidebar div {
+                padding: 10px;
+                border-bottom: 1px solid #1e293b;
+                cursor: pointer;
+            }
+
+                #sidebar div:hover {
+                    background: #1e293b;
+                }
+
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #topbar {
+            padding: 10px;
+            background: #020617;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        button {
+            background: #0ea5e9;
+            border: none;
+            padding: 6px 12px;
+            color: white;
+            cursor: pointer;
+        }
+
+        canvas {
+            flex: 1;
+            background: #020617;
+        }
+
+        /* MODAL */
+        #modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #modalContent {
+            background: #020617;
+            padding: 20px;
+            width: 400px;
+            border: 1px solid #334155;
+        }
+
+        #modal input, #modal textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            background: #020617;
+            border: 1px solid #334155;
+            color: white;
+            padding: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="sidebar"></div>
+
+    <div id="main">
+
+        <div id="topbar">
+            <button onclick="openModal()">+ New Room</button>
+        </div>
+
+        <canvas id="map"></canvas>
+
+    </div>
+
+
+    <!-- MODAL -->
+    <div id="modal">
+        <div id="modalContent">
+
+            <h2>Room Editor</h2>
+
+            <input id="m_vnum" placeholder="VNUM">
+            <input id="m_name" placeholder="Name">
+            <textarea id="m_desc" placeholder="Description"></textarea>
+
+            <h3>Exits</h3>
+            <div id="m_exits"></div>
+
+            <button onclick="saveModal()">Save</button>
+            <button onclick="closeModal()">Close</button>
+
+        </div>
+    </div>
+
+
+    <script src="js/api.js"></script>
+    <script src="js/rooms.js"></script>
+
+    <script>
+        window.onload = init;
+    </script>
+
+</body>
+</html>
