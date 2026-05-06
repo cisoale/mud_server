@@ -6,7 +6,7 @@
         "danger_level": 1,
         "culture": "frontier",
         "controlling_faction": null,
-        "weather": "rain",
+        "weather": "clear",
         "corruption": 0,
         "stability": 100,
         "resources": {
@@ -22,7 +22,7 @@
         "danger_level": 5,
         "culture": "corrupted",
         "controlling_faction": null,
-        "weather": "rain",
+        "weather": "fog",
         "corruption": 40,
         "stability": 50,
         "resources": {
