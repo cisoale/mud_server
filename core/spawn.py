@@ -13,7 +13,7 @@ def spawn_player(player):
         return None
 
     # 🔥 SET CORRETTO
-    player["room"] = room
+    player["room"] = room.vnum
 
     # 🔥 AGGIUNGI ALLA ROOM
     if player not in room.players:

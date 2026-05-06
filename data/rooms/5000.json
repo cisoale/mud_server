@@ -22,7 +22,8 @@
     "long_desc": "",
     "mobs": [],
     "name": "Terre degli enfant",
-    "short_desc": "puzza di bruciato",
+    "short_desc": "puzza di bruciato","region": 
+    "dark_forest",
     "vnum": 5000,
     "x": 228.91892122375523,
     "y": 93.04476445032097,

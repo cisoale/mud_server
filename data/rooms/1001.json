@@ -31,12 +31,10 @@
     "mobs": [],
     "name": "Locanda",
     "short_desc": "Ti trovi nella locanda",
+    "region": "starting_region",
     "vnum": 1001,
-    "x": 236.48648886751573,
-    "y": 195.74746818707064,
-    "zone": "Villaggio umano",
-    "pos": {
-        "x": 185.23828125,
-        "y": 47.00390625
-    }
+    
+    "x": 185.23828125,
+    "y": 47.00390625,
+    "zone": "Villaggio umano"
 }

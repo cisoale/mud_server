@@ -97,10 +97,15 @@ async def handle_login(conn):
     # =========================
     spawn_player(player)
 
+
+    # =========================
+    # CONNESSIONE PLAYER
+    # =========================
+    player["conn"] = conn
     # =========================
     # LOOK
     # =========================
     from commands.look import render_room
-    conn.send(render_room(player))
+    render_room(player)
 
     return player

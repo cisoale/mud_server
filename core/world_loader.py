@@ -1,24 +1,26 @@
 import os
 import json
 
-from core.world import add_room
+from core.world import add_room, get_room
 from core.world_validator import validate_and_fix_room
 from core.mob_loader import create_mob
 
 ROOMS_PATH = "data/rooms"
-from core.mob_loader import create_mob
-from core.world import get_room
 
 
 def load_static_npcs():
 
-    # LOCANDA
+    # =========================
+    # LOCANDIERE
+    # =========================
     room = get_room(1001)
+
     if not room:
         print("[NPC] Room 1001 non trovata")
         return
 
     npc = create_mob("locandiere")
+
     if not npc:
         print("[NPC] locandiere non trovato")
         return
@@ -28,7 +30,9 @@ def load_static_npcs():
 
     print("[NPC] locandiere spawnato in room 1001")
 
+
 def load_rooms_from_files():
+
     print("[WORLD] Caricamento rooms...")
 
     if not os.path.exists(ROOMS_PATH):
@@ -37,6 +41,8 @@ def load_rooms_from_files():
 
     for filename in os.listdir(ROOMS_PATH):
 
+        if filename == "roomModel.json":
+            continue
         if not filename.endswith(".json"):
             continue
 
@@ -48,6 +54,7 @@ def load_rooms_from_files():
         try:
             with open(path, "r", encoding="utf-8") as f:
                 data = json.load(f)
+
         except Exception as e:
             print(f"[ERRORE] Lettura {filename}: {e}")
             continue
@@ -58,10 +65,12 @@ def load_rooms_from_files():
         data, changed = validate_and_fix_room(data)
 
         if changed:
+
             print(f"[FIX] Room {data.get('vnum')} corretta automaticamente")
 
             with open(path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=4)
+                pint(data)
 
         # =========================
         # DATI BASE
@@ -70,11 +79,22 @@ def load_rooms_from_files():
         name = data.get("name", "Stanza")
         desc = data.get("description", "")
 
+        # =========================
+        # REGION SYSTEM
+        # =========================
+        region = data.get("region", "starting_region")
+        print(region)
+
         if not vnum:
             print(f"[ERRORE] Room senza vnum: {filename}")
             continue
 
-        room = add_room(vnum, name, desc)
+        # =========================
+        # CREAZIONE ROOM
+        # =========================
+        room = add_room(vnum, name, desc, region)
+
+        print(f"[REGION] Room {vnum} -> {room.region_id}")
 
         # =========================
         # POSIZIONE
@@ -93,7 +113,9 @@ def load_rooms_from_files():
         room.mobs = []
 
         for mob_name in data.get("mobs", []):
+
             mob = create_mob(mob_name)
+
             if mob:
                 room.mobs.append(mob)
             else:
