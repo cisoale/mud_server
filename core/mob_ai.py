@@ -19,7 +19,12 @@ async def mob_ai_loop():
                 continue
 
             for mob in list(room.mobs):
-
+                print(
+                    f"[AI DEBUG] "
+                    f"{mob['name']} "
+                    f"components: "
+                    f"{list(mob.get('components', {}).keys())}"
+                )
                 # solo aggressivi
                 if not mob.get("aggressive"):
                     continue
