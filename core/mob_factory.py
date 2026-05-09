@@ -8,9 +8,10 @@ from components.inventory_component import InventoryComponent
 from components.equipment_component import EquipmentComponent
 from components.effects_component import EffectsComponent
 from components.combat_component import CombatComponent
+from components.threat_component import ThreatComponent
 
 def create_mob(template):
-
+    
     mob = copy.deepcopy(template)
 
     # =========================
@@ -37,6 +38,7 @@ def create_mob(template):
     mob["components"] = {
         "EquipmentComponent": EquipmentComponent(),
         "CombatComponent": CombatComponent(),
+        "ThreatComponent": ThreatComponent(),
     }
     
     # stats
