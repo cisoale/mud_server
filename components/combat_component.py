@@ -1,15 +1,39 @@
 from engine.component import Component
 
+
 class CombatComponent(Component):
-    def __init__(self,
-                 max_hp=100,
-                 attack=10,
-                 defense=5):
 
-        self.max_hp = max_hp
-        self.hp = max_hp
+    def __init__(self):
 
-        self.attack = attack
-        self.defense = defense
+        # combat state
+        self.in_combat = False
 
-        self.dead = False
+        # targets
+        self.target_id = None
+
+        # timers
+        self.last_attack_time = 0
+
+        self.attack_cooldown = 2.0
+
+        # combat flags
+        self.stunned = False
+        self.silenced = False
+        self.rooted = False
+
+        # threat
+        self.threat_table = {}
+
+        # combo system
+        self.combo_points = 0
+
+        # cast
+        self.casting = False
+        self.cast_end_time = 0
+
+        # combat stats
+        self.attack_speed = 1.0
+        self.crit_bonus = 0
+
+        # runtime
+        self.last_attacker_id = None

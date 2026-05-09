@@ -5,7 +5,9 @@ from components.stats_component import StatsComponent
 from components.ai_component import AIComponent
 from components.position_component import PositionComponent
 from components.inventory_component import InventoryComponent
-
+from components.equipment_component import EquipmentComponent
+from components.effects_component import EffectsComponent
+from components.combat_component import CombatComponent
 
 def create_mob(template):
 
@@ -32,8 +34,11 @@ def create_mob(template):
     # ECS COMPONENTS
     # =========================
 
-    mob["components"] = {}
-
+    mob["components"] = {
+        "EquipmentComponent": EquipmentComponent(),
+        "CombatComponent": CombatComponent(),
+    }
+    
     # stats
     stats = StatsComponent()
 

@@ -1,4 +1,5 @@
 import random
+import time
 
 from core.world import rooms, broadcast_room
 
@@ -13,22 +14,78 @@ stat_system = StatSystem()
 
 
 # =====================================
+# GET COMPONENT
+# =====================================
+
+def get_component(entity, name):
+
+    return entity.get(
+        "components",
+        {}
+    ).get(name)
+
+
+# =====================================
 # START COMBAT
 # =====================================
 
 def start_combat(player, mob, conn):
 
+    # sicurezza
+    if not player or not mob:
+        return
+
+    # già morti
+    if not player.get("alive", True):
+        return
+
+    if not mob.get("alive", True):
+        return
+
     # evita doppio combat
     if player.get("target") or mob.get("target"):
         return
 
+    # set target
     player["target"] = mob
     mob["target"] = player
 
-    # aggiorna conn
+    # salva connessione
     player["conn"] = conn
 
+    # =================================
+    # ECS COMBAT COMPONENT
+    # =================================
+
+    player_combat = get_component(
+        player,
+        "CombatComponent"
+    )
+
+    mob_combat = get_component(
+        mob,
+        "CombatComponent"
+    )
+
+    if player_combat:
+
+        player_combat.in_combat = True
+
+        player_combat.target_id = mob.get(
+            "entity_id"
+        )
+
+    if mob_combat:
+
+        mob_combat.in_combat = True
+
+        mob_combat.target_id = player.get(
+            "entity_id"
+        )
+
+    # messaggio
     if conn:
+
         conn.send(
             f"Attacchi {mob['name']}!\n"
         )
@@ -45,35 +102,78 @@ def player_attack(player, mob):
     if not conn:
         return
 
-    # sicurezza hp
+    # sicurezza
+    if not mob.get("alive", True):
+        return
+
     if stat_system.get_hp(mob) <= 0:
         return
 
-    # =========================
-    # MISS
-    # =========================
+    # =================================
+    # COMBAT COMPONENT
+    # =================================
 
-    if random.random() < 0.1:
+    combat = get_component(
+        player,
+        "CombatComponent"
+    )
 
-        conn.send("Mancato!\n")
+    # stun
+    if combat and combat.stunned:
+
+        conn.send(
+            "Sei stordito!\n"
+        )
 
         return
 
-    # =========================
+    # cooldown
+    if combat:
+
+        now = time.time()
+
+        if (
+            now - combat.last_attack_time
+            < combat.attack_cooldown
+        ):
+            return
+
+        combat.last_attack_time = now
+
+    # =================================
+    # MISS
+    # =================================
+
+    if random.random() < 0.1:
+
+        conn.send(
+            "Mancato!\n"
+        )
+
+        return
+
+    # =================================
     # CRIT
-    # =========================
+    # =================================
 
     crit = random.random() < 0.1
 
-    # =========================
-    # ECS DAMAGE
-    # =========================
+    # =================================
+    # DAMAGE
+    # =================================
 
-    attack = stat_system.get_attack(player)
+    attack = stat_system.get_attack(
+        player
+    )
 
-    defense = stat_system.get_defense(mob)
+    defense = stat_system.get_defense(
+        mob
+    )
 
-    dmg = max(1, attack - defense)
+    dmg = max(
+        1,
+        attack - defense
+    )
 
     if crit:
 
@@ -83,13 +183,12 @@ def player_attack(player, mob):
             "Colpo critico!\n"
         )
 
-    # applica danno ECS
+    # applica danno
     stat_system.damage(
         mob,
         dmg
     )
 
-    # sync hp
     hp = stat_system.get_hp(mob)
 
     conn.send(
@@ -103,9 +202,9 @@ def player_attack(player, mob):
         f"HP: {hp}\n"
     )
 
-    # =========================
+    # =================================
     # MORTE
-    # =========================
+    # =================================
 
     if hp <= 0:
 
@@ -126,13 +225,45 @@ def mob_attack(mob, player):
     if not conn:
         return
 
-    # sicurezza hp
+    # sicurezza
+    if not mob.get("alive", True):
+        return
+
+    if not player.get("alive", True):
+        return
+
     if stat_system.get_hp(player) <= 0:
         return
 
-    # =========================
+    # =================================
+    # COMBAT COMPONENT
+    # =================================
+
+    combat = get_component(
+        mob,
+        "CombatComponent"
+    )
+
+    # stun
+    if combat and combat.stunned:
+        return
+
+    # cooldown
+    if combat:
+
+        now = time.time()
+
+        if (
+            now - combat.last_attack_time
+            < combat.attack_cooldown
+        ):
+            return
+
+        combat.last_attack_time = now
+
+    # =================================
     # MISS
-    # =========================
+    # =================================
 
     if random.random() < 0.1:
 
@@ -143,23 +274,32 @@ def mob_attack(mob, player):
 
         return
 
-    # =========================
+    # =================================
     # DAMAGE
-    # =========================
+    # =================================
 
-    attack = stat_system.get_attack(mob)
+    attack = stat_system.get_attack(
+        mob
+    )
 
-    defense = stat_system.get_defense(player)
+    defense = stat_system.get_defense(
+        player
+    )
 
-    dmg = max(1, attack - defense)
+    dmg = max(
+        1,
+        attack - defense
+    )
 
-    # applica danno ECS
+    # applica danno
     stat_system.damage(
         player,
         dmg
     )
 
-    hp = stat_system.get_hp(player)
+    hp = stat_system.get_hp(
+        player
+    )
 
     conn.send(
         f"{mob['name']} "
@@ -172,9 +312,9 @@ def mob_attack(mob, player):
         f"{stat_system.get_max_hp(player)}\n"
     )
 
-    # =========================
-    # MORTE
-    # =========================
+    # =================================
+    # MORTE PLAYER
+    # =================================
 
     if hp <= 0:
 
@@ -184,7 +324,7 @@ def mob_attack(mob, player):
 
 
 # =====================================
-# MORTE MOB
+# HANDLE MOB DEATH
 # =====================================
 
 def handle_mob_death(player, mob):
@@ -200,30 +340,78 @@ def handle_mob_death(player, mob):
         f"{mob['name']} morto"
     )
 
-    # =========================
+    # =================================
+    # DEAD STATE
+    # =================================
+
+    mob["alive"] = False
+
+    mob["target"] = None
+
+    # =================================
+    # ECS COMBAT
+    # =================================
+
+    combat = get_component(
+        mob,
+        "CombatComponent"
+    )
+
+    if combat:
+
+        combat.in_combat = False
+
+        combat.target_id = None
+
+    # =================================
+    # ECS AI
+    # =================================
+
+    ai = get_component(
+        mob,
+        "AIComponent"
+    )
+
+    if ai:
+
+        ai.target = None
+
+        ai.state = "dead"
+
+    # =================================
+    # RESET PLAYER
+    # =================================
+
+    player["target"] = None
+
+    player_combat = get_component(
+        player,
+        "CombatComponent"
+    )
+
+    if player_combat:
+
+        player_combat.in_combat = False
+
+        player_combat.target_id = None
+
+    # =================================
     # REMOVE MOB
-    # =========================
+    # =================================
 
     if room and mob in room.mobs:
 
         room.mobs.remove(mob)
 
-    # =========================
-    # RESET TARGETS
-    # =========================
-
-    player["target"] = None
-    mob["target"] = None
-
-    # =========================
+    # =================================
     # REWARDS
-    # =========================
+    # =================================
 
     xp = mob.get("xp", 10)
 
-    gold = mob.get(
-        "gold",
-        random.randint(1, 10)
+    gold = random.randint(
+        mob.get("gold_min", 1),
+        mob.get("gold_max", 10)
     )
 
     player["xp"] = (
@@ -236,51 +424,26 @@ def handle_mob_death(player, mob):
         + gold
     )
 
+    # =================================
+    # MESSAGGI
+    # =================================
+
     if conn:
 
         conn.send(
-            f"Ottieni "
-            f"{xp} XP "
-            f"e {gold} oro.\n"
+            f"{mob['name']} "
+            f"è stato sconfitto!\n"
         )
 
-    print(
-        f"[GOLD] "
-        f"{player['name']} "
-        f"+{gold} "
-        f"(tot={player['gold']})"
-    )
+        conn.send(
+            f"\n{player['name']} "
+            f"raccoglie "
+            f"{gold} monete.\n"
+        )
 
-    # =========================
-    # DROP
-    # =========================
-
-    if room:
-
-        drop = mob.get("drop")
-
-        if drop:
-
-            try:
-
-                room.items.append(
-                    drop.copy()
-                )
-
-                print(
-                    f"[DROP] "
-                    f"{drop.get('name')}"
-                )
-
-            except Exception as e:
-
-                print(
-                    f"[DROP ERROR] {e}"
-                )
-
-    # =========================
-    # QUEST SYSTEM
-    # =========================
+    # =================================
+    # QUEST
+    # =================================
 
     quest = player.get("quest")
 
@@ -290,9 +453,7 @@ def handle_mob_death(player, mob):
 
         target = quest.get("target")
 
-        mob_name = mob.get("name")
-
-        if mob_name == target:
+        if mob.get("name") == target:
 
             quest["progress"] = (
                 quest.get(
@@ -310,7 +471,6 @@ def handle_mob_death(player, mob):
                     f"{target} uccisi\n"
                 )
 
-            # completamento
             if (
                 quest["progress"]
                 >= quest["required"]
@@ -322,13 +482,35 @@ def handle_mob_death(player, mob):
 
                     conn.send(
                         "[QUEST] "
-                        "COMPLETATA! "
-                        "Torna dal locandiere.\n"
+                        "COMPLETATA!\n"
                     )
 
-    # =========================
+    # =================================
+    # CORPSE
+    # =================================
+
+    if room:
+
+        corpse = {
+
+            "name": f"corpo di {mob['name']}",
+
+            "description":
+                f"Il corpo senza vita di "
+                f"{mob['name']}.",
+
+            "loot":
+                mob.get("loot", []),
+
+            "gold":
+                gold
+        }
+
+        room.items.append(corpse)
+
+    # =================================
     # BROADCAST
-    # =========================
+    # =================================
 
     if room:
 
@@ -341,24 +523,45 @@ def handle_mob_death(player, mob):
 
 
 # =====================================
-# MORTE PLAYER
+# HANDLE PLAYER DEATH
 # =====================================
 
 def handle_player_death(player):
 
     conn = player.get("conn")
 
-    # reset hp
+    player["alive"] = False
+
+    # combat reset
+    combat = get_component(
+        player,
+        "CombatComponent"
+    )
+
+    if combat:
+
+        combat.in_combat = False
+
+        combat.target_id = None
+
+    # hp reset
     max_hp = stat_system.get_max_hp(
         player
     )
 
     player["hp"] = max_hp
 
-    if "current_hp" in player:
-        player["current_hp"] = max_hp
+    player["current_hp"] = max_hp
 
     player["target"] = None
+
+    # respawn
+    player["room"] = player.get(
+        "start_room",
+        1001
+    )
+
+    player["alive"] = True
 
     if conn:
 
@@ -366,12 +569,6 @@ def handle_player_death(player):
             "Sei morto! "
             "Torni alla locanda.\n"
         )
-
-    # respawn
-    player["room"] = player.get(
-        "start_room",
-        1001
-    )
 
 
 # =====================================
@@ -382,25 +579,74 @@ def combat_tick():
 
     for room in rooms.values():
 
-        # sicurezza
         if not hasattr(room, "mobs"):
             continue
 
         for mob in list(room.mobs):
 
-            target = mob.get("target")
+            try:
 
-            if target:
+                # =========================
+                # MOB DEAD
+                # =========================
 
-                try:
+                if not mob.get(
+                    "alive",
+                    True
+                ):
+                    continue
 
-                    mob_attack(
-                        mob,
-                        target
-                    )
+                # =========================
+                # TARGET
+                # =========================
 
-                except Exception as e:
+                target = mob.get(
+                    "target"
+                )
 
-                    print(
-                        f"[COMBAT ERROR] {e}"
-                    )
+                if not target:
+                    continue
+
+                # =========================
+                # TARGET DEAD
+                # =========================
+
+                if not target.get(
+                    "alive",
+                    True
+                ):
+
+                    mob["target"] = None
+
+                    continue
+
+                # =========================
+                # PLAYER AUTO ATTACK
+                # =========================
+
+                player_attack(
+                    target,
+                    mob
+                )
+
+                # mob morto dopo colpo
+                if not mob.get(
+                    "alive",
+                    True
+                ):
+                    continue
+
+                # =========================
+                # MOB AUTO ATTACK
+                # =========================
+
+                mob_attack(
+                    mob,
+                    target
+                )
+
+            except Exception as e:
+
+                print(
+                    f"[COMBAT ERROR] {e}"
+                )

@@ -125,6 +125,10 @@ def get_mob(key):
 # CREATE MOB INSTANCE
 # =========================
 def create_mob(key):
+    print(
+      f"[LEGACY MOB LOADER] "
+      f"create_mob chiamato"
+    )
     """
     Crea una copia runtime del mob con struttura completa.
     """

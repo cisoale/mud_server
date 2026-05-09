@@ -1,8 +1,11 @@
 from core.world import get_room
 from core.simulation import global_world
+
+
 # =========================
 # WEATHER DESCRIPTIONS
 # =========================
+
 WEATHER_TEXT = {
     "clear": "Il cielo è limpido e tranquillo.",
     "rain": "La pioggia cade costantemente sulla regione.",
@@ -14,6 +17,7 @@ WEATHER_TEXT = {
 # =========================
 # COMANDO LOOK
 # =========================
+
 def execute(player, conn, args):
 
     # sicurezza connessione
@@ -30,6 +34,7 @@ def execute(player, conn, args):
 # =========================
 # RENDER STANZA
 # =========================
+
 def render_room(player):
 
     conn = player.get("conn")
@@ -47,6 +52,7 @@ def render_room(player):
     # =========================
     # NOME STANZA
     # =========================
+
     conn.send(
         f"\n"
         f"{getattr(room, 'name', 'Stanza sconosciuta')}\n"
@@ -55,6 +61,7 @@ def render_room(player):
     # =========================
     # DESCRIZIONE
     # =========================
+
     desc = getattr(room, "description", "")
 
     if desc:
@@ -63,13 +70,24 @@ def render_room(player):
     # =========================
     # REGION + WEATHER
     # =========================
-    region_id = getattr(room, "region_id", "starting_region")
 
-    region = global_world.region_system.get_region(region_id)
+    region_id = getattr(
+        room,
+        "region_id",
+        "starting_region"
+    )
+
+    region = global_world.region_system.get_region(
+        region_id
+    )
 
     if region:
 
-        weather = getattr(region, "weather", "clear")
+        weather = getattr(
+            region,
+            "weather",
+            "clear"
+        )
 
         weather_text = WEATHER_TEXT.get(
             weather,
@@ -81,9 +99,13 @@ def render_room(player):
     # =========================
     # GIOCATORI
     # =========================
+
     players = getattr(room, "players", [])
 
-    others = [p for p in players if p != player]
+    others = [
+        p for p in players
+        if p != player
+    ]
 
     if others:
 
@@ -91,13 +113,17 @@ def render_room(player):
 
         for p in others:
 
-            name = p.get("name", "giocatore")
+            name = p.get(
+                "name",
+                "giocatore"
+            )
 
             conn.send(f" - {name}\n")
 
     # =========================
     # MOB
     # =========================
+
     mobs = getattr(room, "mobs", [])
 
     if mobs:
@@ -106,7 +132,21 @@ def render_room(player):
 
         for mob in mobs:
 
-            name = mob.get("name", "creatura")
+            # sicurezza ECS / legacy
+            if isinstance(mob, dict):
+
+                name = mob.get(
+                    "name",
+                    "creatura"
+                )
+
+            elif hasattr(mob, "name"):
+
+                name = mob.name
+
+            else:
+
+                name = "creatura sconosciuta"
 
             if not isinstance(name, str):
                 name = "creatura sconosciuta"
@@ -116,6 +156,7 @@ def render_room(player):
     # =========================
     # OGGETTI A TERRA
     # =========================
+
     items = getattr(room, "items", [])
 
     if items:
@@ -126,19 +167,63 @@ def render_room(player):
 
         for item in items:
 
-            if not isinstance(item, dict):
-                print(f"[LOOK BUG] item non valido: {item}")
+            # =========================
+            # ITEM DICT
+            # =========================
+
+            if isinstance(item, dict):
+
+                name = (
+                    item.get("display_name")
+                    or item.get("name", "oggetto")
+                )
+
+                qty = item.get(
+                    "quantity",
+                    1
+                )
+
+            # =========================
+            # ITEM STRING LEGACY
+            # =========================
+
+            elif isinstance(item, str):
+
+                name = item
+                qty = 1
+
+            # =========================
+            # ECS OBJECT
+            # =========================
+
+            elif hasattr(item, "name"):
+
+                name = item.name
+
+                qty = getattr(
+                    item,
+                    "quantity",
+                    1
+                )
+
+            # =========================
+            # ITEM INVALIDO
+            # =========================
+
+            else:
+
+                print(
+                    f"[LOOK BUG] item sconosciuto: {item}"
+                )
+
                 continue
 
-            name = (
-                item.get("display_name")
-                or item.get("name", "oggetto")
-            )
+            # =========================
+            # SICUREZZA
+            # =========================
 
             if not isinstance(name, str):
                 name = "oggetto corrotto"
-
-            qty = item.get("quantity", 1)
 
             if not isinstance(qty, int):
                 qty = 1
@@ -148,22 +233,38 @@ def render_room(player):
 
             counts[name] += qty
 
+        # =========================
+        # RENDER ITEMS
+        # =========================
+
         for name, qty in counts.items():
 
             if qty > 1:
-                conn.send(f" - {name} x{qty}\n")
+
+                conn.send(
+                    f" - {name} x{qty}\n"
+                )
+
             else:
-                conn.send(f" - {name}\n")
+
+                conn.send(
+                    f" - {name}\n"
+                )
 
     # =========================
     # USCITE
     # =========================
+
     exits = getattr(room, "exits", {})
 
     if exits:
 
-        exit_list = ", ".join(exits.keys())
+        exit_list = ", ".join(
+            exits.keys()
+        )
 
-        conn.send(f"\nUscite: {exit_list}\n")
+        conn.send(
+            f"\nUscite: {exit_list}\n"
+        )
 
     conn.send("\n")
