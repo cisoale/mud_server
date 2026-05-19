@@ -1,12 +1,16 @@
 {
     "description": "Lungo viale nella pineta",
     "exits": {
-        "north": {
-            "closed": false,
+        "up": {
+            "to": 1001,
             "door": false,
-            "key": null,
+            "closed": false,
             "locked": false,
             "secret": false,
+            "blocked": false,
+            "key": ""
+        },
+        "north": {
             "to": 1001
         }
     },
@@ -15,11 +19,12 @@
     ],
     "mobs": [],
     "name": "Viale",
-    "vnum": 1004,
-    "x": 190.00000191298693,
-    "y": 287.6393610041625,
     "pos": {
-        "x": 325.984375,
-        "y": 62.00390625
-    }
+        "x": 263,
+        "y": 181
+    },
+    "region": "",
+    "vnum": 1004,
+    "x": 263,
+    "y": 181
 }

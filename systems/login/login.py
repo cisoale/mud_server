@@ -2,7 +2,7 @@ from core.database import get_player, create_player
 from core.world import get_room
 from core.spawn import spawn_player
 from core.skill_system import unlock_skills  # 🔥 FIX IMPORT
-
+from core.player_factory import inject_player_components
 
 # =========================
 # INPUT
@@ -91,16 +91,27 @@ async def handle_login(conn):
     player.setdefault("gold", 0)
     unlock_skills(player, conn)
     
+    # =========================
+    # ECS PLAYER
+    # =========================
+    player = inject_player_components(
+        player
+    )
 
     # =========================
     # SPAWN
     # =========================
     spawn_player(player)
 
+
+    # =========================
+    # CONNESSIONE PLAYER
+    # =========================
+    player["conn"] = conn
     # =========================
     # LOOK
     # =========================
     from commands.look import render_room
-    conn.send(render_room(player))
+    render_room(player)
 
     return player

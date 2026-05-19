@@ -1,0 +1,645 @@
+* {
+    box-sizing: border-box;
+}
+
+
+/* ===================================== */
+/* BODY */
+/* ===================================== */
+
+body {
+    margin: 0;
+    background: #1e1e1e;
+    color: white;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+
+/* ===================================== */
+/* TOPBAR */
+/* ===================================== */
+
+#topbar {
+    height: 60px;
+    background: #2a2a2a;
+    border-bottom: 2px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+
+.logoBar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+
+.toolbar {
+    display: flex;
+    gap: 10px;
+}
+
+
+/* ===================================== */
+/* BUTTONS */
+/* ===================================== */
+
+button {
+    background: #444;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.12s;
+}
+
+
+    button:hover {
+        background: #666;
+    }
+
+
+    button:active {
+        transform: scale(0.97);
+    }
+
+
+    button.active {
+        background: #0088cc;
+    }
+
+
+#helpButton {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    padding: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+/* ===================================== */
+/* MAIN LAYOUT */
+/* ===================================== */
+
+#layout {
+    display: flex;
+    height: calc(100vh - 60px);
+}
+
+
+/* ===================================== */
+/* SIDEBARS */
+/* ===================================== */
+
+#leftSidebar,
+#rightSidebar {
+    width: 270px;
+    background: #252525;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+
+#leftSidebar {
+    border-right: 2px solid #333;
+}
+
+
+#rightSidebar {
+    border-left: 2px solid #333;
+}
+
+
+.sidebarHeader {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+
+.regionHeader {
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+/* ===================================== */
+/* ROOM / MOB ENTRIES */
+/* ===================================== */
+
+.entry {
+    background: #363636;
+    color: #f0f0f0;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, border 0.15s;
+}
+
+
+    .entry:hover {
+        background: #505050;
+    }
+
+
+    .entry.selected {
+        background: #0066aa;
+        border: 1px solid #00d0ff;
+    }
+
+
+/* ===================================== */
+/* REGIONS */
+/* ===================================== */
+
+#regions {
+    margin-top: 20px;
+}
+
+
+.regionEntry {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #2d2d2d;
+    padding: 8px 10px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+
+.regionColor {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid #000;
+}
+
+
+/* ===================================== */
+/* WORKSPACE */
+/* ===================================== */
+
+#workspace {
+    flex: 1;
+    background: #111;
+    position: relative;
+    overflow: hidden;
+}
+
+
+#mapCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+}
+
+
+body.linking #mapCanvas {
+    cursor: crosshair;
+}
+
+
+/* ===================================== */
+/* MODALS */
+/* ===================================== */
+
+#modalOverlay,
+#helpOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+
+/* ===================================== */
+/* MAIN WINDOW */
+/* ===================================== */
+
+#modalWindow {
+    width: 980px;
+    max-width: 95vw;
+    max-height: 95vh;
+    background: #262626;
+    border: 2px solid #444;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: popupFade 0.15s ease;
+}
+
+
+/* ===================================== */
+/* HELP WINDOW */
+/* ===================================== */
+
+#helpWindow {
+    width: 700px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #262626;
+    border: 2px solid #444;
+    border-radius: 10px;
+    animation: popupFade 0.15s ease;
+}
+
+
+/* ===================================== */
+/* MODAL HEADERS */
+/* ===================================== */
+
+#modalHeader,
+#helpHeader {
+    background: #333;
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+#modalTitle {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+
+/* ===================================== */
+/* MODAL CONTENT */
+/* ===================================== */
+
+#modalBody,
+#helpContent {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+
+#helpContent {
+    line-height: 1.7;
+}
+
+
+    #helpContent h3 {
+        margin-top: 24px;
+        color: #00d0ff;
+    }
+
+
+/* ===================================== */
+/* EDITORS */
+/* ===================================== */
+
+.editorPanel {
+    display: none;
+    flex-direction: column;
+    gap: 18px;
+}
+
+
+.editorGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+
+/* ===================================== */
+/* FORM FIELDS */
+/* ===================================== */
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+
+    .field.full {
+        grid-column: span 2;
+    }
+
+
+label {
+    color: #cccccc;
+    font-size: 13px;
+}
+
+
+/* ===================================== */
+/* INPUTS */
+/* ===================================== */
+
+input,
+textarea {
+    width: 100%;
+    background: #111;
+    color: white;
+    border: 1px solid #444;
+    padding: 10px 12px;
+    border-radius: 5px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+
+    input:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #00d0ff;
+        box-shadow: 0 0 6px rgba(0,208,255,0.35);
+    }
+
+
+textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+
+/* ===================================== */
+/* ACTIONS */
+/* ===================================== */
+
+.editorActions {
+    margin-top: 10px;
+}
+
+
+/* ===================================== */
+/* EXIT EDITOR */
+/* ===================================== */
+
+.exitEditor {
+    margin-top: 20px;
+    border-top: 1px solid #444;
+    padding-top: 20px;
+}
+
+
+    .exitEditor h3 {
+        margin-top: 0;
+        margin-bottom: 18px;
+        color: #00d0ff;
+    }
+
+
+/* ===================================== */
+/* EXIT GRID */
+/* ===================================== */
+
+.exitGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+
+/* ===================================== */
+/* EXIT BLOCK */
+/* ===================================== */
+
+.exitBlock {
+    background: #2b2b2b;
+    border: 1px solid #3a3a3a;
+    padding: 14px;
+    border-radius: 8px;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+
+    .exitBlock:hover {
+        border-color: #00d0ff33;
+        background: #303030;
+    }
+
+
+    .exitBlock h4 {
+        margin-top: 0;
+        margin-bottom: 12px;
+        color: #00d0ff;
+        font-size: 16px;
+    }
+
+
+    .exitBlock input {
+        margin-top: 6px;
+    }
+
+
+/* ===================================== */
+/* EXIT FLAGS */
+/* ===================================== */
+
+.exitFlagsCompact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 14px;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+
+    .exitFlagsCompact label {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 6px;
+        font-size: 12px;
+        color: #cccccc;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+
+    .exitFlagsCompact input[type="checkbox"] {
+        margin: 0;
+        width: 14px;
+        height: 14px;
+        accent-color: #00d0ff;
+        cursor: pointer;
+    }
+
+
+/* ===================================== */
+/* SCROLLBAR */
+/* ===================================== */
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+
+::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+
+::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 5px;
+}
+
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #777;
+    }
+
+
+/* ===================================== */
+/* POPUP ANIMATION */
+/* ===================================== */
+
+@keyframes popupFade {
+
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ===================================== */
+/* VALIDATION BUTTON */
+/* ===================================== */
+
+#validationButton {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    padding: 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+
+    /* ===================================== */
+    /* VALIDATION STATES */
+    /* ===================================== */
+
+    #validationButton.hasErrors {
+        background: #cc3333;
+    }
+
+
+/* ===================================== */
+/* VALIDATION MODAL */
+/* ===================================== */
+
+#validationOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+
+#validationWindow {
+    width: 800px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #262626;
+    border: 2px solid #444;
+    border-radius: 10px;
+    animation: popupFade 0.15s ease;
+}
+
+
+#validationHeader {
+    background: #333;
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+#validationContent {
+    padding: 20px;
+}
+
+
+.validationError {
+    background: #3a2020;
+    border-left: 4px solid #ff4444;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+}
+
+
+.validationSuccess {
+    background: #203a24;
+    border-left: 4px solid #44ff88;
+    padding: 10px 14px;
+    border-radius: 6px;
+}
+
+/* ===================================== */
+/* CLICKABLE VALIDATION */
+/* ===================================== */
+
+.validationError {
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+    .validationError:hover {
+        background: #522828;
+        border-left-color: #ff7777;
+    }
+
+/* ===================================== */
+/* ROOM ACTIONS */
+/* ===================================== */
+
+.roomActions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+/* ===================================== */
+/* DANGER BUTTON */
+/* ===================================== */
+
+.dangerButton {
+    background: #992222;
+}
+
+    .dangerButton:hover {
+        background: #bb3333;
+    }

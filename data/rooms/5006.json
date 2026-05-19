@@ -1,10 +1,16 @@
 {
-    "vnum": 5006,
-    "name": "La posta",
-    "long_desc": "Sei alla posta",
+    "description": "",
     "exits": {},
+    "items": [],
+    "long_desc": "Sei alla posta",
+    "mobs": [],
+    "name": "La posta",
+    "vnum": 5006,
+    "x": 484,
+    "y": 468,
+    "region": "dark_forest",
     "pos": {
-        "x": 300,
-        "y": 300
+        "x": 484,
+        "y": 468
     }
 }

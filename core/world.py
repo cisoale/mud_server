@@ -2,10 +2,14 @@ rooms = {}
 
 
 class Room:
-    def __init__(self, vnum, name, description):
+    def __init__(self, vnum, name, description, region="starting_region"):
         self.vnum = vnum
         self.name = name
         self.description = description
+
+        # Living World
+        self.region_id = region
+
         self.players = []
         self.mobs = []
         self.items = []
@@ -14,9 +18,8 @@ class Room:
     def __repr__(self):
         return f"<Room {self.vnum}: {self.name}>"
 
-
-def add_room(vnum, name, description=""):
-    room = Room(vnum, name, description)
+def add_room(vnum, name, description="", region="starting_region"):
+    room = Room(vnum, name, description, region)
     rooms[vnum] = room
     return room
 
@@ -45,7 +48,7 @@ def move_player(player, direction):
         target = exit_data
 
     new_room = get_room(target)
-
+    print(f"[DEBUG] Entrato in regione: {new_room.region_id}")
     if not new_room:
         return None, "Stanza non esistente."
 

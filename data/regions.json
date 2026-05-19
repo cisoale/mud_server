@@ -1,0 +1,32 @@
+[
+    {
+        "id": "starting_region",
+        "name": "Terre di Confine",
+        "biome": "plains",
+        "danger_level": 1,
+        "culture": "frontier",
+        "controlling_faction": null,
+        "weather": "rain",
+        "corruption": 0,
+        "stability": 100,
+        "resources": {
+            "wood": 1000,
+            "stone": 500,
+            "iron": 100
+        }
+    },
+    {
+        "id": "dark_forest",
+        "name": "Foresta Oscura",
+        "biome": "forest",
+        "danger_level": 5,
+        "culture": "corrupted",
+        "controlling_faction": null,
+        "weather": "storm",
+        "corruption": 40,
+        "stability": 50,
+        "resources": {
+            "wood": 500
+        }
+    }
+]

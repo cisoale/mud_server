@@ -2,26 +2,33 @@
     "description": "Lungo viale nella pineta",
     "exits": {
         "east": {
-            "closed": false,
+            "to": 1003,
             "door": false,
-            "key": null,
+            "closed": false,
             "locked": false,
             "secret": false,
-            "to": 1003
+            "blocked": false,
+            "key": ""
         },
         "west": {
-            "closed": false,
+            "to": 1001,
             "door": false,
-            "key": null,
+            "closed": false,
             "locked": false,
             "secret": false,
-            "to": 1001
+            "blocked": false,
+            "key": ""
         }
     },
     "items": [],
     "mobs": [],
     "name": "Viale verso north",
     "vnum": 1002,
-    "x": 418.1081123177678,
-    "y": 166.55827870399443
+    "x": 400,
+    "y": 120,
+    "region": "starting_region",
+    "pos": {
+        "x": 400,
+        "y": 120
+    }
 }

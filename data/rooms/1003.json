@@ -2,33 +2,36 @@
     "description": "",
     "exits": {
         "east": {
-            "closed": false,
+            "to": 1005,
             "door": false,
-            "key": null,
+            "closed": false,
             "locked": false,
             "secret": false,
-            "to": 1005
+            "blocked": false,
+            "key": ""
         },
         "west": {
-            "closed": false,
+            "to": 1002,
             "door": false,
-            "key": null,
+            "closed": false,
             "locked": false,
             "secret": false,
-            "to": 1002
+            "blocked": false,
+            "key": ""
         }
     },
     "items": [],
     "long_desc": "",
     "mobs": [],
     "name": "Cortile",
+    "pos": {
+        "x": 543,
+        "y": 122
+    },
+    "region": "starting_region",
     "short_desc": "",
     "vnum": 1003,
-    "x": 497.0270320312702,
-    "y": 170.88260307185757,
-    "zone": "Villaggio umano",
-    "pos": {
-        "x": 415.23828125,
-        "y": 131.00390625
-    }
+    "x": 543,
+    "y": 122,
+    "zone": "Villaggio umano"
 }

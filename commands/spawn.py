@@ -1,87 +1,159 @@
-from core.mob_loader import create_mob
+from core.mob_loader import get_mob
+from core.mob_factory import create_mob
+
 from core.item_loader import create_item
+
 from core.world import get_room
 
 
-def parse_target(target):
-    """
-    Converte automaticamente:
-    - numeri → vnum (string)
-    - testo → nome lowercase
-    """
-    if target.isdigit():
-        return target  # vnum già ok
-    return target.lower()
-
+# =====================================
+# SPAWN COMMAND
+# =====================================
 
 def execute(player, conn, args):
 
     if not args:
-        conn.send("Uso: spawn mob|item <nome/vnum> [quantità]\n")
+
+        conn.send(
+            "Uso:\n"
+            "spawn mob <nome>\n"
+            "spawn item <nome>\n"
+        )
+
         return
 
-    if not player.get("is_builder"):
-        conn.send("Non hai i permessi.\n")
-        return
+    # =================================
+    # ROOM
+    # =================================
 
-    tipo = args[0].lower()
-
-    if len(args) < 2:
-        conn.send("Specifica cosa spawnare.\n")
-        return
-
-    target_raw = args[1]
-    target = parse_target(target_raw)
-
-    quantità = 1
-    if len(args) > 2 and args[2].isdigit():
-        quantità = int(args[2])
-
-    room = get_room(player.get("room"))
+    room = get_room(
+        player.get("room")
+    )
 
     if not room:
-        conn.send("Errore stanza.\n")
+
+        conn.send(
+            "Room non trovata.\n"
+        )
+
         return
 
-    # =========================
+    # =================================
+    # TYPE
+    # =================================
+
+    spawn_type = args[0].lower()
+
+    # =================================
     # MOB
-    # =========================
-    if tipo == "mob":
+    # =================================
 
-        spawned = 0
+    if spawn_type == "mob":
 
-        for _ in range(quantità):
-            mob = create_mob(target)
+        if len(args) < 2:
 
-            if not mob:
-                conn.send(f"Mob non trovato: {target_raw}\n")
-                return
+            conn.send(
+                "Spawn quale mob?\n"
+            )
 
-            room.mobs.append(mob)
-            spawned += 1
+            return
 
-        conn.send(f"Spawnati {spawned} mob: {target_raw}\n")
+        target = " ".join(args[1:])
+
+        # =============================
+        # TEMPLATE
+        # =============================
+
+        template = get_mob(target)
+
+        if not template:
+
+            conn.send(
+                "Mob non trovato.\n"
+            )
+
+            return
+
+        # =============================
+        # ECS RUNTIME MOB
+        # =============================
+
+        mob = create_mob(template)
+
+        if not mob:
+
+            conn.send(
+                "Errore creazione mob.\n"
+            )
+
+            return
+
+        # room
+        room.mobs.append(mob)
+
+        mob["room"] = room.vnum
+
+        # ECS PositionComponent
+        position = mob["components"].get(
+            "PositionComponent"
+        )
+
+        if position:
+            position.room_id = room.vnum
+
+        # DEBUG
+        print(
+            f"[ECS SPAWN COMMAND] "
+            f"{mob['name']} -> "
+            f"{list(mob['components'].keys())}"
+        )
+
+        conn.send(
+            f"{mob['name']} "
+            f"spawnato.\n"
+        )
+
         return
 
-    # =========================
+    # =================================
     # ITEM
-    # =========================
-    elif tipo == "item":
+    # =================================
 
-        spawned = 0
+    elif spawn_type == "item":
 
-        for _ in range(quantità):
-            item = create_item(target)
+        if len(args) < 2:
 
-            if not item:
-                conn.send(f"Item non trovato: {target_raw}\n")
-                return
+            conn.send(
+                "Spawn quale item?\n"
+            )
 
-            room.items.append(item)
-            spawned += 1
+            return
 
-        conn.send(f"Spawnati {spawned} item: {target_raw}\n")
+        target = " ".join(args[1:])
+
+        item = create_item(target)
+
+        if not item:
+
+            conn.send(
+                "Item non trovato.\n"
+            )
+
+            return
+
+        room.items.append(item)
+
+        conn.send(
+            f"{item['name']} "
+            f"spawnato.\n"
+        )
+
         return
 
-    else:
-        conn.send("Tipo non valido (mob/item)\n")
+    # =================================
+    # UNKNOWN
+    # =================================
+
+    conn.send(
+        "Tipo spawn non valido.\n"
+    )

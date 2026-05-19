@@ -1,4 +1,5 @@
 {
+    "description": "",
     "exits": {
         "north": {
             "closed": false,
@@ -17,18 +18,17 @@
             "to": 5002
         }
     },
+    "items": [],
     "long_desc": "",
+    "mobs": [],
     "name": "",
+    "pos": {
+        "x": 273,
+        "y": 473
+    },
     "short_desc": "",
     "vnum": 5003,
-    "zone": "",
-    "description": "",
-    "items": [],
-    "mobs": [],
-    "x": 100,
-    "y": 100,
-    "pos": {
-        "x": 750,
-        "y": 250
-    }
+    "x": 273,
+    "y": 473,
+    "zone": ""
 }

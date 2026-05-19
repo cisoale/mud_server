@@ -1,93 +1,249 @@
 from core.world import get_room
-from core.inventory import add_item
+from core.item_loader import create_item
+from core.save_system import save_player
 
+# =========================================
+# FIND CORPSE
+# =========================================
 
-# =========================
-# TROVA CORPO
-# =========================
-def find_corpse(room, name):
+def find_corpse(room, target_name):
 
-    name = name.lower()
+    if not hasattr(room, "items"):
+        return None
 
-    matches = []
+    target_name = str(
+        target_name
+    ).lower().strip()
 
     for item in room.items:
 
-        if item.get("type") != "corpse":
+        if not isinstance(item, dict):
             continue
 
-        item_name = item.get("name", "").lower()
+        item_name = str(
+            item.get("name", "")
+        ).lower()
 
-        if name in item_name:
-            matches.append(item)
+        if not item_name.startswith("corpo"):
+            continue
 
-    if not matches:
-        return None
+        # match diretto
+        if target_name == item_name:
+            return item
 
-    return matches[0]
+        # match parziale
+        if target_name in item_name:
+            return item
+
+        # alias
+        if target_name in [
+            "corpo",
+            "corpse"
+        ]:
+            return item
+
+    return None
 
 
-# =========================
-# COMANDO LOOT
-# =========================
+# =========================================
+# LOOT COMMAND
+# =========================================
+
 def execute(player, conn, args):
 
-    room = get_room(player.get("room"))
-
-    if not room:
-        conn.send("Errore stanza.\n")
-        return
-
-    if not args:
-        conn.send("Loot cosa?\n")
-        return
-
-    target_name = " ".join(args).lower()
-
-    corpse = find_corpse(room, target_name)
-
-    if not corpse:
-        conn.send("Non trovi quel corpo.\n")
-        return
-
-    # =========================
-    # LOOT OGGETTI
-    # =========================
-    loot_items = corpse.get("loot", [])
-
-    if loot_items:
-        conn.send("\nRecuperi:\n")
-
-        for item in loot_items:
-
-            add_item(player, item)
-
-            name = item.get("name", "???")
-            qty = item.get("quantity", 1)
-
-            if qty > 1:
-                conn.send(f"- {name} x{qty}\n")
-            else:
-                conn.send(f"- {name}\n")
-
-    else:
-        conn.send("Non trovi oggetti utili.\n")
-
-    # =========================
-    # GOLD
-    # =========================
-    gold = corpse.get("gold", 0)
-
-    if gold > 0:
-        player["gold"] = player.get("gold", 0) + gold
-        conn.send(f"Hai trovato {gold} oro.\n")
-
-    # =========================
-    # RIMUOVI CORPO
-    # =========================
     try:
-        room.items.remove(corpse)
-    except ValueError:
-        pass
 
-    conn.send("\nSaccheggio completato.\n")
+        # =====================================
+        # INPUT
+        # =====================================
+
+        if not args:
+
+            conn.send(
+                "Loot cosa?\n"
+            )
+
+            return
+
+        if isinstance(args, list):
+
+            target_name = " ".join(
+                [str(x) for x in args]
+            ).lower()
+
+        else:
+
+            target_name = str(
+                args
+            ).lower()
+
+        # =====================================
+        # ROOM
+        # =====================================
+
+        room = get_room(
+            player.get("room")
+        )
+
+        if not room:
+
+            conn.send(
+                "La stanza non esiste.\n"
+            )
+
+            return
+
+        # =====================================
+        # CORPSE
+        # =====================================
+
+        corpse = find_corpse(
+            room,
+            target_name
+        )
+
+        if not corpse:
+
+            conn.send(
+                "Non trovi quel corpo.\n"
+            )
+
+            return
+
+        looted_anything = False
+
+        # =====================================
+        # GOLD
+        # =====================================
+
+        gold = corpse.get(
+            "gold",
+            0
+        )
+
+        if isinstance(gold, int):
+
+            if gold > 0:
+
+                player["gold"] = (
+                    player.get(
+                        "gold",
+                        0
+                    ) + gold
+                )
+                save_player(player)
+                conn.send(
+                    f"Raccogli "
+                    f"{gold} monete "
+                    f"dal "
+                    f"{corpse['name']}.\n"
+                )
+
+                corpse["gold"] = 0
+
+                looted_anything = True
+
+        # =====================================
+        # ITEMS
+        # =====================================
+
+        loot_table = corpse.get(
+            "loot",
+            []
+        )
+
+        if not isinstance(
+            loot_table,
+            list
+        ):
+            loot_table = []
+
+        for loot_entry in loot_table:
+
+            if not isinstance(
+                loot_entry,
+                dict
+            ):
+                continue
+
+            item_name = loot_entry.get(
+                "item"
+            )
+
+            if not item_name:
+                continue
+
+            item = create_item(
+                item_name
+            )
+
+            if not item:
+                continue
+
+            player.setdefault(
+                "inventory",
+                []
+            ).append(item)
+
+            conn.send(
+                f"Trovi "
+                f"{item['name']} "
+                f"nel "
+                f"{corpse['name']}.\n"
+            )
+
+            looted_anything = True
+
+        # svuota loot
+        corpse["loot"] = []
+
+        # =====================================
+        # EMPTY
+        # =====================================
+
+        if not looted_anything:
+
+            conn.send(
+                "Il corpo è vuoto.\n"
+            )
+
+            return
+
+        # =====================================
+        # REMOVE CORPSE
+        # =====================================
+
+        empty_gold = (
+            corpse.get(
+                "gold",
+                0
+            ) <= 0
+        )
+
+        empty_loot = not corpse.get(
+            "loot",
+            []
+        )
+
+        if empty_gold and empty_loot:
+
+            if corpse in room.items:
+
+                room.items.remove(
+                    corpse
+                )
+
+                conn.send(
+                    f"{corpse['name']} "
+                    f"si dissolve lentamente.\n"
+                )
+
+    except Exception as e:
+
+        print(
+            f"[LOOT ERROR] {e}"
+        )
+
+        conn.send(
+            "Errore comando.\n"
+        )

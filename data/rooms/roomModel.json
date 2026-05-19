@@ -1,19 +1,76 @@
-export function normalizeRoom(r){
+{
+    "vnum": 0,
 
-    return {
-        vnum: parseInt(r.vnum) || 0,
+    "name": "Nuova Room",
 
-        name: r.name || "Room",
-        zone: r.zone || "",
+    "short_desc": "Ti trovi in una stanza.",
 
-        short_desc: r.short_desc || "",
-        long_desc: r.long_desc || "",
+    "long_desc": "Una stanza ancora da descrivere.",
 
-        exits: r.exits || {},
+    "description": "",
 
-        flags: r.flags || [],
-        sector: r.sector || "inside",
+    "region": "starting_region",
 
-        pos: r.pos || { x: 0, y: 0 }
-    };
+    "zone": "Zona Generica",
+
+    "x": 100,
+    "y": 100,
+
+    "pos": {
+        "x": 0,
+        "y": 0
+    },
+
+    "exits": {
+
+        "north": {
+            "to": null,
+            "door": false,
+            "closed": false,
+            "locked": false,
+            "key": null,
+            "secret": false
+        },
+
+        "south": {
+            "to": null,
+            "door": false,
+            "closed": false,
+            "locked": false,
+            "key": null,
+            "secret": false
+        },
+
+        "east": {
+            "to": null,
+            "door": false,
+            "closed": false,
+            "locked": false,
+            "key": null,
+            "secret": false
+        },
+
+        "west": {
+            "to": null,
+            "door": false,
+            "closed": false,
+            "locked": false,
+            "key": null,
+            "secret": false
+        }
+    },
+
+    "mobs": [],
+
+    "items": [],
+
+    "flags": [],
+
+    "scripts": [],
+
+    "ambient": {
+        "sound": "",
+        "smell": "",
+        "light": "normal"
+    }
 }

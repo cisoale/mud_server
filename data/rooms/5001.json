@@ -1,30 +1,37 @@
 {
+    "description": "",
     "exits": {
-        "east": {
-            "closed": false,
-            "door": false,
-            "key": null,
-            "locked": false,
-            "secret": true,
-            "to": 5000
-        },
         "north": {
-            "closed": false,
+            "to": 5002,
             "door": false,
-            "key": null,
+            "closed": false,
             "locked": false,
             "secret": false,
-            "to": 5002
+            "blocked": false,
+            "key": ""
+        },
+        "west": {
+            "to": 5000,
+            "door": false,
+            "closed": false,
+            "locked": false,
+            "secret": false,
+            "blocked": false,
+            "key": ""
         }
     },
+    "items": [],
     "long_desc": "",
+    "mobs": [],
     "name": "Lo sterrato",
+    "pos": {
+        "x": 213,
+        "y": 533
+    },
+    "region": "dark_forest",
     "short_desc": "",
     "vnum": 5001,
-    "zone": "Terre bruciate",
-    "description": "",
-    "items": [],
-    "mobs": [],
-    "x": 2140,
-    "y": 1460
+    "x": 213,
+    "y": 533,
+    "zone": "Terre bruciate"
 }

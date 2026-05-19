@@ -1,0 +1,35 @@
+{
+    "ambient": {
+        "light": "normal",
+        "smell": "",
+        "sound": ""
+    },
+    "description": "Ti trovi in una locanda piena di vegetazione,le pareti sono piene di piante rampicanti e fiori esotici.\nIl bancone è ricavato da un'enorme tronco caduto di traverso e completamente intagliato e lavorato.",
+    "exits": {
+        "down": {
+            "to": 3003,
+            "door": true,
+            "closed": false,
+            "locked": false,
+            "secret": false,
+            "blocked": false,
+            "key": ""
+        }
+    },
+    "flags": [],
+    "items": [],
+    "long_desc": "Una stanza ancora da descrivere.",
+    "mobs": [],
+    "name": "Locanda Elfica",
+    "pos": {
+        "x": 32,
+        "y": 206
+    },
+    "region": "Elfi",
+    "scripts": [],
+    "short_desc": "Ti trovi in una stanza.",
+    "vnum": 3002,
+    "x": 32,
+    "y": 206,
+    "zone": "Zona Generica"
+}
