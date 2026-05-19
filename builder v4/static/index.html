@@ -10,6 +10,8 @@
 
     <title>Realm Builder</title>
 
+    <link rel="icon" href="data:,">
+
     <link rel="stylesheet"
           href="style.css">
 
@@ -23,11 +25,31 @@
 
     <header id="topbar">
 
-        <div class="logo">
+        <div class="logoBar">
 
-            REALM BUILDER
+            <div class="logo">
+                REALM BUILDER
+            </div>
+
+            <!-- HELP -->
+
+            <button id="helpButton"
+                    onclick="openHelpModal()">
+                ?
+            </button>
+
+            <!-- VALIDATION -->
+
+            <button id="validationButton"
+                    onclick="openValidationModal()">
+                ⚠
+            </button>
 
         </div>
+
+
+
+        <!-- TOOLBAR -->
 
         <div class="toolbar">
 
@@ -39,9 +61,14 @@
                 + Mob
             </button>
 
+            <button onclick="toggleLinkMode()">
+                Link Mode
+            </button>
+
         </div>
 
     </header>
+
 
 
     <!-- ===================================== -->
@@ -58,9 +85,7 @@
         <aside id="leftSidebar">
 
             <div class="sidebarHeader">
-
                 Rooms
-
             </div>
 
             <div id="rooms"></div>
@@ -87,26 +112,48 @@
 
         <aside id="rightSidebar">
 
+            <!-- MOBS -->
+
             <div class="sidebarHeader">
-
                 Mobs
-
             </div>
 
             <div id="mobs"></div>
+
+
+
+            <!-- REGIONS -->
+
+            <div class="sidebarHeader regionHeader">
+
+                <span>Regions</span>
+
+                <button onclick="newRegion()">
+                    +
+                </button>
+
+            </div>
+
+            <div id="regions"></div>
 
         </aside>
 
     </div>
 
 
+
     <!-- ===================================== -->
-    <!-- MODAL -->
+    <!-- MAIN MODAL -->
     <!-- ===================================== -->
 
     <div id="modalOverlay">
 
         <div id="modalWindow">
+
+
+            <!-- ===================================== -->
+            <!-- MODAL HEADER -->
+            <!-- ===================================== -->
 
             <div id="modalHeader">
 
@@ -120,15 +167,27 @@
 
             </div>
 
+
+
+            <!-- ===================================== -->
+            <!-- MODAL BODY -->
+            <!-- ===================================== -->
+
             <div id="modalBody">
 
 
+                <!-- ===================================== -->
                 <!-- ROOM EDITOR -->
+                <!-- ===================================== -->
 
                 <div id="roomEditor"
                      class="editorPanel">
 
+
+                    <!-- BASIC ROOM DATA -->
+
                     <div class="editorGrid">
+
 
                         <div class="field">
 
@@ -138,6 +197,8 @@
 
                         </div>
 
+
+
                         <div class="field">
 
                             <label>Nome</label>
@@ -145,6 +206,8 @@
                             <input id="room_name">
 
                         </div>
+
+
 
                         <div class="field full">
 
@@ -154,6 +217,8 @@
 
                         </div>
 
+
+
                         <div class="field">
 
                             <label>Regione</label>
@@ -161,6 +226,8 @@
                             <input id="room_region">
 
                         </div>
+
+
 
                         <div class="field">
 
@@ -170,6 +237,8 @@
                                    type="number">
 
                         </div>
+
+
 
                         <div class="field">
 
@@ -182,10 +251,336 @@
 
                     </div>
 
-                    <div class="editorActions">
+
+
+                    <!-- ===================================== -->
+                    <!-- EXITS -->
+                    <!-- ===================================== -->
+
+                    <div class="exitEditor">
+
+                        <h3>Exits</h3>
+
+                        <div class="exitGrid">
+
+
+                            <!-- NORTH -->
+
+                            <div class="exitBlock">
+
+                                <h4>North</h4>
+
+                                <input id="exit_north_to"
+                                       placeholder="To Room">
+
+                                <div class="exitFlagsCompact">
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_north_door">
+                                        Door
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_north_locked">
+                                        Locked
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_north_closed">
+                                        Closed
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_north_secret">
+                                        Secret
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_north_blocked">
+                                        Blocked
+                                    </label>
+
+                                </div>
+
+                                <input id="exit_north_key"
+                                       placeholder="Key ID">
+
+                            </div>
+
+
+
+                            <!-- SOUTH -->
+
+                            <div class="exitBlock">
+
+                                <h4>South</h4>
+
+                                <input id="exit_south_to"
+                                       placeholder="To Room">
+
+                                <div class="exitFlagsCompact">
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_south_door">
+                                        Door
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_south_locked">
+                                        Locked
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_south_closed">
+                                        Closed
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_south_secret">
+                                        Secret
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_south_blocked">
+                                        Blocked
+                                    </label>
+
+                                </div>
+
+                                <input id="exit_south_key"
+                                       placeholder="Key ID">
+
+                            </div>
+
+
+
+                            <!-- EAST -->
+
+                            <div class="exitBlock">
+
+                                <h4>East</h4>
+
+                                <input id="exit_east_to"
+                                       placeholder="To Room">
+
+                                <div class="exitFlagsCompact">
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_east_door">
+                                        Door
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_east_locked">
+                                        Locked
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_east_closed">
+                                        Closed
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_east_secret">
+                                        Secret
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_east_blocked">
+                                        Blocked
+                                    </label>
+
+                                </div>
+
+                                <input id="exit_east_key"
+                                       placeholder="Key ID">
+
+                            </div>
+
+
+
+                            <!-- WEST -->
+
+                            <div class="exitBlock">
+
+                                <h4>West</h4>
+
+                                <input id="exit_west_to"
+                                       placeholder="To Room">
+
+                                <div class="exitFlagsCompact">
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_west_door">
+                                        Door
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_west_locked">
+                                        Locked
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_west_closed">
+                                        Closed
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_west_secret">
+                                        Secret
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_west_blocked">
+                                        Blocked
+                                    </label>
+
+                                </div>
+
+                                <input id="exit_west_key"
+                                       placeholder="Key ID">
+
+                            </div>
+
+
+
+                            <!-- UP -->
+
+                            <div class="exitBlock">
+
+                                <h4>Up</h4>
+
+                                <input id="exit_up_to"
+                                       placeholder="To Room">
+
+                                <div class="exitFlagsCompact">
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_up_door">
+                                        Door
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_up_locked">
+                                        Locked
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_up_closed">
+                                        Closed
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_up_secret">
+                                        Secret
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_up_blocked">
+                                        Blocked
+                                    </label>
+
+                                </div>
+
+                                <input id="exit_up_key"
+                                       placeholder="Key ID">
+
+                            </div>
+
+
+
+                            <!-- DOWN -->
+
+                            <div class="exitBlock">
+
+                                <h4>Down</h4>
+
+                                <input id="exit_down_to"
+                                       placeholder="To Room">
+
+                                <div class="exitFlagsCompact">
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_down_door">
+                                        Door
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_down_locked">
+                                        Locked
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_down_closed">
+                                        Closed
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_down_secret">
+                                        Secret
+                                    </label>
+
+                                    <label>
+                                        <input type="checkbox"
+                                               id="exit_down_blocked">
+                                        Blocked
+                                    </label>
+
+                                </div>
+
+                                <input id="exit_down_key"
+                                       placeholder="Key ID">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ===================================== -->
+                    <!-- ROOM ACTIONS -->
+                    <!-- ===================================== -->
+
+                    <div class="editorActions roomActions">
 
                         <button onclick="saveRoomForm()">
                             Salva Room
+                        </button>
+
+                        <button class="dangerButton"
+                                onclick="deleteCurrentRoom()">
+                            Elimina Room
                         </button>
 
                     </div>
@@ -193,12 +588,16 @@
                 </div>
 
 
+
+                <!-- ===================================== -->
                 <!-- MOB EDITOR -->
+                <!-- ===================================== -->
 
                 <div id="mobEditor"
                      class="editorPanel">
 
                     <div class="editorGrid">
+
 
                         <div class="field">
 
@@ -208,6 +607,8 @@
 
                         </div>
 
+
+
                         <div class="field">
 
                             <label>Nome</label>
@@ -216,6 +617,8 @@
 
                         </div>
 
+
+
                         <div class="field full">
 
                             <label>Descrizione</label>
@@ -223,6 +626,8 @@
                             <textarea id="mob_description"></textarea>
 
                         </div>
+
+
 
                         <div class="field">
 
@@ -233,6 +638,8 @@
 
                         </div>
 
+
+
                         <div class="field">
 
                             <label>Damage</label>
@@ -241,6 +648,8 @@
                                    type="number">
 
                         </div>
+
+
 
                         <div class="field">
 
@@ -253,6 +662,8 @@
 
                     </div>
 
+
+
                     <div class="editorActions">
 
                         <button onclick="saveMobForm()">
@@ -262,6 +673,129 @@
                     </div>
 
                 </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ===================================== -->
+    <!-- HELP MODAL -->
+    <!-- ===================================== -->
+
+    <div id="helpOverlay">
+
+        <div id="helpWindow">
+
+            <div id="helpHeader">
+
+                <h2>Realm Builder Help</h2>
+
+                <button onclick="closeHelpModal()">
+                    ✕
+                </button>
+
+            </div>
+
+
+            <div id="helpContent">
+
+                <h3>Basic Controls</h3>
+
+                <ul>
+
+                    <li>
+                        Left Click Room → Open editor
+                    </li>
+
+                    <li>
+                        Drag Room → Move room
+                    </li>
+
+                    <li>
+                        Drag Empty Space → Move map
+                    </li>
+
+                    <li>
+                        ALT + Click Exit → Delete exit
+                    </li>
+
+                </ul>
+
+
+
+                <h3>Link Mode</h3>
+
+                <ul>
+
+                    <li>
+                        Activate "Link Mode"
+                    </li>
+
+                    <li>
+                        Click first room
+                    </li>
+
+                    <li>
+                        Click second room
+                    </li>
+
+                    <li>
+                        Exit is created automatically
+                    </li>
+
+                </ul>
+
+
+
+                <h3>Exit Colors</h3>
+
+                <ul>
+
+                    <li>
+                        Gray → Normal Exit
+                    </li>
+
+                    <li>
+                        Red → Locked Exit
+                    </li>
+
+                    <li>
+                        Dashed → Secret Exit
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ===================================== -->
+    <!-- VALIDATION MODAL -->
+    <!-- ===================================== -->
+
+    <div id="validationOverlay">
+
+        <div id="validationWindow">
+
+            <div id="validationHeader">
+
+                <h2>Validation Panel</h2>
+
+                <button onclick="closeValidationModal()">
+                    ✕
+                </button>
+
+            </div>
+
+            <div id="validationContent">
 
             </div>
 

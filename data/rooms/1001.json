@@ -1,40 +1,50 @@
 {
     "description": "",
     "exits": {
-        "down": {
-            "closed": false,
-            "door": false,
-            "key": null,
-            "locked": false,
-            "secret": false,
-            "to": 1004
-        },
         "east": {
-            "closed": false,
+            "to": 1002,
             "door": false,
-            "key": null,
+            "closed": false,
             "locked": false,
             "secret": false,
-            "to": 1002
+            "blocked": false,
+            "key": ""
         },
         "up": {
-            "closed": false,
+            "to": 5000,
             "door": false,
-            "key": null,
+            "closed": false,
             "locked": false,
             "secret": true,
-            "to": 5000
+            "blocked": false,
+            "key": ""
+        },
+        "down": {
+            "to": 1004,
+            "door": false,
+            "closed": false,
+            "locked": false,
+            "secret": false,
+            "blocked": false,
+            "key": ""
+        },
+        "south": {
+            "to": 1004
         }
     },
     "items": [],
     "long_desc": "Un luogo accogliente,sembra di essere a casa.",
     "mobs": [],
     "name": "Locanda",
-    "short_desc": "Ti trovi nella locanda",
+    "pos": {
+        "x": 260,
+        "y": 120
+    },
     "region": "starting_region",
+    "region_id": "",
+    "short_desc": "Ti trovi nella locanda",
     "vnum": 1001,
-    
-    "x": 185.23828125,
-    "y": 47.00390625,
+    "x": 260,
+    "y": 120,
     "zone": "Villaggio umano"
 }

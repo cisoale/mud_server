@@ -1,31 +1,37 @@
 {
     "description": "",
     "exits": {
-        "down": {
-            "closed": false,
-            "door": false,
-            "key": null,
-            "locked": false,
-            "secret": true,
-            "to": 1001
-        },
         "east": {
-            "closed": false,
+            "to": 5001,
             "door": false,
-            "key": null,
+            "closed": false,
             "locked": false,
             "secret": false,
-            "to": 5001
+            "blocked": false,
+            "key": ""
+        },
+        "down": {
+            "to": 1001,
+            "door": false,
+            "closed": false,
+            "locked": false,
+            "secret": true,
+            "blocked": false,
+            "key": ""
         }
     },
     "items": [],
     "long_desc": "",
     "mobs": [],
     "name": "Terre degli enfant",
-    "short_desc": "puzza di bruciato","region": 
-    "dark_forest",
+    "pos": {
+        "x": 120,
+        "y": 540
+    },
+    "region": "dark_forest",
+    "short_desc": "puzza di bruciato",
     "vnum": 5000,
-    "x": 228.91892122375523,
-    "y": 93.04476445032097,
+    "x": 120,
+    "y": 540,
     "zone": "Terre bruciate"
 }

@@ -99,6 +99,24 @@ def api_mobs():
             "error": str(e)
         }), 500
 
+@app.route('/api/delete_room', methods=['POST'])
+def delete_room():
+
+    data = request.json
+
+    vnum = str(data.get('vnum'))
+
+    rooms = load_rooms()
+
+    if vnum in rooms:
+
+        del rooms[vnum]
+
+        save_rooms(rooms)
+
+    return jsonify({
+        "status": "ok"
+    })
 
 @app.route("/api/room", methods=["POST"])
 def api_save_room():
