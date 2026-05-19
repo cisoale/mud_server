@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Realm Builder</title>
+
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+<body>
+
+    <!-- ===================================== -->
+    <!-- TOPBAR -->
+    <!-- ===================================== -->
+
+    <header id="topbar">
+
+        <div class="logo">
+
+            REALM BUILDER
+
+        </div>
+
+        <div class="toolbar">
+
+            <button onclick="newRoom()">
+                + Room
+            </button>
+
+            <button onclick="newMob()">
+                + Mob
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- ===================================== -->
+    <!-- MAIN LAYOUT -->
+    <!-- ===================================== -->
+
+    <div id="layout">
+
+
+        <!-- ===================================== -->
+        <!-- LEFT SIDEBAR -->
+        <!-- ===================================== -->
+
+        <aside id="leftSidebar">
+
+            <div class="sidebarHeader">
+
+                Rooms
+
+            </div>
+
+            <div id="rooms"></div>
+
+        </aside>
+
+
+
+        <!-- ===================================== -->
+        <!-- WORKSPACE -->
+        <!-- ===================================== -->
+
+        <main id="workspace">
+
+            <canvas id="mapCanvas"></canvas>
+
+        </main>
+
+
+
+        <!-- ===================================== -->
+        <!-- RIGHT SIDEBAR -->
+        <!-- ===================================== -->
+
+        <aside id="rightSidebar">
+
+            <div class="sidebarHeader">
+
+                Mobs
+
+            </div>
+
+            <div id="mobs"></div>
+
+        </aside>
+
+    </div>
+
+
+    <!-- ===================================== -->
+    <!-- MODAL -->
+    <!-- ===================================== -->
+
+    <div id="modalOverlay">
+
+        <div id="modalWindow">
+
+            <div id="modalHeader">
+
+                <div id="modalTitle">
+                    Editor
+                </div>
+
+                <button onclick="closeModal()">
+                    ✕
+                </button>
+
+            </div>
+
+            <div id="modalBody">
+
+
+                <!-- ROOM EDITOR -->
+
+                <div id="roomEditor"
+                     class="editorPanel">
+
+                    <div class="editorGrid">
+
+                        <div class="field">
+
+                            <label>VNUM</label>
+
+                            <input id="room_vnum">
+
+                        </div>
+
+                        <div class="field">
+
+                            <label>Nome</label>
+
+                            <input id="room_name">
+
+                        </div>
+
+                        <div class="field full">
+
+                            <label>Descrizione</label>
+
+                            <textarea id="room_description"></textarea>
+
+                        </div>
+
+                        <div class="field">
+
+                            <label>Regione</label>
+
+                            <input id="room_region">
+
+                        </div>
+
+                        <div class="field">
+
+                            <label>X</label>
+
+                            <input id="room_x"
+                                   type="number">
+
+                        </div>
+
+                        <div class="field">
+
+                            <label>Y</label>
+
+                            <input id="room_y"
+                                   type="number">
+
+                        </div>
+
+                    </div>
+
+                    <div class="editorActions">
+
+                        <button onclick="saveRoomForm()">
+                            Salva Room
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MOB EDITOR -->
+
+                <div id="mobEditor"
+                     class="editorPanel">
+
+                    <div class="editorGrid">
+
+                        <div class="field">
+
+                            <label>VNUM</label>
+
+                            <input id="mob_vnum">
+
+                        </div>
+
+                        <div class="field">
+
+                            <label>Nome</label>
+
+                            <input id="mob_name">
+
+                        </div>
+
+                        <div class="field full">
+
+                            <label>Descrizione</label>
+
+                            <textarea id="mob_description"></textarea>
+
+                        </div>
+
+                        <div class="field">
+
+                            <label>HP</label>
+
+                            <input id="mob_hp"
+                                   type="number">
+
+                        </div>
+
+                        <div class="field">
+
+                            <label>Damage</label>
+
+                            <input id="mob_damage"
+                                   type="number">
+
+                        </div>
+
+                        <div class="field">
+
+                            <label>Defense</label>
+
+                            <input id="mob_defense"
+                                   type="number">
+
+                        </div>
+
+                    </div>
+
+                    <div class="editorActions">
+
+                        <button onclick="saveMobForm()">
+                            Salva Mob
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>
